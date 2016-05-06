@@ -26,7 +26,7 @@ public class Home extends FragmentActivity implements ActionBar.TabListener {
     DrawerLayout menuLayout;
     private ViewPager viewPager;
     private TabsPagerAdapter mAdapter;
-    private ActionBar actionBar;
+    private ActionBar actionBar;//comment of lina
     // Tab titles
     private String[] tabs = { "Top Rated", "Games", "Movies" };
     private DrawerLayout mDrawerLayout;
