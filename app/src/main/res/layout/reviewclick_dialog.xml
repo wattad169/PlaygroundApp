@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <RelativeLayout
+        android:id="@+id/rl_back"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:background="#90000000"
+        >
+
+        <RelativeLayout
+            android:id="@+id/rl_user_dialog"
+            android:layout_width="fill_parent"
+            android:layout_height="240dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/bg_review"
+            android:layout_centerVertical="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" >
+
+            <LinearLayout
+                android:id="@+id/relativeLayout9"
+                android:layout_width="match_parent"
+                android:layout_height="90dp"
+                android:background="@drawable/title_bg1"
+                android:layout_alignParentTop="true"
+                android:gravity="center_horizontal">
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="wrap_content"
+                    android:layout_height="fill_parent"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:gravity="center"
+                    android:id="@+id/linearLayout">
+
+                    <com.inc.playground.playground.utils.RoundedImageView
+                        android:id="@+id/img_my"
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:background="@drawable/circle" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="wrap_content"
+                    android:layout_height="fill_parent"
+                    android:layout_marginLeft="10dp"
+                    android:gravity="center_vertical"
+                    android:layout_toRightOf="@+id/linearLayout">
+
+                    <TextView
+                        android:id="@+id/txt_nameuser"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_toRightOf="@+id/img_my"
+                        android:text="bhavin"
+                        android:textSize="20dp"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:textColor="#fff"
+                        android:textStyle="bold" />
+
+                    <RatingBar
+                        android:id="@+id/rate1234"
+                        style="@style/foodRatingShowreview"
+                        android:layout_width="wrap_content"
+                        android:layout_height="40dp"
+                        android:layout_alignParentBottom="true"
+                        android:isIndicator="true"
+                        android:numStars="5"
+                        android:max="100"
+                        android:scaleX="0.6"
+                        android:scaleY="0.6"
+                        android:transformPivotX="0dp"
+                        android:transformPivotY="0dp"
+                        android:rating="2.0"
+                        android:stepSize="0.0" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <RelativeLayout
+                android:id="@+id/rl_text"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/btn_ok"
+                android:layout_below="@+id/relativeLayout9" >
+
+                <TextView
+                    android:id="@+id/txt_desc"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:gravity="center_horizontal"
+                    android:textColor="@color/material_blue_grey_950" />
+            </RelativeLayout>
+
+            <Button
+                android:id="@+id/btn_ok"
+                android:layout_width="100dp"
+                android:layout_height="30dp"
+                android:background="@drawable/ok_btn"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="10dp"
+                android:text="OK"
+                android:textColor="#fff"
+                android:textSize="15dp"
+                android:textStyle="bold" />
+        </RelativeLayout>
+    </RelativeLayout>
+
+</RelativeLayout>

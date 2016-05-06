@@ -1,0 +1,123 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Profile" >
+
+    <RelativeLayout
+        android:id="@+id/rel_header"
+        android:layout_width="fill_parent"
+        android:layout_height="50dp"
+        android:background="@drawable/title_bg" >
+
+        <TextView
+            android:id="@+id/txt_header"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:text="@string/title_activity_profile"
+            android:textColor="#fff"
+            android:textSize="20dp" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/rel_profile"
+        android:layout_width="fill_parent"
+        android:layout_height="120dp"
+        android:layout_below="@+id/rel_header"
+        android:layout_marginTop="7dp"
+        android:background="@drawable/peofile_bg" >
+
+        <com.inc.playground.playground.utils.RoundedImageView
+            android:id="@+id/img_profile"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:background="@drawable/default_circle_img" />
+
+        <TextView
+            android:id="@+id/txt_edit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="20dp"
+            android:text="Edit"
+            android:visibility="invisible"
+            android:textColor="#fff" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/rel_detail"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_below="@+id/rel_profile"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:background="@drawable/center_white_bg" >
+
+        <EditText
+            android:id="@+id/edt_fullname"
+            android:layout_width="fill_parent"
+            android:layout_height="45dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/userrname_cell"
+            android:hint="Fullname"
+            android:textColor="#000" />
+
+        <EditText
+            android:id="@+id/edt_username"
+            android:layout_width="fill_parent"
+            android:layout_height="45dp"
+            android:layout_below="@+id/edt_fullname"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/userrname_cell"
+            android:hint="User name"
+            android:inputType="textEmailAddress"
+            android:textColor="#000" />
+
+        <EditText
+            android:id="@+id/edt_malid"
+            android:layout_width="fill_parent"
+            android:layout_height="45dp"
+            android:layout_below="@+id/edt_username"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/userrname_cell"
+            android:clickable="false"
+            android:focusable="false"
+            android:hint="Mail id"
+            android:textColor="#000" />
+
+        <Button
+            android:id="@+id/btn_update"
+            android:layout_width="300dp"
+            android:layout_height="50dp"
+            android:layout_above="@+id/btn_delete"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/upadate_btn"
+            android:text="Update"
+            android:visibility="invisible"
+            android:textColor="#fff" />
+
+        <Button
+            android:id="@+id/btn_delete"
+            android:layout_width="300dp"
+            android:layout_height="50dp"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/delete_btn"
+            android:text="Delete"
+            android:textColor="#fff" />
+    </RelativeLayout>
+
+</RelativeLayout>

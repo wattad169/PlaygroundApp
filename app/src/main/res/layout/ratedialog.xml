@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/k">
+
+    <RelativeLayout
+        android:id="@+id/rl_back"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:background="#90000000">
+
+        <RelativeLayout
+            android:id="@+id/rl_ratedialog"
+            android:layout_width="fill_parent"
+            android:layout_height="240dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/bg_review"
+            android:layout_centerVertical="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true">
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="fill_parent"
+                android:layout_height="100dp"
+                android:layout_centerHorizontal="true"
+                android:gravity="center"
+                android:background="@drawable/title_bg1"
+                android:paddingTop="10dp"
+                android:id="@+id/linearLayout2">
+
+                <TextView
+                    android:id="@+id/txt_title_review"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Write your Review"
+                    android:textColor="#fff"
+                    android:textSize="20dp"
+                    />
+
+                <RatingBar
+                    android:id="@+id/rate1234"
+                    style="@style/foodRatingShowreview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="28dp"
+                    android:scaleX="0.8"
+                    android:scaleY="0.8"
+                    android:stepSize="1.0"
+                    android:layout_alignParentBottom="true"
+                    android:layout_centerHorizontal="true" />
+
+            </LinearLayout>
+
+
+            <RelativeLayout
+                android:id="@+id/relativeLayout2"
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:layout_below="@+id/linearLayout2"
+                android:layout_alignParentLeft="true"
+                android:layout_marginTop="10dp"
+                android:layout_alignParentStart="true">
+
+                <EditText
+                    android:id="@+id/txt_description"
+                    android:layout_width="fill_parent"
+                    android:layout_height="80dp"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+                    android:background="@drawable/text_field"
+                    android:hint="Review here"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textColor="#000"
+                    android:padding="10dp" />
+
+
+            </RelativeLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_marginTop="10dp"
+                android:layout_below="@+id/relativeLayout2">
+
+                    <Button
+                        android:id="@+id/btn_submit"
+                        android:layout_width="100dp"
+                        android:layout_height="30dp"
+                        android:layout_centerVertical="true"
+                        android:background="@drawable/submit_btn"
+                        android:text="Submit"
+                        android:textColor="#fff"
+                        android:textSize="15dp"
+                        android:layout_marginRight="10dp"/>
+
+                    <Button
+                        android:id="@+id/btn_cancel"
+                        android:layout_width="100dp"
+                        android:layout_height="30dp"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:background="@drawable/cancel_btn"
+                        android:text="Cancel"
+                        android:textColor="#fff"
+                        android:textSize="15dp" />
+
+            </LinearLayout>
+        </RelativeLayout>
+    </RelativeLayout>
+
+</RelativeLayout>

@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <RelativeLayout
+        android:id="@+id/rl_back"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" >
+
+        <ImageView
+            android:id="@+id/img_back"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:background="#000000" />
+
+        <RelativeLayout
+            android:id="@+id/rl_user_dialog"
+            android:layout_width="300dp"
+            android:layout_height="300dp"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:background="@drawable/center_bg" >
+
+            <EditText
+                android:id="@+id/edt_username"
+                android:layout_width="fill_parent"
+                android:layout_height="45dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/username_btn_bg"
+                android:hint="Enter Name"
+                android:paddingLeft="65dp"
+                android:paddingRight="10dp" />
+
+            <EditText
+                android:id="@+id/edt_emailid"
+                android:layout_width="fill_parent"
+                android:layout_height="45dp"
+                android:layout_below="@+id/edt_username"
+                android:layout_centerHorizontal="true"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/mailid_btn_bg"
+                android:hint="Enter Email"
+                android:paddingLeft="65dp"
+                android:paddingRight="10dp" />
+
+            <EditText
+                android:id="@+id/edt_pwd"
+                android:layout_width="fill_parent"
+                android:layout_height="45dp"
+                android:layout_below="@+id/edt_emailid"
+                android:layout_centerHorizontal="true"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/password_btn_bg"
+                android:hint="Enter Password"
+                android:inputType="textPassword"
+                android:paddingLeft="65dp"
+                android:paddingRight="10dp" />
+
+            <Button
+                android:id="@+id/btn_registerfinal"
+                android:layout_width="fill_parent"
+                android:layout_height="45dp"
+                android:layout_below="@+id/edt_pwd"
+                android:layout_centerHorizontal="true"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/login_btn_bg"
+                android:text="Register"
+                android:textColor="#fff" />
+
+            <Button
+                android:id="@+id/btn_cancel"
+                android:layout_width="fill_parent"
+                android:layout_height="45dp"
+                android:layout_below="@+id/btn_registerfinal"
+                android:layout_centerHorizontal="true"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/login_btn_bg"
+                android:text="Cancel"
+                android:textColor="#fff" />
+        </RelativeLayout>
+    </RelativeLayout>
+
+</RelativeLayout>
