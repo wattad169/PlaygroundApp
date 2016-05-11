@@ -41,6 +41,7 @@ public class Home extends FragmentActivity implements ActionBar.TabListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
+
 //
 //        menuButtonOpen = (Button) findViewById(R.id.settings_menu);
 //        menuButtonClose = (Button) findViewById(R.id.menu_close);

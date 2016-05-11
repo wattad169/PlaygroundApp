@@ -204,9 +204,9 @@ final public class NetworkUtilities {
             JSONObject currentObject = (JSONObject) jsonInput.get(i);
             String eventId = currentObject.getString(Constants.EVENT_ID);
             EventsObject currentEvent = new EventsObject();
-            currentEvent.setEvent_id(eventId);
-            currentEvent.setName(currentObject.getString(Constants.EVENT_NAME));
-            currentEvent.setAddress(currentObject.getString(Constants.EVENT_LOCATION));
+            currentEvent.SetId(eventId);
+            currentEvent.SetName(currentObject.getString(Constants.EVENT_NAME));
+            currentEvent.SetFormattedLocation(currentObject.getString(Constants.EVENT_LOCATION));
 
             // get your lon and lat from the getMylocation function in Utils.java
             currentEvent.setDistance(calculateDistance());
