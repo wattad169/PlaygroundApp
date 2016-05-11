@@ -12,9 +12,11 @@ import java.util.HashMap;
  */
 public class GlobalVariables extends Application {
 
-    private HashMap<String, Double> currentLocation;
+    public HashMap<String, Double> currentLocation;
 
     private GPSTracker gps;
+
+    private HashMap<String, EventsObject> homeEvents;
 
     public HashMap<String, Double> GetCurrentLocation(){
         return this.currentLocation;
@@ -32,7 +34,12 @@ public class GlobalVariables extends Application {
         this.gps = new GPSTracker(activityFrom);
     }
 
-    public Application getApplication(){
-        return this;
+    public HashMap<String, EventsObject> GetHomeEvents(){
+        return this.homeEvents;
     }
+    
+    public void SetHomeEvents(HashMap<String, EventsObject> events){
+        this.homeEvents = events;
+    }
+
 }

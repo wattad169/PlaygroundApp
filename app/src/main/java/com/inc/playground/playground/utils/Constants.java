@@ -52,7 +52,19 @@ public class Constants {
 
     public static final String EVENT_ID = "event_id";
 
+    public static final String EVENT_SIZE = "event_size";
+
+    public static final String START_TIME = "start_time";
+
+    public static final String END_TIME = "end_time";
+
+    public static final String EVENT_DESCRIPTION = "description";
+
+    public static final String EVENT_STATUS = "status";
+
     public final static String EVENTINFORM = "eventInform";
+
+
 
 //    static final Map<String , Integer> sportTypeToLogo = new HashMap<String , Integer>() {{
 //        put("football", R.mipmap.football);

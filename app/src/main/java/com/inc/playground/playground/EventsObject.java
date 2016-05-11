@@ -9,7 +9,7 @@ import java.util.HashMap;
  * Created by mostafawattad on 06/05/2016.
  */
 public class EventsObject {
-    String id, name, formattedLocation, type, size, date, startTime, endTime, description, status;
+    String id, name, formattedLocation, type, size, date, startTime, endTime, description, status, distance;
     // TODO ADD EVENT MEMBERS (A LIST CONTAINING USERS)
     User creator;
 
@@ -67,5 +67,8 @@ public class EventsObject {
 
     public void SetStatus(String status) { this.status = status; }
 
+    public String GetDistance() { return distance; }
+
+    public void SetDistance(String distance) { this.distance= distance; }
 
 }

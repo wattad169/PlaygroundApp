@@ -44,6 +44,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.inc.playground.playground.EventsObject;
+import com.inc.playground.playground.GlobalVariables;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
@@ -157,12 +158,12 @@ final public class NetworkUtilities {
             Log.v(TAG, "getAuthtoken completing");
         }
     }
-    public static Double calculateDistance(float originLon,float originLat,float distanceLon,float distanceLat){
+    public static Double calculateDistance(double originLon, double originLat, double distanceLon, double distanceLat){
         final HttpResponse resp;
-        String apiUrl = Constants.apiKey.replace("X1",Float.toString(originLon));
-        apiUrl = apiUrl.replace("Y1",Float.toString(originLat));
-        apiUrl = apiUrl.replace("X2",Float.toString(distanceLon));
-        apiUrl = apiUrl.replace("Y2",Float.toString(distanceLat));
+        String apiUrl = Constants.apiKey.replace("X1",Double.toString(originLon));
+        apiUrl = apiUrl.replace("Y1",Double.toString(originLat));
+        apiUrl = apiUrl.replace("X2",Double.toString(distanceLon));
+        apiUrl = apiUrl.replace("Y2",Double.toString(distanceLat));
         apiUrl = apiUrl.replace("APIKEY",Constants.apiKey);
         HttpGet http_client = new HttpGet(apiUrl);
 
@@ -192,32 +193,44 @@ final public class NetworkUtilities {
             return null;
         } catch (JSONException e) {
             e.printStackTrace();
-        } finally {
-            Log.v(TAG, "getAuthtoken completing");
         }
-
+        return null;
     }
-    public static HashMap<Integer,EventsObject> eventListToHashMap(JSONArray jsonInput) throws JSONException {
 
-
+    /**
+     *  Converts JSON Object containing events info to hash map of events objects
+     * @param jsonInput - The JSON object received from server
+     * @param currentLocation   - Location of phone (for calculating distance)
+     * @return hash map containing event objects as values and eventId as key
+     * @throws JSONException
+     */
+    public static HashMap<String,EventsObject> eventListToHashMap(JSONArray jsonInput,HashMap<String, Double> currentLocation) throws JSONException {
+        HashMap<String,EventsObject> events = new HashMap<>();
         for(int i=0 ; i<jsonInput.length();i++){
+            //Fill the EventObject with data from the JSON
             JSONObject currentObject = (JSONObject) jsonInput.get(i);
             String eventId = currentObject.getString(Constants.EVENT_ID);
             EventsObject currentEvent = new EventsObject();
             currentEvent.SetId(eventId);
             currentEvent.SetName(currentObject.getString(Constants.EVENT_NAME));
             currentEvent.SetFormattedLocation(currentObject.getString(Constants.EVENT_LOCATION));
-
-            // get your lon and lat from the getMylocation function in Utils.java
-            currentEvent.setDistance(calculateDistance());
-
-
+            currentEvent.SetType(currentObject.getString(Constants.EVENT_TYPE));
+//            currentEvent.SetSize(currentObject.getString(Constants.EVENT_SIZE));
+            currentEvent.SetDate(currentObject.getString(Constants.EVENT_DATE));
+//            currentEvent.SetStartTime(currentObject.getString(Constants.START_TIME));
+//            currentEvent.SetEndTime(currentObject.getString(Constants.END_TIME));
+//            currentEvent.SetStatus(currentObject.getString(Constants.EVENT_STATUS));
+//            currentEvent.SetDescription(currentObject.getString(Constants.EVENT_DESCRIPTION));
+            //Calculate and set the event distance
+            double currentLon = currentLocation.get(Constants.LOCATION_LON);
+            double currentLat = currentLocation.get(Constants.LOCATION_LAT);
+            double eventLon = Double.parseDouble(currentObject.getJSONObject("location").getString(Constants.LOCATION_LON));
+            double eventLat = Double.parseDouble(currentObject.getJSONObject("location").getString(Constants.LOCATION_LAT));
+            currentEvent.SetDistance(Double.toString(calculateDistance(currentLon, currentLat, eventLon, eventLat)));
+            // add event to Hashmap
+            events.put(eventId, currentEvent);
         }
-
-
-
-
-
+        return events;
     }
 
 
