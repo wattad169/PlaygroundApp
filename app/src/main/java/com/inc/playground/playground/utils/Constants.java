@@ -90,4 +90,29 @@ public class Constants {
     public static final String apiKey = "AIzaSyBKtVDM9E9Th-kzV7QgMKg4Qn9EtvoeYlw";
     public static final String ID = "id";
 
+    //LOGIN REQUEST PARAMS
+    public static final String MODE = "mode";
+
+    public static final String LOGIN_MODE = "login";
+
+    public static final String FACEBOOK_MODE = "facebook_user";
+
+    public static final String  GOOGLE_MODE= "google_user";
+
+    public static final String FACEBOOK_ID = "facebook_id";
+
+    public static final String NAME = "name";
+
+    public static final String EMAIL = "email";
+
+    public static final String PASSWORD = "password";
+
+    public static final String PHOTO_URL = "photo_url";
+
+    public static final String PHOTO = "photo";
+
+    public static final String FULLNAME = "fullname";
+
+
+
 }

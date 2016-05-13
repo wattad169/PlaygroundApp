@@ -45,7 +45,7 @@ public class FragmentList extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_list, container, false);
 
         // call the onPostExecute function in getList class from favourite activity from the other application
-        new getList().execute();
+//        new getList().execute();
 
         return rootView;
     }

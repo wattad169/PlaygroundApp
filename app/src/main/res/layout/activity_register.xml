@@ -85,14 +85,14 @@
             android:id="@+id/edt_password"
             android:layout_width="fill_parent"
             android:layout_height="45dp"
-            android:layout_below="@+id/edt_username"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             android:layout_marginTop="10dp"
             android:background="@drawable/userrname_cell"
             android:hint="@string/hint_Password"
             android:inputType="textPassword"
-            android:textColor="#000" />
+            android:textColor="#000"
+            android:layout_below="@+id/edt_mailid" />
 
         <Button
             android:id="@+id/btn_register"
@@ -107,21 +107,6 @@
             android:textColor="#fff"
             android:textSize="20dp" />
 
-        <EditText
-            android:id="@+id/edt_username"
-            android:layout_width="fill_parent"
-            android:layout_height="45dp"
-            android:layout_alignParentRight="true"
-            android:layout_below="@+id/edt_mailid"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:background="@drawable/userrname_cell"
-            android:ems="10"
-            android:hint="@string/hint_username"
-            android:textColor="#000" >
-
-            <requestFocus />
-        </EditText>
     </RelativeLayout>
 
 </RelativeLayout>

@@ -54,7 +54,7 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
 	ArrayList<Logingetset> login;
 	String username, password, imagefb;
 	public static final String MY_PREFS_NAME = "Store";
-	String value, personname, personemail;
+	String value, personname, personemail,user_token;
 	private static final int RC_SIGN_IN = 0;
 	private GoogleApiClient mGoogleApiClient;
 	private boolean mIntentInProgress;
@@ -71,7 +71,7 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
 	private static final String KEY = "facebook-credentials";
 	String name, email,userloginid;
 	// private static String APP_ID = "823483137763059";
-	private static String APP_ID = "1687498654867590";
+	private static String APP_ID = "1609067259420394";
 	// Instance of Facebook Class
 	private Facebook facebook;
 	private static final String FACEBOOK_PERMISSION = "publish_stream";
@@ -91,10 +91,8 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
 		if (prefs.getString("score", null) != null) {
 			userloginid = prefs.getString("score", null);
 		}
-		
-		//tf1 = Typeface.createFromAsset(Login.this.getAssets(), "fonts/Roboto-Light.ttf");
+
 		TextView textview1 = (TextView) findViewById(R.id.txt_header);
-		//textview1.setTypeface(tf1);
 
 		buildGoogleApiClient();
 		facebook = new Facebook(APP_ID);
@@ -175,17 +173,10 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
 				SharedPreferences.Editor editor = getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE).edit();
 				editor.putString("myfbpic", "" + method);
 				editor.putString("delete", "" + prodel);
-
 				editor.commit();
 				loginToFacebook();
-
-//				postToWall();
-				// logoutFromFacebook();
-
-				getProfileInformation();
-
-				Log.d("name123", "" + name);
-				Log.d("email123", "" + "http://graph.facebook.com/" + imagefb + "/picture");
+//				Log.d("name123", "" + name);
+//				Log.d("email123", "" + "http://graph.facebook.com/" + imagefb + "/picture");
 
 				// logoutFromFacebook();
 
@@ -205,7 +196,7 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
 				editor.commit();
 				method = "google";
 				signInWithGplus();
-				getProfileInformation1();
+                getProfileInformation1();
 				Log.d("personname", "" + personname);
 				Log.d("personemail", "" + personemail);
 
@@ -235,40 +226,40 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
 
 			URL hp = null;
 			String url = null;
+
 			try {
 				// login.clear();
 				JSONObject cred = new JSONObject();
-				String urlQuery = "";
+				String urlQuery = "/login/";
 				if (method.equals("login")) {
-					urlQuery = "/login";
+					try {
+                        cred.put(Constants.MODE, Constants.LOGIN_MODE);
+                        cred.put(Constants.EMAIL, "mostafa");
+						cred.put(Constants.EMAIL, "mostafa");
+						cred.put(Constants.PASSWORD, "12345");
+					} catch (JSONException e) {
+						Log.i(TAG, e.toString());
+					}
 
-					try {
-						cred.put(NetworkUtilities.PARAM_USERNAME, username);
-					} catch (JSONException e) {
-						Log.i(TAG,e.toString());
-					}
-					try {
-						cred.put(NetworkUtilities.PARAM_PASSWORD, password);
-					} catch (JSONException e) {
-						e.printStackTrace();
-					}
 
 				} else if (method.equals("google")) {
-					hp = new URL(getString(R.string.link) + "rest/user_register.php?google_user&name=" + personname
-							+ "&email=" + personemail + "&photo_url=" + personPhotoUrl);
-				} else if (method.equals("facebook")) {
-					hp = new URL(getString(R.string.link) + "rest/user_register.php?facebook_user&name=" + name
-							+ "&facebook_id=" + email + "&photo_url=" + imagefb);
-				}
+					try {
+                        cred.put(Constants.MODE, Constants.GOOGLE_MODE);
+						cred.put(Constants.EMAIL, personemail);
+						cred.put(Constants.NAME, personname);
+						cred.put(Constants.PHOTO_URL, personPhotoUrl);
+					} catch (JSONException e) {
+						Log.i(TAG, e.toString());
+					}
 
-				/*
-				 * } else if (key.equals("facebook")) { hp = new URL(
-				 * "http://192.168.1.115/store/rest/login.php?username=" +
-				 * username + "&password=" + password); } else if
-				 * (key.equals("google")) { hp = new URL(
-				 * "http://192.168.1.115/store/rest/login.php?username=" +
-				 * username + "&password=" + password); }
-				 */
+
+
+				} else if (method.equals("facebook")) {
+                    cred.put(Constants.MODE, Constants.FACEBOOK_MODE);
+					cred.put(Constants.FACEBOOK_ID, email);
+					cred.put(Constants.NAME, name);
+					cred.put(Constants.PHOTO_URL, imagefb);
+				}
 
 				String responseString = NetworkUtilities.doPost(cred, NetworkUtilities.BASE_URL + urlQuery);
 				JSONObject myObject = null;
@@ -290,40 +281,43 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
 
 				} else{ //
 					key = "user";
-					String j = myObject.getString(Constants.RESPONSE_MESSAGE);
-					// JSONArray j = new JSONArray(total);
-					Log.d("jsonarray", "" + j);
-					Log.d("URL1", "" + j);
-//					for (int i = 0; i < j.length(); i++) {
 
-					JSONObject Obj;
-//					Obj = j.getJSONObject(i);
-					// JSONArray jarr = Obj.getJSONArray("images");
+					JSONObject resonseMessage = myObject.getJSONObject(Constants.RESPONSE_MESSAGE);
+					Log.d("jsonarray", "" + resonseMessage);
+					Log.d("URL1", "" + resonseMessage);
+
 					Logingetset temp = new Logingetset();
-					/*
-					 * for (int k = 0; k < jarr.length(); k++) { JSONObject
-					 * Obj1; Obj1 = j.getJSONObject(k);
-					 * temp.setImages(Obj1.getString("images")); String
-					 * images = Obj1.getString("images"); Log.d("images", ""
-					 * + images);
-					 *
-					 * }
-					 */
+					if(method.equals("login")){
+                        user_token = resonseMessage.getString(Constants.ID);
+                        fullname = resonseMessage.getString(Constants.FULLNAME);
+                        email_id = resonseMessage.getString(Constants.EMAIL);
+                        user_name = email_id;
+                        user2 = email_id;
+                    }
+                    else if(method.equals("facebook")){
+                        user_token = email;
+                        fullname= name;
+                        fullimage = imagefb;
+                        email_id = email;
+                        user2 =user_token;
+                    }
+                    else if(method.equals("google")){
+                        user_token = personemail;
+                        fullname= personname;
+                        fullimage = personPhotoUrl;
+                        email_id = personemail;
+                        user2 =personemail;
 
-					temp.setUser_id(j);
-					temp.setName("Mostafa Wattad");
-					temp.setUsername("mostafaw");
-					temp.setEmail("wattad169@gmail.com");
-					temp.setImage("https://storage.googleapis.com/sports-bucket/Source/1965583_10204825358656748_4079077085336938408_o.jpg");
-					// temp.setLat(Obj.getString("lat"));
-					user2 = j;
-					fullname = "Mostafa Wattad";
-					user_name = "mostafa";
-					email_id = "wattad169@gmail.com";
+                    }
+
 					fullimage = "https://storage.googleapis.com/sports-bucket/Source/1965583_10204825358656748_4079077085336938408_o.jpg";
+					temp.setUser_id(user_token);
+					temp.setName(fullname);
+					temp.setUsername(email_id);
+					temp.setEmail(email_id);
+					temp.setImage(fullimage);
 					login.add(temp);
 
-//					}
 
 				}
 
@@ -335,14 +329,6 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
 				 * { // TODO Auto-generated method stub return
 				 * Double.compare(lhs.getMiles(), rhs.getMiles()); } });
 				 */
-			} catch (MalformedURLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				Error = e.getMessage();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				Error = e.getMessage();
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -361,6 +347,7 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
 
 			if (method.equals("login")) {
 				if (key.equals("user")) {
+					Toast.makeText(Login.this, user_token, Toast.LENGTH_LONG).show();
 					SharedPreferences.Editor editor = getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE).edit();
 					editor.putString("score", "" + user2);
 					editor.putString("username", "" + user_name);
@@ -368,15 +355,15 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
 					editor.putString("fullname", "" + fullname);
 					editor.putString("picture", "" + fullimage);
 					editor.commit();
-					if (value.equals("home")) {
-						Intent iv = new Intent(Login.this, Home.class);
-						startActivity(iv);
-						Toast.makeText(Login.this, "Login Successful..", Toast.LENGTH_LONG).show();
-					} else if (value.equals("review")) {
-						Intent iv = new Intent(Login.this, Review.class);
-						iv.putExtra("id", "" + id);
-						startActivity(iv);
-					}
+//					if (value.equals("home")) {
+                    Intent iv = new Intent(Login.this,Profile.class);
+                    startActivity(iv);
+//					Toast.makeText(Login.this, user_token, Toast.LENGTH_LONG).show();
+//					} else if (value.equals("review")) {
+//						Intent iv = new Intent(Login.this, Review.class);
+//						iv.putExtra("id", "" + id);
+//						startActivity(iv);
+//					}
 
 				} else if (key.equals("status")) {
 					Toast.makeText(Login.this, "Username or Password is Incorrect", Toast.LENGTH_LONG)
@@ -392,15 +379,11 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
 					editor.putString("fullname", "" + fullname);
 					editor.putString("picture", "" + fullimage);
 					editor.commit();
-					if (value.equals("home")) {
-						Intent iv = new Intent(Login.this, Home.class);
-						startActivity(iv);
-						Toast.makeText(Login.this, "Login Successful with Facebook", Toast.LENGTH_LONG).show();
-					} else if (value.equals("review")) {
-						Intent iv = new Intent(Login.this, Review.class);
-						iv.putExtra("id", "" + id);
-						startActivity(iv);
-					}
+
+                    Intent iv = new Intent(Login.this,Profile.class);
+                    startActivity(iv);
+                    Toast.makeText(Login.this, "Login Successful with Facebook", Toast.LENGTH_LONG).show();
+
 
 				} else if (key.equals("status")) {
 					Toast.makeText(Login.this, "Username or Password is Incorrect", Toast.LENGTH_LONG)
@@ -415,15 +398,10 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
 					editor.putString("fullname", "" + fullname);
 					editor.putString("picture", "" + fullimage);
 					editor.commit();
-					if (value.equals("home")) {
-						Intent iv = new Intent(Login.this, Home.class);
-						startActivity(iv);
-						Toast.makeText(Login.this, "Login Successful with Google+", Toast.LENGTH_LONG).show();
-					} else if (value.equals("review")) {
-						Intent iv = new Intent(Login.this, Review.class);
-						iv.putExtra("id", "" + id);
-						startActivity(iv);
-					}
+
+                    Intent iv = new Intent(Login.this,Profile.class);
+                    startActivity(iv);
+                    Toast.makeText(Login.this, "Login Successful with Google+", Toast.LENGTH_LONG).show();
 
 				} else if (key.equals("status")) {
 					Toast.makeText(Login.this, "Username or Password is Incorrect", Toast.LENGTH_LONG)
@@ -439,69 +417,69 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
 		Bundle bundle = new Bundle();
 		bundle.putString("fields", "id,name,first_name,last_name,email,picture,gender,birthday,work");
 		mAsyncRunner.request("me", bundle, new RequestListener() {
-			@Override
-			public void onComplete(String response, Object state) {
-				mPrefs = getPreferences(MODE_PRIVATE);
-				String app_id = mPrefs.getString("access_id", null);
-				try {
+            @Override
+            public void onComplete(String response, Object state) {
+                mPrefs = getPreferences(MODE_PRIVATE);
+                String app_id = mPrefs.getString("access_id", null);
+                try {
 
-					Bundle bundle = new Bundle();
-					bundle.putString("fields", "id,name,first_name,last_name,email,picture,gender,birthday,work");
-					Log.d("bundle", facebook.request("me", bundle));
-				} catch (MalformedURLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+                    Bundle bundle = new Bundle();
+                    bundle.putString("fields", "id,name,first_name,last_name,email,picture,gender,birthday,work");
+                    Log.d("bundle", facebook.request("me", bundle));
+                } catch (MalformedURLException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
 
-				Log.d("Profile", response);
-				String json = response;
-				try {
-					JSONObject profile = new JSONObject(json);
+                Log.d("Profile", response);
+                String json = response;
+                try {
+                    JSONObject profile = new JSONObject(json);
 
-					// getting name of the user
-					name = profile.getString("name");
-					// getting email of the user
-					imagefb = profile.getString("id");
-					email = profile.getString("email");
-					JSONObject picture = profile.getJSONObject("picture");
-					JSONObject data = picture.getJSONObject("data");
-					ppic = data.getString("url");
-					Log.d("ppic", "" + ppic);
-					Log.d("fbimage", "" + imagefb);
-					Log.d("fbname", "" + name);
-					if (name != null) {
-						if (ppic != null) {
-							name = name.replace(" ", "%20");
+                    // getting name of the user
+                    name = profile.getString("name");
+                    // getting email of the user
+                    imagefb = profile.getString("id");
+                    email = profile.getString("email");
+                    JSONObject picture = profile.getJSONObject("picture");
+                    JSONObject data = picture.getJSONObject("data");
+                    ppic = data.getString("url");
+                    Log.d("ppic", "" + ppic);
+                    Log.d("fbimage", "" + imagefb);
+                    Log.d("fbname", "" + name);
+                    if (name != null) {
+                        if (ppic != null) {
+                            name = name.replace(" ", "%20");
 
-							imagefb = "https://graph.facebook.com/" + imagefb + "/picture?type=large";
-							email = email.replace(" ", "%20");
-							new getlogin().execute();
-						}
-					}
-				} catch (JSONException e) {
-					e.printStackTrace();
-				}
-			}
+                            imagefb = "https://graph.facebook.com/" + imagefb + "/picture?type=large";
+                            email = email.replace(" ", "%20");
+                            new getlogin().execute();
+                        }
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
 
-			@Override
-			public void onIOException(IOException e, Object state) {
-			}
+            @Override
+            public void onIOException(IOException e, Object state) {
+            }
 
-			@Override
-			public void onFileNotFoundException(FileNotFoundException e, Object state) {
-			}
+            @Override
+            public void onFileNotFoundException(FileNotFoundException e, Object state) {
+            }
 
-			@Override
-			public void onMalformedURLException(MalformedURLException e, Object state) {
-			}
+            @Override
+            public void onMalformedURLException(MalformedURLException e, Object state) {
+            }
 
-			@Override
-			public void onFacebookError(FacebookError e, Object state) {
-			}
-		});
+            @Override
+            public void onFacebookError(FacebookError e, Object state) {
+            }
+        });
 
 	}
 
@@ -545,7 +523,7 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
 
 		if (!facebook.isSessionValid()) {
 
-			facebook.authorize(this, new String[] { "email", "publish_actions" },Facebook.FORCE_DIALOG_AUTH, new DialogListener() {
+			facebook.authorize(this, new DialogListener() {
 
 				@Override
 				public void onCancel() {
@@ -568,6 +546,8 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
 					editor.putLong("access_expires", facebook.getAccessExpires());
 					editor.putString("access_id", facebook.getAppId());
 					editor.commit();
+                    getProfileInformation();
+//                    Log.d("Finish", "" + facebook.getAppId());
 
 				}
 
@@ -736,6 +716,7 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
 				try {
 					mIntentInProgress = true;
 					mConnectionResult.startResolutionForResult(Login.this, RC_SIGN_IN);
+
 				} catch (SendIntentException e) {
 					mIntentInProgress = false;
 					mGoogleApiClient.connect();
