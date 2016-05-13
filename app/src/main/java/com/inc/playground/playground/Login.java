@@ -34,6 +34,7 @@ import org.json.JSONObject;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -336,9 +337,11 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
 			} catch (NullPointerException e) {
 				// TODO: handle exception
 				Error = e.getMessage();
-			}
+			} catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
 
-			return null;
+            return null;
 		}
 
 		@Override

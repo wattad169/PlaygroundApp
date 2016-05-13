@@ -157,13 +157,6 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         });
 
 
-            @Override
-            public void onClick(View v) {
-                // TODO Auto-generated method stub
-                // new changes
-                Intent iv = new Intent(MainActivity.this, Login.class);
-                startActivity(iv);
-
 
 
 
