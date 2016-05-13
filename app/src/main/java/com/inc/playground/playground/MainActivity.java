@@ -143,6 +143,26 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         });
         // add another Linearlayout like I did for ll_login tag in the xml for other buttons in the menu bar
 
+        /*Onclick for the Setting button (idan) */
+        LinearLayout ll_Setting = (LinearLayout) findViewById(R.id.ll_settings);
+        ll_Setting.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // TODO Auto-generated method stub
+                // new changes
+                Intent iv = new Intent(MainActivity.this,
+                        com.inc.playground.playground.upLeft3StripesButton.Setting.class);
+                startActivity(iv);
+            }
+        });
+
+
+            @Override
+            public void onClick(View v) {
+                // TODO Auto-generated method stub
+                // new changes
+                Intent iv = new Intent(MainActivity.this, Login.class);
+                startActivity(iv);
 
 
 
