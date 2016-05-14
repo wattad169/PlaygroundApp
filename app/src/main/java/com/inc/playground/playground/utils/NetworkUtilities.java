@@ -159,42 +159,42 @@ final public class NetworkUtilities {
         }
     }
     public static Double calculateDistance(double originLon, double originLat, double distanceLon, double distanceLat){
-        final HttpResponse resp;
-        String apiUrl = Constants.apiKey.replace("X1",Double.toString(originLon));
-        apiUrl = apiUrl.replace("Y1",Double.toString(originLat));
-        apiUrl = apiUrl.replace("X2",Double.toString(distanceLon));
-        apiUrl = apiUrl.replace("Y2",Double.toString(distanceLat));
-        apiUrl = apiUrl.replace("APIKEY",Constants.apiKey);
-        HttpGet http_client = new HttpGet(apiUrl);
-
-        try {
-            resp = getHttpClient().execute(http_client);
-            String resopnseString = null;
-            if (resp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-                InputStream istream = (resp.getEntity() != null) ? resp.getEntity().getContent()
-                        : null;
-                if (istream != null) {
-                    BufferedReader ireader = new BufferedReader(new InputStreamReader(istream));
-                    resopnseString = ireader.readLine().trim();
-                }
-            }
-            if ((resopnseString != null) && (resopnseString.length() > 0)) {
-                Log.v(TAG, "Successful authentication");
-                JSONObject convertedResponse = new JSONObject(resopnseString);
-                Double distanceKm = new Double((convertedResponse.getJSONObject("rows").getJSONObject("elements").getJSONObject("distance").getInt("value"))/1000);
-                return distanceKm;
-
-            } else {
-                Log.e(TAG, "Error authenticating" + resp.getStatusLine());
-                return null;
-            }
-        } catch (final IOException e) {
-            Log.e(TAG, "IOException when getting authtoken", e);
-            return null;
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return null;
+//        final HttpResponse resp;
+//        String apiUrl = Constants.apiGetDistanceUrl.replace("X1",Double.toString(originLon));
+//        apiUrl = apiUrl.replace("Y1",Double.toString(originLat));
+//        apiUrl = apiUrl.replace("X2",Double.toString(distanceLon));
+//        apiUrl = apiUrl.replace("Y2",Double.toString(distanceLat));
+//        apiUrl = apiUrl.replace("APIKEY",Constants.apiKey);
+//        HttpGet http_client = new HttpGet(apiUrl);
+//
+//        try {
+//            resp = getHttpClient().execute(http_client);
+//            String resopnseString = null;
+//            if (resp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+//                InputStream istream = (resp.getEntity() != null) ? resp.getEntity().getContent()
+//                        : null;
+//                if (istream != null) {
+//                    BufferedReader ireader = new BufferedReader(new InputStreamReader(istream));
+//                    resopnseString = ireader.readLine();
+//                }
+//            }
+//            if ((resopnseString != null) && (resopnseString.length() > 0)) {
+//                Log.v(TAG, "Successful authentication");
+//                JSONObject convertedResponse = new JSONObject(resopnseString);
+//                Double distanceKm = new Double((convertedResponse.getJSONObject("rows").getJSONObject("elements").getJSONObject("distance").getInt("value"))/1000);
+//                return distanceKm;
+//
+//            } else {
+//                Log.e(TAG, "Error authenticating" + resp.getStatusLine());
+//                return null;
+//            }
+//        } catch (final IOException e) {
+//            Log.e(TAG, "IOException when getting authtoken", e);
+//            return null;
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+        return 2.0;
     }
 
     /**
@@ -204,14 +204,14 @@ final public class NetworkUtilities {
      * @return hash map containing event objects as values and eventId as key
      * @throws JSONException
      */
-    public static HashMap<String,EventsObject> eventListToHashMap(JSONArray jsonInput,HashMap<String, Double> currentLocation) throws JSONException {
-        HashMap<String,EventsObject> events = new HashMap<>();
+    public static ArrayList<EventsObject> eventListToArrayList(JSONArray jsonInput,HashMap<String, Double> currentLocation) throws JSONException {
+        ArrayList<EventsObject> events = new ArrayList<>();
         for(int i=0 ; i<jsonInput.length();i++){
             //Fill the EventObject with data from the JSON
             JSONObject currentObject = (JSONObject) jsonInput.get(i);
-            String eventId = currentObject.getString(Constants.EVENT_ID);
+            int eventId = currentObject.getInt(Constants.EVENT_ID);
             EventsObject currentEvent = new EventsObject();
-            currentEvent.SetId(eventId);
+            currentEvent.SetId(Integer.toString(eventId));
             currentEvent.SetName(currentObject.getString(Constants.EVENT_NAME));
             currentEvent.SetFormattedLocation(currentObject.getString(Constants.EVENT_LOCATION));
             currentEvent.SetType(currentObject.getString(Constants.EVENT_TYPE));
@@ -224,11 +224,12 @@ final public class NetworkUtilities {
             //Calculate and set the event distance
             double currentLon = currentLocation.get(Constants.LOCATION_LON);
             double currentLat = currentLocation.get(Constants.LOCATION_LAT);
-            double eventLon = Double.parseDouble(currentObject.getJSONObject("location").getString(Constants.LOCATION_LON));
-            double eventLat = Double.parseDouble(currentObject.getJSONObject("location").getString(Constants.LOCATION_LAT));
-            currentEvent.SetDistance(Double.toString(calculateDistance(currentLon, currentLat, eventLon, eventLat)));
+            String eventLon = currentObject.getJSONObject("location").getString(Constants.LOCATION_LON);
+            String eventLat = currentObject.getJSONObject("location").getString(Constants.LOCATION_LAT);
+            currentEvent.SetPosition(eventLat, eventLon);
+            currentEvent.SetDistance(Double.toString(calculateDistance(currentLon, currentLat, Double.parseDouble(eventLon), Double.parseDouble(eventLat))));
             // add event to Hashmap
-            events.put(eventId, currentEvent);
+            events.add(currentEvent);
         }
         return events;
     }
