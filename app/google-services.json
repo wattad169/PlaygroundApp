@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "905465991528",
+    "project_id": "playground-1290"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:905465991528:android:fa363e3a6b8ffd4a",
+        "android_client_info": {
+          "package_name": "com.inc.playground.playground"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "905465991528-oegvluj0ba18h12eoi6g0r1ld5femg29.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.inc.playground.playground",
+            "certificate_hash": "0EB8FCEEBEB9D11E6D24127AC1A4B731614FEBEC"
+          }
+        },
+        {
+          "client_id": "905465991528-js4sg22lr8lksqpn1ag0lbrmbprshj2q.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAbZntCwSUfSlaweIMo1Hxld8OV0hneW0I"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -96,6 +96,7 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
 		TextView textview1 = (TextView) findViewById(R.id.txt_header);
 
 		buildGoogleApiClient();
+
 		facebook = new Facebook(APP_ID);
 		mAsyncRunner = new AsyncFacebookRunner(facebook);
 
@@ -197,7 +198,7 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
 				editor.commit();
 				method = "google";
 				signInWithGplus();
-                getProfileInformation1();
+
 				Log.d("personname", "" + personname);
 				Log.d("personemail", "" + personemail);
 
@@ -402,8 +403,8 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
 					editor.putString("picture", "" + fullimage);
 					editor.commit();
 
-                    Intent iv = new Intent(Login.this,Profile.class);
-                    startActivity(iv);
+//                    Intent iv = new Intent(Login.this,Profile.class);
+//                    startActivity(iv);
                     Toast.makeText(Login.this, "Login Successful with Google+", Toast.LENGTH_LONG).show();
 
 				} else if (key.equals("status")) {
@@ -526,7 +527,7 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
 
 		if (!facebook.isSessionValid()) {
 
-			facebook.authorize(this, new DialogListener() {
+			facebook.authorize(this, new String[] { "email", "publish_actions" },Facebook.FORCE_DIALOG_AUTH, new DialogListener() {
 
 				@Override
 				public void onCancel() {
@@ -656,6 +657,7 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
 	public void onConnected(Bundle arg0) {
 		mSignInClicked = false;
 		Toast.makeText(this, "User is Connect", Toast.LENGTH_LONG).show();
+        getProfileInformation1();
 
 		// Get user's information
 		//getProfileInformation1();
@@ -719,6 +721,7 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
 				try {
 					mIntentInProgress = true;
 					mConnectionResult.startResolutionForResult(Login.this, RC_SIGN_IN);
+
 
 				} catch (SendIntentException e) {
 					mIntentInProgress = false;

@@ -4,7 +4,7 @@
 
     <uses-sdk
         android:minSdkVersion="16"
-        android:targetSdkVersion="18" />
+        android:targetSdkVersion="23" />
     <permission
         android:name="com.androidbunch.drawroutev2.permission.MAPS_RECEIVE"
         android:protectionLevel="signature" />
@@ -26,6 +26,7 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
     <!--</application>-->
     <application android:label="Playground"
         android:name="GlobalVariables"
