@@ -50,7 +50,7 @@ public class Constants {
 
     public static final String LOCATION_LON = "lon";
 
-    public static final String EVENT_ID = "event_id";
+    public static final String EVENT_ID = "id";
 
     public static final String EVENT_SIZE = "event_size";
 

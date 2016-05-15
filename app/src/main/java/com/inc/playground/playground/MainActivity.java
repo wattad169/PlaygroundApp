@@ -219,7 +219,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
                 return "Map View";
             }
             if(position==2){
-                return "Calendar";
+                return "calendar";
             }
             return "";
         }
