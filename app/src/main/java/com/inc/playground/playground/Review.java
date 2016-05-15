@@ -84,17 +84,6 @@ public class Review extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_review);
 
-		if (getString(R.string.bannerads).equals("yes")) {
-			AdView mAdView = (AdView) findViewById(R.id.adView);
-			AdRequest adRequest = new AdRequest.Builder().build();
-			mAdView.loadAd(adRequest);
-		} else if (getString(R.string.bannerads).equals("no")) {
-
-			AdView mAdView = (AdView) findViewById(R.id.adView);
-			mAdView.setVisibility(View.GONE);
-
-		}
-
 		if (getString(R.string.insertialads).equals("yes")) {
 			interstitialCanceled = false;
 			CallNewInsertial();
@@ -677,17 +666,7 @@ public class Review extends Activity {
 			// AdRequest adRequest = new AdRequest.Builder().build();
 			// mAdView.loadAd(adRequest);
 			Log.d("call", "call");
-
-			mInterstitialAd = new InterstitialAd(Review.this);
-			mInterstitialAd.setAdUnitId(getString(R.string.insertial_ad_key));
 			requestNewInterstitial();
-			mInterstitialAd.setAdListener(new AdListener() {
-				@Override
-				public void onAdClosed() {
-
-				}
-
-			});
 
 		}
 	}

@@ -151,7 +151,8 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
                 // TODO Auto-generated method stub
                 // new changes
                 Intent iv = new Intent(MainActivity.this,
-                        com.inc.playground.playground.upLeft3StripesButton.Setting.class);
+                        com.inc.playground.playground.upLeft3StripesButton.
+                                SettingsActivity.class );
                 startActivity(iv);
             }
         });
