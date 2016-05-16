@@ -53,7 +53,7 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
 	String key, id, method;
 	Button btn_login, btn_loginfb, btn_logingoogle;
 	ArrayList<Logingetset> login;
-	String username, password, imagefb;
+	String username, password, imagefb,facebook_id,image_url;
 	public static final String MY_PREFS_NAME = "Store";
 	String value, personname, personemail,user_token;
 	private static final int RC_SIGN_IN = 0;
@@ -258,7 +258,7 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
 
 				} else if (method.equals("facebook")) {
                     cred.put(Constants.MODE, Constants.FACEBOOK_MODE);
-					cred.put(Constants.FACEBOOK_ID, email);
+					cred.put(Constants.FACEBOOK_ID, facebook_id);
 					cred.put(Constants.NAME, name);
 					cred.put(Constants.PHOTO_URL, imagefb);
 				}
@@ -295,9 +295,11 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
                         email_id = resonseMessage.getString(Constants.EMAIL);
                         user_name = email_id;
                         user2 = email_id;
+                        fullimage = "https://storage.googleapis.com/sports-bucket/Source/1965583_10204825358656748_4079077085336938408_o.jpg";
+                        //TODO:Upload user image instead
                     }
                     else if(method.equals("facebook")){
-                        user_token = email;
+                        user_token = facebook_id;
                         fullname= name;
                         fullimage = imagefb;
                         email_id = email;
@@ -312,7 +314,7 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
 
                     }
 
-					fullimage = "https://storage.googleapis.com/sports-bucket/Source/1965583_10204825358656748_4079077085336938408_o.jpg";
+//
 					temp.setUser_id(user_token);
 					temp.setName(fullname);
 					temp.setUsername(email_id);
@@ -362,7 +364,7 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
 //					if (value.equals("home")) {
                     Intent iv = new Intent(Login.this,Profile.class);
                     startActivity(iv);
-//					Toast.makeText(Login.this, user_token, Toast.LENGTH_LONG).show();
+					Toast.makeText(Login.this, "Login Successful", Toast.LENGTH_LONG).show();
 //					} else if (value.equals("review")) {
 //						Intent iv = new Intent(Login.this, Review.class);
 //						iv.putExtra("id", "" + id);
@@ -396,15 +398,15 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
 			} else if (method.equals("google")) {
 				if (key.equals("user")) {
 					SharedPreferences.Editor editor = getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE).edit();
-					editor.putString("score", "" + user2);
+                    editor.putString("score", "" + user2);
 					editor.putString("username", "" + user_name);
-					editor.putString("emilid", "" + email_id);
-					editor.putString("fullname", "" + fullname);
+                    editor.putString("emilid", "" + email_id);
+                    editor.putString("fullname", "" + fullname);
 					editor.putString("picture", "" + fullimage);
 					editor.commit();
 
-//                    Intent iv = new Intent(Login.this,Profile.class);
-//                    startActivity(iv);
+                    Intent iv = new Intent(Login.this,Profile.class);
+                    startActivity(iv);
                     Toast.makeText(Login.this, "Login Successful with Google+", Toast.LENGTH_LONG).show();
 
 				} else if (key.equals("status")) {
@@ -446,8 +448,15 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
                     // getting name of the user
                     name = profile.getString("name");
                     // getting email of the user
-                    imagefb = profile.getString("id");
-                    email = profile.getString("email");
+
+                    facebook_id = profile.getString("id");
+                    imagefb = facebook_id;
+//                    try {
+//                        email = profile.getString("email");
+//                    }
+//                    catch (JSONException e){
+//
+//                    }
                     JSONObject picture = profile.getJSONObject("picture");
                     JSONObject data = picture.getJSONObject("data");
                     ppic = data.getString("url");
@@ -459,7 +468,7 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
                             name = name.replace(" ", "%20");
 
                             imagefb = "https://graph.facebook.com/" + imagefb + "/picture?type=large";
-                            email = email.replace(" ", "%20");
+//                            email = email.replace(" ", "%20");
                             new getlogin().execute();
                         }
                     }
@@ -656,23 +665,7 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
 	@Override
 	public void onConnected(Bundle arg0) {
 		mSignInClicked = false;
-		Toast.makeText(this, "User is Connect", Toast.LENGTH_LONG).show();
         getProfileInformation1();
-
-		// Get user's information
-		//getProfileInformation1();
-
-		/*
-		 * if (key.equals("google")) { // key="google"; if (personname != null)
-		 * { if (personemail != null) { personname = personname.replace(" ",
-		 * "%20"); personemail = personemail.replace(" ", "%20");
-		 * 
-		 * new getuserdetail().execute(); } } else { Toast.makeText(Login.this,
-		 * "error", Toast.LENGTH_LONG).show(); } } else if(key.equals(null)){
-		 * Toast.makeText(Login.this, "error", Toast.LENGTH_LONG).show(); }
-		 */
-
-		// Update the UI after signin
 		updateUI(true);
 
 	}

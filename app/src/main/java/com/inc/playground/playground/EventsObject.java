@@ -72,4 +72,8 @@ public class EventsObject implements Serializable{
 
     public void SetDistance(String distance) { this.distance= distance; }
 
+
+
+
+
 }

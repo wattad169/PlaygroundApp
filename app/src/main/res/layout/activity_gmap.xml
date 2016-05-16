@@ -1,0 +1,285 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="freaktemplate.storage.Gmap" >
+
+    <RelativeLayout
+        android:id="@+id/rl_header"
+        android:layout_width="fill_parent"
+        android:layout_height="50dp"
+        android:background="@drawable/title_bg" >
+
+        <Button
+            android:id="@+id/btn_map"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="5dp"
+            android:background="@drawable/more_btn" />
+
+        <TextView
+            android:id="@+id/txt_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:text="@string/title_activity_gmap"
+            android:textColor="#fff"
+            android:textSize="20dp" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_above="@+id/rel_zoom"
+        android:layout_below="@+id/rl_header" >
+
+        <fragment
+            android:id="@+id/mapFragment"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            class="com.google.android.gms.maps.SupportMapFragment" />
+
+        <Button
+            android:id="@+id/btn_detail"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:textAllCaps="false"
+            android:textColor="#000"
+            android:visibility="gone" />
+
+        <Button
+            android:id="@+id/btn_circle"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_below="@+id/btn_current"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/circle_draw" />
+
+        <Button
+            android:id="@+id/btn_current"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_below="@+id/btn_arrow"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/current" />
+
+        <Button
+            android:id="@+id/btn_arrow"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_below="@+id/btn_zoom"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/root" />
+
+        <Button
+            android:id="@+id/btn_zoom"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_below="@+id/btn_anim"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/zoom"
+            android:onClick="zoomToMarkers" />
+
+        <Button
+            android:id="@+id/btn_anim"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginLeft="5dp"
+            android:background="@drawable/more_btn_map"
+            android:layout_marginTop="5dp" />
+        <!--
+        <TableLayout
+            android:id="@+id/rel_bottom"
+            android:layout_width="fill_parent"
+            android:layout_height="50dp"
+            android:layout_alignParentBottom="true"
+            android:orientation="horizontal"
+            android:stretchColumns="0,1,2,3" >
+
+            <TableRow
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent" >
+
+                <LinearLayout
+                    android:id="@+id/ll_zoom"
+                    android:layout_width="80dp"
+                    android:layout_height="match_parent"
+                    android:layout_column="0"
+                    android:gravity="bottom|center"
+                    android:orientation="vertical" >
+
+                    <Button
+                        android:id="@+id/btn_zoom"
+                        android:layout_width="45dp"
+                        android:layout_height="45dp"
+                        android:layout_centerVertical="true"
+                        android:background="@drawable/zoom"
+                        android:onClick="zoomToMarkers" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/ll_arrow"
+                    android:layout_width="80dp"
+                    android:layout_height="match_parent"
+                    android:layout_column="1"
+                    android:gravity="bottom|center"
+                    android:orientation="vertical" >
+
+                    <Button
+                        android:id="@+id/btn_arrow"
+                        android:layout_width="45dp"
+                        android:layout_height="45dp"
+                        android:layout_centerVertical="true"
+                        android:background="@drawable/root" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/ll_current"
+                    android:layout_width="80dp"
+                    android:layout_height="match_parent"
+                    android:layout_column="2"
+                    android:gravity="bottom|center"
+                    android:orientation="vertical" >
+
+                    <Button
+                        android:id="@+id/btn_current"
+                        android:layout_width="45dp"
+                        android:layout_height="45dp"
+                        android:layout_centerVertical="true"
+                        android:background="@drawable/current" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/ll_circle"
+                    android:layout_width="80dp"
+                    android:layout_height="match_parent"
+                    android:layout_column="3"
+                    android:gravity="bottom|center"
+                    android:orientation="vertical" >
+
+                    <Button
+                        android:id="@+id/btn_circle"
+                        android:layout_width="45dp"
+                        android:layout_height="45dp"
+                        android:background="@drawable/circle_draw" />
+                </LinearLayout>
+                
+
+                
+            </TableRow>
+        </TableLayout>
+
+
+
+
+
+
+
+
+        -->
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/rel_zoom"
+        android:layout_width="fill_parent"
+        android:layout_height="50dp"
+        android:layout_alignParentBottom="true"
+        android:visibility="gone" >
+
+        <!--
+                 <Button
+                android:id="@+id/button1"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:onClick="startAnimation"
+                android:text="Animate Marker" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        -->
+
+        <Button
+            android:id="@+id/button2"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:onClick="zoomToMarkers"
+            android:text="Zoom to markers"
+            android:textColor="#000" />
+
+        <!--
+                 <Button
+                android:id="@+id/button3"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:onClick="animateBack"
+                android:text="Animate back to position" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        -->
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/rl_infodialog"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+    </RelativeLayout>
+
+</RelativeLayout>

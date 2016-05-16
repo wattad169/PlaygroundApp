@@ -195,6 +195,9 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
                     // a launchpad into the other demonstrations in this example application.
                     return new FragmentList();
 
+                case 1:
+                    return new FragmentMap();
+
                 default:
                     // The other sections of the app are dummy placeholders.
                     Fragment fragment = new DummySectionFragment();
