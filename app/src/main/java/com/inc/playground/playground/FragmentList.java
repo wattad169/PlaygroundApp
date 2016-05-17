@@ -100,7 +100,13 @@ public class FragmentList extends Fragment{
                         Log.d("ListViewFragment", "onScroll()");
                     }
                 });
-                if (homeEvents.size() == 0) {// If no events are found
+                fab.setOnClickListener(new View.OnClickListener() {
+                        public void onClick(View v) {
+                            Intent iv = new Intent(getActivity().getApplicationContext(), AddEvent.class);
+                            startActivity(iv);
+                        }
+                    });
+            if (homeEvents.size() == 0) {// If no events are found
                     Toast.makeText(getActivity().getApplicationContext(),"No Events Found", Toast.LENGTH_LONG).show();
                     events_list.setVisibility(View.INVISIBLE);
                 }

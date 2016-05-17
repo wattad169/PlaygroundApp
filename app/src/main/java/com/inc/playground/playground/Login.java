@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.IntentSender.SendIntentException;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -12,6 +14,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,6 +37,7 @@ import org.json.JSONObject;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -54,7 +58,7 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
 	Button btn_login, btn_loginfb, btn_logingoogle;
 	ArrayList<Logingetset> login;
 	String username, password, imagefb,facebook_id,image_url;
-	public static final String MY_PREFS_NAME = "Store";
+	public static final String MY_PREFS_NAME = "Login";
 	String value, personname, personemail,user_token;
 	private static final int RC_SIGN_IN = 0;
 	private GoogleApiClient mGoogleApiClient;
@@ -89,8 +93,8 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
 		setContentView(R.layout.activity_login);
 
 		SharedPreferences prefs = getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
-		if (prefs.getString("score", null) != null) {
-			userloginid = prefs.getString("score", null);
+		if (prefs.getString("userid", null) != null) {
+			userloginid = prefs.getString("userid", null);
 		}
 
 		TextView textview1 = (TextView) findViewById(R.id.txt_header);
@@ -355,14 +359,14 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
 				if (key.equals("user")) {
 					Toast.makeText(Login.this, user_token, Toast.LENGTH_LONG).show();
 					SharedPreferences.Editor editor = getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE).edit();
-					editor.putString("score", "" + user2);
+					editor.putString("userid", "" + user2);
 					editor.putString("username", "" + user_name);
 					editor.putString("emilid", "" + email_id);
 					editor.putString("fullname", "" + fullname);
 					editor.putString("picture", "" + fullimage);
 					editor.commit();
 //					if (value.equals("home")) {
-                    Intent iv = new Intent(Login.this,Profile.class);
+                    Intent iv = new Intent(Login.this,MainActivity.class);
                     startActivity(iv);
 					Toast.makeText(Login.this, "Login Successful", Toast.LENGTH_LONG).show();
 //					} else if (value.equals("review")) {
@@ -379,14 +383,14 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
 			} else if (method.equals("facebook")) {
 				if (key.equals("user")) {
 					SharedPreferences.Editor editor = getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE).edit();
-					editor.putString("score", "" + user2);
+					editor.putString("userid", "" + user2);
 					editor.putString("username", "" + user_name);
 					editor.putString("emilid", "" + email_id);
 					editor.putString("fullname", "" + fullname);
 					editor.putString("picture", "" + fullimage);
 					editor.commit();
 
-                    Intent iv = new Intent(Login.this,Profile.class);
+                    Intent iv = new Intent(Login.this,MainActivity.class);
                     startActivity(iv);
                     Toast.makeText(Login.this, "Login Successful with Facebook", Toast.LENGTH_LONG).show();
 
@@ -398,14 +402,14 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
 			} else if (method.equals("google")) {
 				if (key.equals("user")) {
 					SharedPreferences.Editor editor = getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE).edit();
-                    editor.putString("score", "" + user2);
+                    editor.putString("userid", "" + user2);
 					editor.putString("username", "" + user_name);
                     editor.putString("emilid", "" + email_id);
                     editor.putString("fullname", "" + fullname);
 					editor.putString("picture", "" + fullimage);
 					editor.commit();
 
-                    Intent iv = new Intent(Login.this,Profile.class);
+                    Intent iv = new Intent(Login.this,MainActivity.class);
                     startActivity(iv);
                     Toast.makeText(Login.this, "Login Successful with Google+", Toast.LENGTH_LONG).show();
 
