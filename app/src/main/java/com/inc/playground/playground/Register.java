@@ -11,6 +11,7 @@ import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Message;
 import android.provider.MediaStore.MediaColumns;
 import android.util.Base64;
 import android.util.Log;
@@ -53,6 +54,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
+import java.util.logging.Handler;
 
 import com.inc.playground.playground.Home;
 import com.inc.playground.playground.R;
@@ -364,6 +366,7 @@ public class Register extends Activity {
 			return null;
 		}
 
+
 		@Override
 		protected void onPostExecute(Void aVoid) {
 			super.onPostExecute(aVoid);
@@ -384,6 +387,7 @@ public class Register extends Activity {
 
 				Intent iv = new Intent(Register.this, Home.class);
 				startActivity(iv);
+
 				Toast.makeText(Register.this, "Register Successful..", Toast.LENGTH_LONG).show();
 			} else if (key.equals("status")) {
 				Toast.makeText(Register.this, getString(R.string.error_duplicate_email), Toast.LENGTH_LONG).show();

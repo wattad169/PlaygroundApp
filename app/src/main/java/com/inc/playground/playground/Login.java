@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.IntentSender.SendIntentException;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -12,6 +14,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,6 +37,7 @@ import org.json.JSONObject;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -53,8 +57,8 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
 	String key, id, method;
 	Button btn_login, btn_loginfb, btn_logingoogle;
 	ArrayList<Logingetset> login;
-	String username, password, imagefb;
-	public static final String MY_PREFS_NAME = "Store";
+	String username, password, imagefb,facebook_id,image_url;
+	public static final String MY_PREFS_NAME = "Login";
 	String value, personname, personemail,user_token;
 	private static final int RC_SIGN_IN = 0;
 	private GoogleApiClient mGoogleApiClient;
@@ -89,13 +93,14 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
 		setContentView(R.layout.activity_login);
 
 		SharedPreferences prefs = getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
-		if (prefs.getString("score", null) != null) {
-			userloginid = prefs.getString("score", null);
+		if (prefs.getString("userid", null) != null) {
+			userloginid = prefs.getString("userid", null);
 		}
 
 		TextView textview1 = (TextView) findViewById(R.id.txt_header);
 
 		buildGoogleApiClient();
+
 		facebook = new Facebook(APP_ID);
 		mAsyncRunner = new AsyncFacebookRunner(facebook);
 
@@ -197,7 +202,7 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
 				editor.commit();
 				method = "google";
 				signInWithGplus();
-                getProfileInformation1();
+
 				Log.d("personname", "" + personname);
 				Log.d("personemail", "" + personemail);
 
@@ -257,7 +262,7 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
 
 				} else if (method.equals("facebook")) {
                     cred.put(Constants.MODE, Constants.FACEBOOK_MODE);
-					cred.put(Constants.FACEBOOK_ID, email);
+					cred.put(Constants.FACEBOOK_ID, facebook_id);
 					cred.put(Constants.NAME, name);
 					cred.put(Constants.PHOTO_URL, imagefb);
 				}
@@ -294,9 +299,11 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
                         email_id = resonseMessage.getString(Constants.EMAIL);
                         user_name = email_id;
                         user2 = email_id;
+                        fullimage = "https://storage.googleapis.com/sports-bucket/Source/1965583_10204825358656748_4079077085336938408_o.jpg";
+                        //TODO:Upload user image instead
                     }
                     else if(method.equals("facebook")){
-                        user_token = email;
+                        user_token = facebook_id;
                         fullname= name;
                         fullimage = imagefb;
                         email_id = email;
@@ -311,7 +318,7 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
 
                     }
 
-					fullimage = "https://storage.googleapis.com/sports-bucket/Source/1965583_10204825358656748_4079077085336938408_o.jpg";
+//
 					temp.setUser_id(user_token);
 					temp.setName(fullname);
 					temp.setUsername(email_id);
@@ -352,16 +359,16 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
 				if (key.equals("user")) {
 					Toast.makeText(Login.this, user_token, Toast.LENGTH_LONG).show();
 					SharedPreferences.Editor editor = getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE).edit();
-					editor.putString("score", "" + user2);
+					editor.putString("userid", "" + user2);
 					editor.putString("username", "" + user_name);
 					editor.putString("emilid", "" + email_id);
 					editor.putString("fullname", "" + fullname);
 					editor.putString("picture", "" + fullimage);
 					editor.commit();
 //					if (value.equals("home")) {
-                    Intent iv = new Intent(Login.this,Profile.class);
+                    Intent iv = new Intent(Login.this,MainActivity.class);
                     startActivity(iv);
-//					Toast.makeText(Login.this, user_token, Toast.LENGTH_LONG).show();
+					Toast.makeText(Login.this, "Login Successful", Toast.LENGTH_LONG).show();
 //					} else if (value.equals("review")) {
 //						Intent iv = new Intent(Login.this, Review.class);
 //						iv.putExtra("id", "" + id);
@@ -376,14 +383,14 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
 			} else if (method.equals("facebook")) {
 				if (key.equals("user")) {
 					SharedPreferences.Editor editor = getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE).edit();
-					editor.putString("score", "" + user2);
+					editor.putString("userid", "" + user2);
 					editor.putString("username", "" + user_name);
 					editor.putString("emilid", "" + email_id);
 					editor.putString("fullname", "" + fullname);
 					editor.putString("picture", "" + fullimage);
 					editor.commit();
 
-                    Intent iv = new Intent(Login.this,Profile.class);
+                    Intent iv = new Intent(Login.this,MainActivity.class);
                     startActivity(iv);
                     Toast.makeText(Login.this, "Login Successful with Facebook", Toast.LENGTH_LONG).show();
 
@@ -395,14 +402,14 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
 			} else if (method.equals("google")) {
 				if (key.equals("user")) {
 					SharedPreferences.Editor editor = getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE).edit();
-					editor.putString("score", "" + user2);
+                    editor.putString("userid", "" + user2);
 					editor.putString("username", "" + user_name);
-					editor.putString("emilid", "" + email_id);
-					editor.putString("fullname", "" + fullname);
+                    editor.putString("emilid", "" + email_id);
+                    editor.putString("fullname", "" + fullname);
 					editor.putString("picture", "" + fullimage);
 					editor.commit();
 
-                    Intent iv = new Intent(Login.this,Profile.class);
+                    Intent iv = new Intent(Login.this,MainActivity.class);
                     startActivity(iv);
                     Toast.makeText(Login.this, "Login Successful with Google+", Toast.LENGTH_LONG).show();
 
@@ -445,8 +452,15 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
                     // getting name of the user
                     name = profile.getString("name");
                     // getting email of the user
-                    imagefb = profile.getString("id");
-                    email = profile.getString("email");
+
+                    facebook_id = profile.getString("id");
+                    imagefb = facebook_id;
+//                    try {
+//                        email = profile.getString("email");
+//                    }
+//                    catch (JSONException e){
+//
+//                    }
                     JSONObject picture = profile.getJSONObject("picture");
                     JSONObject data = picture.getJSONObject("data");
                     ppic = data.getString("url");
@@ -458,7 +472,7 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
                             name = name.replace(" ", "%20");
 
                             imagefb = "https://graph.facebook.com/" + imagefb + "/picture?type=large";
-                            email = email.replace(" ", "%20");
+//                            email = email.replace(" ", "%20");
                             new getlogin().execute();
                         }
                     }
@@ -526,7 +540,7 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
 
 		if (!facebook.isSessionValid()) {
 
-			facebook.authorize(this, new DialogListener() {
+			facebook.authorize(this, new String[] { "email", "publish_actions" },Facebook.FORCE_DIALOG_AUTH, new DialogListener() {
 
 				@Override
 				public void onCancel() {
@@ -655,22 +669,7 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
 	@Override
 	public void onConnected(Bundle arg0) {
 		mSignInClicked = false;
-		Toast.makeText(this, "User is Connect", Toast.LENGTH_LONG).show();
-
-		// Get user's information
-		//getProfileInformation1();
-
-		/*
-		 * if (key.equals("google")) { // key="google"; if (personname != null)
-		 * { if (personemail != null) { personname = personname.replace(" ",
-		 * "%20"); personemail = personemail.replace(" ", "%20");
-		 * 
-		 * new getuserdetail().execute(); } } else { Toast.makeText(Login.this,
-		 * "error", Toast.LENGTH_LONG).show(); } } else if(key.equals(null)){
-		 * Toast.makeText(Login.this, "error", Toast.LENGTH_LONG).show(); }
-		 */
-
-		// Update the UI after signin
+        getProfileInformation1();
 		updateUI(true);
 
 	}
@@ -719,6 +718,7 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
 				try {
 					mIntentInProgress = true;
 					mConnectionResult.startResolutionForResult(Login.this, RC_SIGN_IN);
+
 
 				} catch (SendIntentException e) {
 					mIntentInProgress = false;

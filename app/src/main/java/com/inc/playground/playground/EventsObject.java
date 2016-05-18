@@ -3,12 +3,13 @@ package com.inc.playground.playground;
 import com.inc.playground.playground.utils.Constants;
 import com.inc.playground.playground.utils.User;
 
+import java.io.Serializable;
 import java.util.HashMap;
 
 /**
  * Created by mostafawattad on 06/05/2016.
  */
-public class EventsObject {
+public class EventsObject implements Serializable{
     String id, name, formattedLocation, type, size, date, startTime, endTime, description, status, distance;
     // TODO ADD EVENT MEMBERS (A LIST CONTAINING USERS)
     User creator;
@@ -70,5 +71,9 @@ public class EventsObject {
     public String GetDistance() { return distance; }
 
     public void SetDistance(String distance) { this.distance= distance; }
+
+
+
+
 
 }

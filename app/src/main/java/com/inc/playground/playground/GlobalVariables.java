@@ -5,6 +5,7 @@ import android.content.Context;
 
 import com.inc.playground.playground.utils.GPSTracker;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -16,7 +17,7 @@ public class GlobalVariables extends Application {
 
     private GPSTracker gps;
 
-    private HashMap<String, EventsObject> homeEvents;
+    private ArrayList<EventsObject> homeEvents;
 
     public HashMap<String, Double> GetCurrentLocation(){
         return this.currentLocation;
@@ -34,11 +35,12 @@ public class GlobalVariables extends Application {
         this.gps = new GPSTracker(activityFrom);
     }
 
-    public HashMap<String, EventsObject> GetHomeEvents(){
+    public ArrayList<EventsObject> GetHomeEvents(){
         return this.homeEvents;
     }
-    
-    public void SetHomeEvents(HashMap<String, EventsObject> events){
+
+    public void SetHomeEvents(ArrayList<EventsObject> events){
+        this.homeEvents = new ArrayList<>();
         this.homeEvents = events;
     }
 

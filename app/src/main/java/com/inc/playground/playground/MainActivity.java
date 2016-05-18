@@ -19,7 +19,11 @@ package com.inc.playground.playground;
 import android.app.ActionBar;
 import android.app.FragmentTransaction;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
@@ -30,12 +34,17 @@ import android.support.v4.app.ListFragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+
+import java.io.InputStream;
 
 public class MainActivity extends FragmentActivity implements ActionBar.TabListener {
 
@@ -50,7 +59,8 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
     AppSectionsPagerAdapter mAppSectionsPagerAdapter;
     private CharSequence mDrawerTitle;
     private CharSequence mTitle;
-
+    String userLoginId,userFullName,userEmail,userPhoto;
+    public static final String MY_PREFS_NAME = "Login";
     /**
      * The {@link ViewPager} that will display the three primary sections of the app, one at a
      * time.
@@ -67,6 +77,27 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 
         // Set up the action bar.
         final ActionBar actionBar = getActionBar();
+        SharedPreferences prefs = getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
+        if (prefs.getString("userid", null) != null){
+            userLoginId = prefs.getString("userid", null);
+            userFullName = prefs.getString("fullname", null);
+            userEmail = prefs.getString("emilid", null);
+            userPhoto = prefs.getString("picture", null);
+            actionBar.setCustomView(R.layout.actionbar_custom_view_home);
+            actionBar.setDisplayShowTitleEnabled(true);
+            actionBar.setDisplayShowCustomEnabled(true);
+            actionBar.setDisplayUseLogoEnabled(true);
+            actionBar.setDisplayShowHomeEnabled(true);
+            ImageView img_profile = (ImageView) findViewById(R.id.img_profile_action_bar);
+            new DownloadImageTask(img_profile)
+                    .execute(userPhoto);
+            LinearLayout ll_login = (LinearLayout) findViewById(R.id.ll_login);
+            ll_login.setVisibility(View.GONE);
+        }
+
+
+
+
 
         // Specify that the Home/Up button should not be enabled, since there is no hierarchical
         // parent.
@@ -195,6 +226,9 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
                     // a launchpad into the other demonstrations in this example application.
                     return new FragmentList();
 
+                case 1:
+                    return new FragmentMap();
+
                 default:
                     // The other sections of the app are dummy placeholders.
                     Fragment fragment = new DummySectionFragment();
@@ -219,7 +253,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
                 return "Map View";
             }
             if(position==2){
-                return "Calendar";
+                return "calendar";
             }
             return "";
         }
@@ -265,6 +299,33 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         // Handle your other action bar items...
 
         return super.onOptionsItemSelected(item);
+    }
+    class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
+        ImageView bmImage;
+        Bitmap mIcon11;
+
+        public DownloadImageTask(ImageView bmImage) {
+            this.bmImage = bmImage;
+        }
+
+        @Override
+        protected Bitmap doInBackground(String... urls) {
+            String urldisplay = urls[0];
+
+            try {
+                InputStream in = new java.net.URL(urldisplay).openStream();
+                mIcon11 = BitmapFactory.decodeStream(in);
+            } catch (Exception e) {
+                Log.e("Error", "" + e.getMessage());
+                e.printStackTrace();
+            }
+            return mIcon11;
+        }
+
+        @Override
+        protected void onPostExecute(Bitmap result) {
+            bmImage.setImageBitmap(result);
+        }
     }
 
 }
