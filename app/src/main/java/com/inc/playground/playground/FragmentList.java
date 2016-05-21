@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
@@ -28,6 +29,10 @@ import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
+
+import com.inc.playground.playground.utils.Constants;
+import com.inc.playground.playground.utils.NetworkUtilities;
 import com.melnykov.fab.FloatingActionButton;
 import com.melnykov.fab.ObservableScrollView;
 import com.melnykov.fab.ScrollDirectionListener;
@@ -36,16 +41,23 @@ import com.inc.playground.playground.utils.AlertDialogManager;
 import com.inc.playground.playground.utils.ConnectionDetector;
 import com.melnykov.fab.ScrollDirectionListener;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 
 /**
  * Created by mostafawattad on 30/04/2016.
  */
+
 public class FragmentList extends Fragment{
     ListView events_list;
     ArrayList<EventsObject> homeEvents;
     ProgressDialog progressDialog;
     GlobalVariables globalVariables;
+    private handleEventTask myEventsTask = null;
+    public SharedPreferences prefs ;
 
 
     @Override
@@ -55,6 +67,8 @@ public class FragmentList extends Fragment{
         this.globalVariables = ((GlobalVariables) getActivity().getApplication());
         homeEvents = this.globalVariables.GetHomeEvents();
         new getList().execute();
+        prefs = getActivity().getSharedPreferences("Login",getActivity().MODE_PRIVATE);
+
 
         return rootView;
     }
@@ -106,11 +120,11 @@ public class FragmentList extends Fragment{
                             startActivity(iv);
                         }
                     });
-            if (homeEvents.size() == 0) {// If no events are found
-                    Toast.makeText(getActivity().getApplicationContext(),"No Events Found", Toast.LENGTH_LONG).show();
+            if (homeEvents !=  null) {
+                if (homeEvents.size() == 0) {// If no events are found
+                    Toast.makeText(getActivity().getApplicationContext(), "No Events Found", Toast.LENGTH_LONG).show();
                     events_list.setVisibility(View.INVISIBLE);
-                }
-                else {
+                } else {
                     // Display events
                     events_list.setVisibility(View.VISIBLE);
                     HomeEventsAdapter homeEventsAdapter = new HomeEventsAdapter(getActivity(), homeEvents);
@@ -127,9 +141,7 @@ public class FragmentList extends Fragment{
                         }
                     });
                 }
-
-//            }
-        }
+            }}
     }
 
     public class HomeEventsAdapter extends BaseAdapter {
@@ -160,7 +172,7 @@ public class FragmentList extends Fragment{
         }
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
+        public View getView(final int position, View convertView, ViewGroup parent) {
             View view = convertView;
 
             if (convertView == null) {
@@ -192,8 +204,101 @@ public class FragmentList extends Fragment{
             TextView eventDistance = (TextView) view.findViewById(R.id.distance_txt);
             eventDistance.setText(data.get(position).GetDistance());
 
+            ToggleButton playButton = (ToggleButton)view.findViewById(R.id.join);
+            view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    Intent intent = new Intent(getActivity().getApplicationContext(), EventInfo.class);
+                    intent.putExtra("eventObject", data.get(position) );
+                    startActivity(intent);
+
+                    //your ON CLICK CODE
+//                    ToggleButton playButton = (ToggleButton) v;
+//                    myEventsTask = new handleEventTask(data.get(position));
+//                    myEventsTask.execute((Void) null);
+
+                }
+            });
             return view;
+
         }
     }
+    public class handleEventTask extends AsyncTask<Void, Void, String> {
+
+        //        private Context context;
+        private EventsObject currentEvent;
+        public handleEventTask(EventsObject currentEvent) {
+            this.currentEvent = currentEvent;
+
+        }
+
+        private String responseString;
+        protected void onPreExecute() {
+        }
+
+        @Override
+        protected String doInBackground(Void... params) {
+            // TODO: attempt authentication against a network service.
+            JSONObject cred = new JSONObject();
+            if (prefs.getString("userid", null) != null) {
+                //If the user is logged in
+                String userId = prefs.getString("userid", null);
+
+                try {//Send request to server for joining event
+                    cred.put(NetworkUtilities.TOKEN, userId);
+                    cred.put("event_id", currentEvent.GetId());
+                    responseString = NetworkUtilities.doPost(cred, NetworkUtilities.BASE_URL + "/join_event/");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+                if(responseString == null) {
+
+                    Log.i("TESTID",currentEvent.GetId());
+                }
+
+                //Check response
+                JSONObject myObject = null;
+                String responseStatus = null;
+                try {
+                    myObject = new JSONObject(responseString);
+                    responseStatus = myObject.getString(Constants.RESPONSE_STATUS);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                if (myObject != null && responseStatus != null) {
+                    if (responseStatus.equals(Constants.RESPONSE_OK.toString())) {
+                        myEventsTask = null;
+                        //TODO YD Switch toggle button text to "playing"
+                    } else {
+                        myEventsTask = null;
+                        //TODO YD override toggle method -> not to switch text to "playing"
+                    }
+                }
+            }
+            else
+            {
+                // If user is not logged -> in send to login activity
+                Intent intent = new Intent(getActivity().getApplicationContext(), Login.class);
+                startActivity(intent);
+            }
+            return null;
+
+        }
+
+        @Override
+        protected void onPostExecute(final String responseString) {
+
+
+
+        }
+
+
+
+
+    }
+
 
 }

@@ -61,6 +61,7 @@
                 android:textOn="Playing"
                 android:paddingTop="50dp"
                 android:background="@drawable/pg_playing"
+                android:onClick="onPlayClick"
                 android:layout_alignParentBottom="false" />
 
             <ImageButton
@@ -189,7 +190,7 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="50dp">
+            android:layout_height="70dp">
 
             <ImageView
                 android:layout_width="30dp"

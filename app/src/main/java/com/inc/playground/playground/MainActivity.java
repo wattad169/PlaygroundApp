@@ -23,6 +23,8 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
@@ -41,6 +43,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 
@@ -94,11 +97,9 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
             LinearLayout ll_login = (LinearLayout) findViewById(R.id.ll_login);
             ll_login.setVisibility(View.GONE);
         }
-
-
-
-
-
+        //set actionBar color
+        actionBar.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.primaryColor)));
+        actionBar.setStackedBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.secondaryColor)));
         // Specify that the Home/Up button should not be enabled, since there is no hierarchical
         // parent.
         actionBar.setHomeButtonEnabled(false);
@@ -127,8 +128,8 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
             // listener for when this tab is selected.
             actionBar.addTab(
                     actionBar.newTab()
-                            .setText(mAppSectionsPagerAdapter.getPageTitle(i))
                             .setTabListener(this));
+            actionBar.getTabAt(i).setIcon(R.drawable.address_icon);
         }
 
         //NavigationDrawer handling (e.g the list from leftside):
@@ -188,10 +189,6 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
             }
         });
 
-
-
-
-
     }
 
     @Override
@@ -202,6 +199,9 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
     public void onTabSelected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
         // When the given tab is selected, switch to the corresponding page in the ViewPager.
         mViewPager.setCurrentItem(tab.getPosition());
+//        RelativeLayout tabLayout = new RelativeLayout(this);
+//        tabLayout.setBackgroundResource(R.color.primaryColor);
+//        tab.setCustomView(tabLayout);
     }
 
     @Override

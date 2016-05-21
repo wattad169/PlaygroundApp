@@ -214,9 +214,9 @@ final public class NetworkUtilities {
         for(int i=0 ; i<jsonInput.length();i++){
             //Fill the EventObject with data from the JSON
             JSONObject currentObject = (JSONObject) jsonInput.get(i);
-            int eventId = currentObject.getInt(Constants.EVENT_ID);
+            String eventId = currentObject.getString(Constants.EVENT_ID);
             EventsObject currentEvent = new EventsObject();
-            currentEvent.SetId(Integer.toString(eventId));
+            currentEvent.SetId(eventId);
             currentEvent.SetName(currentObject.getString(Constants.EVENT_NAME));
             currentEvent.SetFormattedLocation(currentObject.getString(Constants.EVENT_LOCATION));
             currentEvent.SetType(currentObject.getString(Constants.EVENT_TYPE));

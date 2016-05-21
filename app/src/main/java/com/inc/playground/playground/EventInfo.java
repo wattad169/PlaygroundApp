@@ -2,6 +2,8 @@ package com.inc.playground.playground;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
@@ -10,6 +12,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -20,9 +23,15 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.inc.playground.playground.utils.Constants;
 import com.inc.playground.playground.utils.CustomMarker;
 import com.inc.playground.playground.utils.GPSTracker;
+import com.inc.playground.playground.utils.NetworkUtilities;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -60,12 +69,15 @@ public class EventInfo extends FragmentActivity {
     EventsObject currentEvent;
     HashMap<String, String> currentLocation;
     TextView viewName, viewDateEvent, viewStartTime, viewEndTime, viewLocation, viewSize, viewStatus, viewEventDescription;
+    private handleEventTask myEventsTask = null;
+    public SharedPreferences prefs ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 //        setContentView(activity_event_info);
         setContentView(R.layout.activity_event_info);
+        prefs = getSharedPreferences("Login", MODE_PRIVATE);
 
         Intent intent = getIntent();
         currentEvent = (EventsObject) intent.getSerializableExtra("eventObject");
@@ -458,5 +470,91 @@ public class EventInfo extends FragmentActivity {
         googleMap.animateCamera(cu);
 
     }
+    public void onPlayClick(View v){
+        ToggleButton x = (ToggleButton)v;
+
+        myEventsTask = new handleEventTask(currentEvent);
+        myEventsTask.execute((Void) null);
+
+        x.setClickable(false);
+    }
+    public class handleEventTask extends AsyncTask<Void, Void, String> {
+
+        //        private Context context;
+        private EventsObject currentEvent;
+        public handleEventTask(EventsObject currentEvent) {
+            this.currentEvent = currentEvent;
+
+        }
+
+        private String responseString;
+        protected void onPreExecute() {
+        }
+
+        @Override
+        protected String doInBackground(Void... params) {
+            // TODO: attempt authentication against a network service.
+            JSONObject cred = new JSONObject();
+            if (prefs.getString("userid", null) != null) {
+                //If the user is logged in
+                String userId = prefs.getString("userid", null);
+
+                try {//Send request to server for joining event
+                    cred.put(NetworkUtilities.TOKEN, userId);
+                    cred.put("event_id", currentEvent.GetId());
+                    responseString = NetworkUtilities.doPost(cred, NetworkUtilities.BASE_URL + "/join_event/");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+                if(responseString == null) {
+
+                    Log.i("TESTID",currentEvent.GetId());
+                }
+
+                //Check response
+                JSONObject myObject = null;
+                String responseStatus = null;
+                try {
+                    myObject = new JSONObject(responseString);
+                    responseStatus = myObject.getString(Constants.RESPONSE_STATUS);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                if (myObject != null && responseStatus != null) {
+                    if (responseStatus.equals(Constants.RESPONSE_OK.toString())) {
+                        myEventsTask = null;
+                        //TODO YD Switch toggle button text to "playing"
+                    } else {
+                        myEventsTask = null;
+                        //TODO YD override toggle method -> not to switch text to "playing"
+                    }
+                }
+
+            }
+            else
+            {
+                // If user is not logged -> in send to login activity
+                Intent intent = new Intent(getApplicationContext(), Login.class);
+                startActivity(intent);
+            }
+
+            return null;
+
+        }
+
+        @Override
+        protected void onPostExecute(final String responseString) {
+
+
+
+        }
+
+
+
+
+    }
 
 }
+

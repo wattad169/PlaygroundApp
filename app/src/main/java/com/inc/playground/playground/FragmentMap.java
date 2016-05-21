@@ -53,32 +53,28 @@ public class FragmentMap extends Fragment {
         homeEvents = this.globalVariables.GetHomeEvents();
         double myLat = this.globalVariables.GetCurrentLocation().get(Constants.LOCATION_LAT);
         double myLon = this.globalVariables.GetCurrentLocation().get(Constants.LOCATION_LON);
-        for(int i=0;i<homeEvents.size();i++){
-            EventsObject current = homeEvents.get(i);
-            double latitude = Double.parseDouble(current.GetLocation().get(Constants.LOCATION_LAT));
-            double longitude = Double.parseDouble(current.GetLocation().get(Constants.LOCATION_LON));
+        if (homeEvents!= null){
+            for(int i=0;i<homeEvents.size();i++){
+                EventsObject current = homeEvents.get(i);
+                double latitude = Double.parseDouble(current.GetLocation().get(Constants.LOCATION_LAT));
+                double longitude = Double.parseDouble(current.GetLocation().get(Constants.LOCATION_LON));
             // create marker
-            MarkerOptions marker = new MarkerOptions().position(
-                    new LatLng(latitude, longitude)).title(current.GetName());
-
+                MarkerOptions marker = new MarkerOptions().position(
+                        new LatLng(latitude, longitude)).title(current.GetName());
             // Changing marker icon
-            marker.icon(BitmapDescriptorFactory
-                    .defaultMarker(BitmapDescriptorFactory.HUE_ROSE));
+                marker.icon(BitmapDescriptorFactory
+                        .defaultMarker(BitmapDescriptorFactory.HUE_ROSE));
 
             // adding marker
-            googleMap.addMarker(marker);
-            CameraPosition cameraPosition = new CameraPosition.Builder()
-                    .target(new LatLng(myLat, myLon)).zoom(12).build();
-            googleMap.animateCamera(CameraUpdateFactory
-                    .newCameraPosition(cameraPosition));
-
+                googleMap.addMarker(marker);
+                CameraPosition cameraPosition = new CameraPosition.Builder()
+                        .target(new LatLng(myLat, myLon)).zoom(12).build();
+                googleMap.animateCamera(CameraUpdateFactory
+                        .newCameraPosition(cameraPosition));
             // Perform any camera updates here
-
-        }
+        }}
 //        double latitude = 17.385044;
 //        double longitude = 78.486671;
-
-
         return v;
     }
 
