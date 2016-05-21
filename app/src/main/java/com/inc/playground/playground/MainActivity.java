@@ -225,10 +225,11 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
                     // The first section of the app is the most interesting -- it offers
                     // a launchpad into the other demonstrations in this example application.
                     return new FragmentList();
-
                 case 1:
                     return new FragmentMap();
-
+                //idan 20.5
+                case 2:
+                    return new FragmentCalendar();
                 default:
                     // The other sections of the app are dummy placeholders.
                     Fragment fragment = new DummySectionFragment();

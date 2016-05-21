@@ -43,4 +43,5 @@ dependencies {
     compile 'com.google.android.gms:play-services-gcm:7.3.0'
     compile 'com.android.support:support-v4:23.2.1'
     compile 'com.melnykov:floatingactionbutton:1.3.0'
+    compile 'net.zaim.android:decoratecalendarview:0.2.1'
 }

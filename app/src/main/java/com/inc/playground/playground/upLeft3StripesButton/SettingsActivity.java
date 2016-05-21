@@ -2,6 +2,8 @@ package com.inc.playground.playground.upLeft3StripesButton;
 
 
 import android.annotation.TargetApi;
+import android.app.ActivityManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -20,6 +22,7 @@ import android.preference.RingtonePreference;
 import android.text.TextUtils;
 import android.view.MenuItem;
 
+import com.inc.playground.playground.MainActivity;
 import com.inc.playground.playground.R;
 
 import java.util.List;
@@ -35,7 +38,9 @@ import java.util.List;
  * href="http://developer.android.com/guide/topics/ui/settings.html">Settings
  * API Guide</a> for more information on developing a Settings UI.
  */
+
 public class SettingsActivity extends PreferenceActivity {
+
     /**
      * A preference value change listener that updates the preference's summary
      * to reflect its new value.
@@ -222,6 +227,9 @@ public class SettingsActivity extends PreferenceActivity {
             }
             return super.onOptionsItemSelected(item);
         }
+
+
+
     }
 
     /**
@@ -252,5 +260,15 @@ public class SettingsActivity extends PreferenceActivity {
             }
             return super.onOptionsItemSelected(item);
         }
+
     }
+
+
+
+
+
+
+
 }
+
+

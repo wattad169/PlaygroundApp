@@ -16,13 +16,13 @@ public class TabsPagerAdapter extends FragmentPagerAdapter {
 
         switch (index) {
             case 0:
-                // Top Rated fragment activity
+                // Calendar fragment activity
                 return new FragmentCalendar();
             case 1:
-                // Games fragment activity
+                // Map fragment activity
                 return new FragmentMap();
             case 2:
-                // Movies fragment activity
+                // List fragment activity
                 return new FragmentList();
         }
 

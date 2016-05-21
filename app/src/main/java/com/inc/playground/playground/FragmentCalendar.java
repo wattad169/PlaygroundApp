@@ -1,21 +1,66 @@
 package com.inc.playground.playground;
 
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-public class FragmentCalendar extends Fragment {
+import net.zaim.decoratecalendarview.DecorateCalendarView;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
+public class FragmentCalendar extends Fragment implements DecorateCalendarView.OnDecorateCalendarListener {
+
+    private DecorateCalendarView calendarView;
+    //ArrayList<EventsObject> homeEvents;
+
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        // inflat and return the layout
+        View v = inflater.inflate(R.layout.decorate_calendar_view, container, false);
+        super.onCreate(savedInstanceState);
 
-        View rootView = inflater.inflate(R.layout.fragment_calendar, container, false);
+        calendarView = (DecorateCalendarView) v.findViewById(R.id.my_calendar);
+        // Set event listener from calendar view
+        //calendarView.setOnDecorateCalendarListener((DecorateCalendarView.OnDecorateCalendarListener) this);
 
-        return rootView;
+        Bundle bundle = new Bundle();
+        bundle.putString(DecorateCalendarView.BUNDLE_KEY_BEGINNING_DAY_OF_WEEK, String.valueOf(Calendar.SUNDAY));
+        bundle.putString(DecorateCalendarView.BUNDLE_KEY_HOLIDAY_HIGHLIGHT_TYPE, String.valueOf(DecorateCalendarView.BUNDLE_KEY_HOLIDAY_HIGHLIGHT_TYPE));
+        //bundle.putString(DecorateCalendarView.BUNDLE_KEY_SELECTED_COLOR, String.valueOf(Color.parseColor("#FFFF4444")));
+        //bundle.putString(DecorateCalendarView.BUNDLE_KEY_SELECTED_COLOR, String.valueOf(getResources().getColor(R.color.select_background)));
+
+        calendarView.setOnDecorateCalendarListener(this );
+        calendarView.initCalendar(getActivity().getSupportFragmentManager(), bundle);
+
+        return v;
+    }
+
+    @Override
+    public void onDayClick(Date day) {
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        //Toast.makeText(this, format.format(day), Toast.LENGTH_SHORT).show();
+    }
+    @Override
+    public void onChangeDisplayMonth(Date date) {
+        //SimpleDateFormat format = new SimpleDateFormat("2016-05");
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM");
+        //Toast.makeText(this, format.format(date), Toast.LENGTH_SHORT).show();
+
+        //if date in 2014:
+            // Decorate cell of day
+            calendarView.setTopTextOnDay(10, "top", Color.parseColor("#FFFF4444"));
     }
 
 }
+
+
+
