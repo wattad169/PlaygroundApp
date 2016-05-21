@@ -1,16 +1,14 @@
 package com.inc.playground.playground;
 
-import android.app.ActionBar;
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdate;
@@ -23,17 +21,12 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.inc.playground.playground.utils.CustomMarker;
-import com.inc.playground.playground.utils.DownloadImageBitmapTask;
 import com.inc.playground.playground.utils.GPSTracker;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
-
-import static com.inc.playground.playground.R.layout.activity_event_info;
-import static com.inc.playground.playground.R.layout.activity_register;
 
 /**
  * Created by lina on 5/13/2016.
@@ -66,8 +59,8 @@ public class EventInfo extends FragmentActivity {
 
     EventsObject currentEvent;
     HashMap<String, String> currentLocation;
-    TextView viewDateEvent, viewStartTime, viewEndTime, viewLocation, viewSize, viewStatus, viewEventDescription;
-    public static final String TAG = "EventInfoActivity";
+    TextView viewName, viewDateEvent, viewStartTime, viewEndTime, viewLocation, viewSize, viewStatus, viewEventDescription;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,16 +69,26 @@ public class EventInfo extends FragmentActivity {
 
         Intent intent = getIntent();
         currentEvent = (EventsObject) intent.getSerializableExtra("eventObject");
+        viewName = (TextView) findViewById(R.id.event_name);
+        viewDateEvent = (TextView) findViewById(R.id.event_date);
+        viewStartTime = (TextView) findViewById(R.id.event_start_time);
+        viewEndTime = (TextView) findViewById(R.id.event_end_time);
+        viewLocation = (TextView) findViewById(R.id.event_formatted_location);
+        viewSize = (TextView) findViewById(R.id.event_max_size);
+        viewEventDescription = (TextView) findViewById(R.id.event_description);
+//        // TODO type image
 
-        viewDateEvent = (TextView) findViewById(R.id.EventDateInfo);
-        viewStartTime = (TextView) findViewById(R.id.EventStartTimeInfo);
-        viewEndTime = (TextView) findViewById(R.id.EventEndTimeInfo);
-        viewLocation = (TextView) findViewById(R.id.EventLocationInfo);
-        viewSize = (TextView) findViewById(R.id.EventSizeInfo);
-        viewStatus = (TextView) findViewById(R.id.EventStatusInfo);
-        viewEventDescription = (TextView) findViewById(R.id.EventDescriptionInfo);
-        // TODO type image
 
+        //TODO pictures of the members YD
+        LinearLayout membersList = (LinearLayout)findViewById(R.id.members_list);
+
+        for(int i=0;i<8;i++)
+        {
+            ImageView member = new ImageView(this);
+            member.setImageResource(R.drawable.pg_time);
+            member.setId(i);
+            membersList.addView(member);
+        }
 
 
         gps = new GPSTracker(EventInfo.this);
@@ -102,7 +105,7 @@ public class EventInfo extends FragmentActivity {
 
         }
         setdata();
-//
+
 // btn_fvrt = (Button) findViewById(R.id.btn_fvrt);
 //		btn_fvrt1 = (Button) findViewById(R.id.btn_fvrt1);
 
@@ -142,13 +145,13 @@ public class EventInfo extends FragmentActivity {
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(position, 15));
 
         // Set event view values
+        viewName.setText(currentEvent.GetName());
         viewDateEvent.setText(currentEvent.GetDate());
-        viewStartTime.setText(currentEvent.GetStartTime());
-        viewEndTime.setText(currentEvent.GetEndTime());
+       // viewStartTime.setText(currentEvent.GetStartTime());
+        //viewEndTime.setText(currentEvent.GetEndTime());
         viewLocation.setText(currentEvent.GetFormattedLocation());
-        viewSize.setText(currentEvent.GetSize());
-        viewStatus.setText(currentEvent.GetStatus());
-        viewEventDescription.setText(currentEvent.GetDescription());
+        //viewSize.setText(currentEvent.GetSize());
+        //viewEventDescription.setText(currentEvent.GetDescription());
 
         // TODO YD Add event name to toolbar title
 
@@ -175,20 +178,20 @@ public class EventInfo extends FragmentActivity {
 //            @Override
 //            public void onClick(View v) {
 //                // TODO YD Implement
-////				Uri imageUri = Uri.parse("android.resource://" + getPackageName() + "/drawable/" + "download");
-////				Intent share = new Intent(android.content.Intent.ACTION_SEND);
-////				share.setType("text/plain");
-////				share.setType("image/jpeg");
-////				share.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
-////				share.putExtra(Intent.EXTRA_SUBJECT, "Restaurant");
-////				share.putExtra(Intent.EXTRA_STREAM, imageUri);
-////				share.putExtra(Intent.EXTRA_TEXT,
-////						"https://play.google.com/store/apps/details?id=" + Detailpage.this.getPackageName() + "\n"
-////								+ "Email: " + Html.fromHtml(temp_Obj3.getEmail()) + "\n" + "Address: " + Html.fromHtml(temp_Obj3.getAddress()));
-////				startActivity(Intent.createChooser(share, "Share link!"));
+//				Uri imageUri = Uri.parse("android.resource://" + getPackageName() + "/drawable/" + "download");
+//				Intent share = new Intent(android.content.Intent.ACTION_SEND);
+//				share.setType("text/plain");
+//				share.setType("image/jpeg");
+//				share.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+//				share.putExtra(Intent.EXTRA_SUBJECT, currentEvent.GetName());
+//				share.putExtra(Intent.EXTRA_STREAM, imageUri);
+//				share.putExtra(Intent.EXTRA_TEXT,
+//						"https://play.google.com/store/apps/details?id=" + EventInfo.this.getPackageName() + "\n"
+//								+ "Email: " + Html.fromHtml(temp_Obj3.getEmail()) + "\n" + "Address: " + Html.fromHtml(temp_Obj3.getAddress()));
+//				startActivity(Intent.createChooser(share, "Share link!"));
 //            }
 //        });
-//
+
 //        Button btn_map = (Button) findViewById(R.id.btn_map);
 //        btn_map.setOnClickListener(new View.OnClickListener() {
 //
@@ -454,44 +457,6 @@ public class EventInfo extends FragmentActivity {
         cu = CameraUpdateFactory.newLatLngBounds(bounds, 200, 400, 17);
         googleMap.animateCamera(cu);
 
-    }
-    public void setPlayGroundActionBar(){
-        String userLoginId,userFullName,userEmail,userPhoto;
-        Bitmap imageBitmap =null;
-        GlobalVariables globalVariables;
-        final ActionBar actionBar = getActionBar();
-        final String MY_PREFS_NAME = "Login";
-        SharedPreferences prefs = getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
-        globalVariables = ((GlobalVariables) this.getApplication());
-        if (prefs.getString("userid", null) != null){
-            userLoginId = prefs.getString("userid", null);
-            userFullName = prefs.getString("fullname", null);
-            userEmail = prefs.getString("emilid", null);
-            userPhoto = prefs.getString("picture", null);
-            actionBar.setCustomView(R.layout.actionbar_custom_view_home);
-            actionBar.setDisplayShowTitleEnabled(true);
-            actionBar.setDisplayShowCustomEnabled(true);
-            actionBar.setDisplayUseLogoEnabled(true);
-            actionBar.setDisplayShowHomeEnabled(true);
-            ImageView img_profile = (ImageView) findViewById(R.id.img_profile_action_bar);
-            imageBitmap = globalVariables.GetUserPictureBitMap();
-            if(imageBitmap==null){
-                Log.i(TAG,"downloading");
-                try {
-                    imageBitmap = new DownloadImageBitmapTask().execute(userPhoto).get();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } catch (ExecutionException e) {
-                    e.printStackTrace();
-                }
-
-            }
-            else {
-                Log.i(TAG,"Image found");
-            }
-            img_profile.setImageBitmap(imageBitmap);
-            globalVariables.SetUserPictureBitMap(imageBitmap); // Make the imageBitMap global to all activities to avoid downloading twice
-        }
     }
 
 }
