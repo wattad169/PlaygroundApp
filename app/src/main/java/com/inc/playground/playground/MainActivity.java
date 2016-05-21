@@ -22,16 +22,12 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.ListFragment;
-import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
@@ -43,8 +39,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.inc.playground.playground.utils.DownloadImageBitmapTask;
 
-import java.io.InputStream;
+import java.util.concurrent.ExecutionException;
 
 public class MainActivity extends FragmentActivity implements ActionBar.TabListener {
 
@@ -59,8 +56,9 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
     AppSectionsPagerAdapter mAppSectionsPagerAdapter;
     private CharSequence mDrawerTitle;
     private CharSequence mTitle;
-    String userLoginId,userFullName,userEmail,userPhoto;
-    public static final String MY_PREFS_NAME = "Login";
+
+
+    public static final String TAG = "MainActivity";
     /**
      * The {@link ViewPager} that will display the three primary sections of the app, one at a
      * time.
@@ -77,28 +75,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 
         // Set up the action bar.
         final ActionBar actionBar = getActionBar();
-        SharedPreferences prefs = getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
-        if (prefs.getString("userid", null) != null){
-            userLoginId = prefs.getString("userid", null);
-            userFullName = prefs.getString("fullname", null);
-            userEmail = prefs.getString("emilid", null);
-            userPhoto = prefs.getString("picture", null);
-            actionBar.setCustomView(R.layout.actionbar_custom_view_home);
-            actionBar.setDisplayShowTitleEnabled(true);
-            actionBar.setDisplayShowCustomEnabled(true);
-            actionBar.setDisplayUseLogoEnabled(true);
-            actionBar.setDisplayShowHomeEnabled(true);
-            ImageView img_profile = (ImageView) findViewById(R.id.img_profile_action_bar);
-            new DownloadImageTask(img_profile)
-                    .execute(userPhoto);
-            LinearLayout ll_login = (LinearLayout) findViewById(R.id.ll_login);
-            ll_login.setVisibility(View.GONE);
-        }
-
-
-
-
-
+        setPlayGroundActionBar();
         // Specify that the Home/Up button should not be enabled, since there is no hierarchical
         // parent.
         actionBar.setHomeButtonEnabled(false);
@@ -187,11 +164,62 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
                 startActivity(iv);
             }
         });
+        /*Onclick for the Setting button (idan) */
+        LinearLayout ll_temp = (LinearLayout) findViewById(R.id.ll_fav);
+        ll_temp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // TODO Auto-generated method stub
+                // new changes
+                Intent iv = new Intent(MainActivity.this,
+                        FilterActivity.class );
+                startActivity(iv);
+            }
+        });
 
 
+    }
+    public void setPlayGroundActionBar(){
+        String userLoginId,userFullName,userEmail,userPhoto;
+        Bitmap imageBitmap =null;
+        GlobalVariables globalVariables;
+        final ActionBar actionBar = getActionBar();
 
+        final String MY_PREFS_NAME = "Login";
+        SharedPreferences prefs = getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
+        globalVariables = ((GlobalVariables) this.getApplication());
+        if (prefs.getString("userid", null) != null){
+            userLoginId = prefs.getString("userid", null);
+            userFullName = prefs.getString("fullname", null);
+            userEmail = prefs.getString("emilid", null);
+            userPhoto = prefs.getString("picture", null);
+            actionBar.setCustomView(R.layout.actionbar_custom_view_home);
+            actionBar.setDisplayShowTitleEnabled(true);
+            actionBar.setDisplayShowCustomEnabled(true);
+            actionBar.setDisplayUseLogoEnabled(true);
+            actionBar.setDisplayShowHomeEnabled(true);
+            ImageView img_profile = (ImageView) findViewById(R.id.img_profile_action_bar);
+            imageBitmap = globalVariables.GetUserPictureBitMap();
+            if(imageBitmap==null){
+                Log.i(TAG,"downloading");
+                try {
+                    imageBitmap = new DownloadImageBitmapTask().execute(userPhoto).get();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                }
 
+            }
+            else {
+                Log.i(TAG,"Image found");
+            }
+            img_profile.setImageBitmap(imageBitmap);
+            LinearLayout ll_login = (LinearLayout) findViewById(R.id.ll_login);
 
+            globalVariables.SetUserPictureBitMap(imageBitmap); // Make the imageBitMap global to all activities to avoid downloading twice
+            ll_login.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -300,32 +328,6 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 
         return super.onOptionsItemSelected(item);
     }
-    class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
-        ImageView bmImage;
-        Bitmap mIcon11;
 
-        public DownloadImageTask(ImageView bmImage) {
-            this.bmImage = bmImage;
-        }
-
-        @Override
-        protected Bitmap doInBackground(String... urls) {
-            String urldisplay = urls[0];
-
-            try {
-                InputStream in = new java.net.URL(urldisplay).openStream();
-                mIcon11 = BitmapFactory.decodeStream(in);
-            } catch (Exception e) {
-                Log.e("Error", "" + e.getMessage());
-                e.printStackTrace();
-            }
-            return mIcon11;
-        }
-
-        @Override
-        protected void onPostExecute(Bitmap result) {
-            bmImage.setImageBitmap(result);
-        }
-    }
 
 }

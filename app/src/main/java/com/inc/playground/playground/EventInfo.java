@@ -1,12 +1,16 @@
 package com.inc.playground.playground;
 
+import android.app.ActionBar;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdate;
@@ -19,12 +23,14 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.inc.playground.playground.utils.CustomMarker;
+import com.inc.playground.playground.utils.DownloadImageBitmapTask;
 import com.inc.playground.playground.utils.GPSTracker;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 import static com.inc.playground.playground.R.layout.activity_event_info;
 import static com.inc.playground.playground.R.layout.activity_register;
@@ -61,7 +67,7 @@ public class EventInfo extends FragmentActivity {
     EventsObject currentEvent;
     HashMap<String, String> currentLocation;
     TextView viewDateEvent, viewStartTime, viewEndTime, viewLocation, viewSize, viewStatus, viewEventDescription;
-
+    public static final String TAG = "EventInfoActivity";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -448,6 +454,44 @@ public class EventInfo extends FragmentActivity {
         cu = CameraUpdateFactory.newLatLngBounds(bounds, 200, 400, 17);
         googleMap.animateCamera(cu);
 
+    }
+    public void setPlayGroundActionBar(){
+        String userLoginId,userFullName,userEmail,userPhoto;
+        Bitmap imageBitmap =null;
+        GlobalVariables globalVariables;
+        final ActionBar actionBar = getActionBar();
+        final String MY_PREFS_NAME = "Login";
+        SharedPreferences prefs = getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
+        globalVariables = ((GlobalVariables) this.getApplication());
+        if (prefs.getString("userid", null) != null){
+            userLoginId = prefs.getString("userid", null);
+            userFullName = prefs.getString("fullname", null);
+            userEmail = prefs.getString("emilid", null);
+            userPhoto = prefs.getString("picture", null);
+            actionBar.setCustomView(R.layout.actionbar_custom_view_home);
+            actionBar.setDisplayShowTitleEnabled(true);
+            actionBar.setDisplayShowCustomEnabled(true);
+            actionBar.setDisplayUseLogoEnabled(true);
+            actionBar.setDisplayShowHomeEnabled(true);
+            ImageView img_profile = (ImageView) findViewById(R.id.img_profile_action_bar);
+            imageBitmap = globalVariables.GetUserPictureBitMap();
+            if(imageBitmap==null){
+                Log.i(TAG,"downloading");
+                try {
+                    imageBitmap = new DownloadImageBitmapTask().execute(userPhoto).get();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                }
+
+            }
+            else {
+                Log.i(TAG,"Image found");
+            }
+            img_profile.setImageBitmap(imageBitmap);
+            globalVariables.SetUserPictureBitMap(imageBitmap); // Make the imageBitMap global to all activities to avoid downloading twice
+        }
     }
 
 }

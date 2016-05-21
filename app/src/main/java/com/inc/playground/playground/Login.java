@@ -303,18 +303,18 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
                         //TODO:Upload user image instead
                     }
                     else if(method.equals("facebook")){
-                        user_token = facebook_id;
+                        user_token = resonseMessage.getString(Constants.ID);
                         fullname= name;
                         fullimage = imagefb;
                         email_id = email;
                         user2 =user_token;
                     }
                     else if(method.equals("google")){
-                        user_token = personemail;
+                        user_token = resonseMessage.getString(Constants.ID);;
                         fullname= personname;
                         fullimage = personPhotoUrl;
                         email_id = personemail;
-                        user2 =personemail;
+                        user2 =user_token;
 
                     }
 
@@ -366,6 +366,7 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
 					editor.putString("picture", "" + fullimage);
 					editor.commit();
 //					if (value.equals("home")) {
+
                     Intent iv = new Intent(Login.this,MainActivity.class);
                     startActivity(iv);
 					Toast.makeText(Login.this, "Login Successful", Toast.LENGTH_LONG).show();
@@ -383,12 +384,13 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
 			} else if (method.equals("facebook")) {
 				if (key.equals("user")) {
 					SharedPreferences.Editor editor = getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE).edit();
-					editor.putString("userid", "" + user2);
+					editor.putString("userid", "" + user_token);
 					editor.putString("username", "" + user_name);
 					editor.putString("emilid", "" + email_id);
 					editor.putString("fullname", "" + fullname);
 					editor.putString("picture", "" + fullimage);
 					editor.commit();
+                    Log.i("UserLogin",user_token);
 
                     Intent iv = new Intent(Login.this,MainActivity.class);
                     startActivity(iv);
@@ -402,12 +404,13 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
 			} else if (method.equals("google")) {
 				if (key.equals("user")) {
 					SharedPreferences.Editor editor = getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE).edit();
-                    editor.putString("userid", "" + user2);
+                    editor.putString("userid", "" + user_token);
 					editor.putString("username", "" + user_name);
                     editor.putString("emilid", "" + email_id);
                     editor.putString("fullname", "" + fullname);
 					editor.putString("picture", "" + fullimage);
 					editor.commit();
+                    Log.i("UserLogin", user_token);
 
                     Intent iv = new Intent(Login.this,MainActivity.class);
                     startActivity(iv);
