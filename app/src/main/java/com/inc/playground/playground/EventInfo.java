@@ -68,7 +68,7 @@ public class EventInfo extends FragmentActivity {
     double latitudecur;
     double longitudecur;
     GoogleMap googleMap;
-
+    GlobalVariables globalVariables;
 
     public static final String TAG = "EventInfoActivity";
     //DahanLina
@@ -78,6 +78,7 @@ public class EventInfo extends FragmentActivity {
     TextView viewName, viewDateEvent, viewStartTime, viewEndTime, viewLocation, viewSize, viewStatus, viewEventDescription;
     private handleEventTask myEventsTask = null;
     public SharedPreferences prefs ;
+    LinearLayout membersList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,15 +98,18 @@ public class EventInfo extends FragmentActivity {
         viewLocation = (TextView) findViewById(R.id.event_formatted_location);
         viewSize = (TextView) findViewById(R.id.event_max_size);
         viewEventDescription = (TextView) findViewById(R.id.event_description);
+
+
 //        // TODO type image
 
 
         //TODO pictures of the members YD
-        LinearLayout membersList = (LinearLayout)findViewById(R.id.members_list);
+        membersList = (LinearLayout)findViewById(R.id.members_list);
 
         for(int i=0;i<8;i++)
         {
             ImageView member = new ImageView(this);
+
             member.setImageResource(R.drawable.pg_time);
             member.setId(i);
             membersList.addView(member);
@@ -172,7 +176,8 @@ public class EventInfo extends FragmentActivity {
         //viewEndTime.setText(currentEvent.GetEndTime());
         viewLocation.setText(currentEvent.GetFormattedLocation());
         //viewSize.setText(currentEvent.GetSize());
-        //viewEventDescription.setText(currentEvent.GetDescription());
+        //
+        viewEventDescription.setText(currentEvent.GetDescription());
 
         // TODO YD Add event name to toolbar title
 
@@ -488,6 +493,12 @@ public class EventInfo extends FragmentActivity {
         myEventsTask = new handleEventTask(currentEvent);
         myEventsTask.execute((Void) null);
 
+        ImageView member = new ImageView(this);
+        member.setImageResource(R.drawable.pg_time);
+
+        member.setImageBitmap(globalVariables.GetUserPictureBitMap());
+        membersList.addView(member);
+
         x.setClickable(false);
     }
     public class handleEventTask extends AsyncTask<Void, Void, String> {
@@ -570,7 +581,7 @@ public class EventInfo extends FragmentActivity {
     public void setPlayGroundActionBar(){
         String userLoginId,userFullName,userEmail,userPhoto;
         Bitmap imageBitmap =null;
-        GlobalVariables globalVariables;
+
         final ActionBar actionBar = getActionBar();
         final String MY_PREFS_NAME = "Login";
         SharedPreferences prefs = getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);

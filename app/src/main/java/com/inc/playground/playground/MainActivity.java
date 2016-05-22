@@ -114,11 +114,11 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
             // listener for when this tab is selected.
             actionBar.addTab(
                     actionBar.newTab()
-                            .setText(mAppSectionsPagerAdapter.getPageTitle(i))
                             .setTabListener(this));
-            actionBar.getTabAt(i).setIcon(R.drawable.address_icon);
         }
-
+        actionBar.getTabAt(0).setIcon(R.drawable.pg_list_view);
+        actionBar.getTabAt(1).setIcon(R.drawable.pg_map_view);
+        actionBar.getTabAt(2).setIcon(R.drawable.pg_calendar_view);
         //NavigationDrawer handling (e.g the list from leftside):
         mTitle = mDrawerTitle = getTitle();
         mDrawerLayout = (DrawerLayout) findViewById(R.id.menu_layout);

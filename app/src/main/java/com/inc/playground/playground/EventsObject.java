@@ -4,6 +4,7 @@ import com.inc.playground.playground.utils.Constants;
 import com.inc.playground.playground.utils.User;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -11,8 +12,10 @@ import java.util.HashMap;
  */
 public class EventsObject implements Serializable{
     String id, name, formattedLocation, type, size, date, startTime, endTime, description, status, distance;
+    ArrayList<String> members;
     // TODO ADD EVENT MEMBERS (A LIST CONTAINING USERS)
     User creator;
+
 
     HashMap<String, String> location= new HashMap<String, String>();
     // TODO add GetDistance method
@@ -72,6 +75,9 @@ public class EventsObject implements Serializable{
 
     public void SetDistance(String distance) { this.distance= distance; }
 
+    public ArrayList<String> GetMembers(){ return members; }
+
+    public void SetMembers(ArrayList<String> members){ this.members = members; }
 
 
 
