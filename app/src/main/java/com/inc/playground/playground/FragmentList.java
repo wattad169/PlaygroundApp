@@ -62,7 +62,7 @@ public class FragmentList extends Fragment{
     private handleEventTask myEventsTask = null;
     public SharedPreferences prefs ;
     Boolean isOK = true;
-
+    String userLoginId;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -71,6 +71,8 @@ public class FragmentList extends Fragment{
         homeEvents = this.globalVariables.GetHomeEvents();
         new getList().execute();
         prefs = getActivity().getSharedPreferences("Login",getActivity().MODE_PRIVATE);
+        userLoginId = prefs.getString("userid", null);
+
         return rootView;
     }
 
@@ -255,6 +257,7 @@ public class FragmentList extends Fragment{
 
                 }});
 
+            //TODO check if userLoginId is on members event
             return view;
 
         }

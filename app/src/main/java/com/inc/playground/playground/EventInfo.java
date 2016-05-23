@@ -5,6 +5,9 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
+import android.media.Image;
 import android.os.AsyncTask;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -76,6 +79,7 @@ public class EventInfo extends FragmentActivity {
     EventsObject currentEvent;
     HashMap<String, String> currentLocation;
     TextView viewName, viewDateEvent, viewStartTime, viewEndTime, viewLocation, viewSize, viewStatus, viewEventDescription;
+    ImageView typeImg;
     private handleEventTask myEventsTask = null;
     public SharedPreferences prefs ;
     LinearLayout membersList;
@@ -98,8 +102,7 @@ public class EventInfo extends FragmentActivity {
         viewLocation = (TextView) findViewById(R.id.event_formatted_location);
         viewSize = (TextView) findViewById(R.id.event_max_size);
         viewEventDescription = (TextView) findViewById(R.id.event_description);
-
-
+        typeImg = (ImageView) findViewById(R.id.type_img);
 //        // TODO type image
 
 
@@ -179,7 +182,10 @@ public class EventInfo extends FragmentActivity {
         //
         viewEventDescription.setText(currentEvent.GetDescription());
 
-        // TODO YD Add event name to toolbar title
+        String uri = "@drawable/pg_" + currentEvent.GetType();
+        int imageResource = getResources().getIdentifier(uri,null,getPackageName());
+        Drawable typeDrawable = getResources().getDrawable(imageResource);
+        typeImg.setImageDrawable(typeDrawable);
 
 //		CustomPagerAdapter mCustomPagerAdapter = new CustomPagerAdapter(Detailpage.this);
 //		ViewPager mViewPager = (ViewPager) findViewById(R.id.pager);
@@ -615,8 +621,17 @@ public class EventInfo extends FragmentActivity {
             img_profile.setImageBitmap(imageBitmap);
             globalVariables.SetUserPictureBitMap(imageBitmap); // Make the imageBitMap global to all activities to avoid downloading twice
         }
+        actionBar.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.primaryColor)));
     }
 
+    @Override
+    public void onBackPressed()
+    {
+        super.onBackPressed();
+        Intent next = new Intent(getApplication(),Splash.class);
+        startActivity(next);
+        finish();
+    }
 
 }
 

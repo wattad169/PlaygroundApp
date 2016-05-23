@@ -1,7 +1,9 @@
 package com.inc.playground.playground;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -26,8 +28,9 @@ public class Splash extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        final ActionBar actionBar = getActionBar();
+        actionBar.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.primaryColor)));
         // Get events from server
-
         globalVariables = ((GlobalVariables) this.getApplication());
         setContentView(R.layout.activity_splash);
         globalVariables.InitGPS(Splash.this);

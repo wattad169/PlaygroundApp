@@ -71,6 +71,7 @@ public class AddEvent extends Activity {
 				eventsFromServerJSON = responseJSON.getJSONArray(Constants.RESPONSE_MESSAGE);
 				Intent iv = new Intent(AddEvent.this,EventInfo.class);
 				iv.putExtra("eventObject",eventListToArrayList(eventsFromServerJSON, globalVariables.GetCurrentLocation()).get(0));
+				iv.putExtra("parentActivity",Constants.createParentMode);
 				startActivity(iv);
 			} catch (JSONException e) {
 				e.printStackTrace();

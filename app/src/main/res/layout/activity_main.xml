@@ -18,14 +18,13 @@
     android:id="@+id/menu_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+
     >
 
     <android.support.v4.view.ViewPager xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/pager"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-
-        />
+        android:layout_height="match_parent" />
 
     <!-- The main content view -->
 
@@ -34,14 +33,14 @@
         android:layout_width="203dp"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        android:background="@drawable/sidebar_bg"
+        android:background="@drawable/pg_sidebar_bg"
         android:orientation="vertical" >
 
         <LinearLayout
             android:id="@+id/ll_home"
             android:layout_width="200dp"
             android:layout_height="45dp"
-            android:background="@drawable/home"
+            android:background="@drawable/pg_home2"
             android:gravity="center_vertical" >
 
             <ImageView
@@ -65,7 +64,7 @@
             android:id="@+id/ll_cat"
             android:layout_width="200dp"
             android:layout_height="45dp"
-            android:background="@drawable/category"
+            android:background="@drawable/pg_category"
             android:gravity="center_vertical" >
 
             <ImageView
@@ -87,7 +86,7 @@
             android:id="@+id/ll_fav"
             android:layout_width="200dp"
             android:layout_height="45dp"
-            android:background="@drawable/favourite"
+            android:background="@drawable/pg_favourite"
             android:gravity="center_vertical" >
 
             <ImageView
@@ -109,7 +108,7 @@
             android:id="@+id/ll_settings"
             android:layout_width="200dp"
             android:layout_height="45dp"
-            android:background="@drawable/featured"
+            android:background="@drawable/pg_featured"
             android:gravity="center_vertical" >
 
             <ImageView
@@ -152,7 +151,7 @@
             android:id="@+id/ll_about"
             android:layout_width="200dp"
             android:layout_height="45dp"
-            android:background="@drawable/aboutus"
+            android:background="@drawable/pg_aboutus"
             android:gravity="center_vertical" >
 
             <ImageView
