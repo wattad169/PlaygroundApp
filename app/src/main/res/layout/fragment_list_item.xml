@@ -8,7 +8,7 @@
     <RelativeLayout
         android:id="@+id/rel_fav"
         android:layout_width="fill_parent"
-        android:layout_height="100dp"
+        android:layout_height="110dp"
         android:background="@drawable/cell" >
 
         <RelativeLayout
@@ -43,39 +43,38 @@
             android:text="Event Name"
             android:textStyle="bold"
             android:layout_marginRight="5dp"
-            android:textSize="18dp"
-            android:layout_marginBottom="2dp" />
+            android:textSize="18dp" />
 
         <ImageView
             android:id="@+id/img_arrow"
-            android:layout_width="15dp"
-            android:layout_height="15dp"
+            android:layout_width="18dp"
+            android:layout_height="20dp"
             android:background="@drawable/location"
-            android:layout_alignBottom="@+id/formatted_loctaion_txt"
             android:layout_alignLeft="@+id/event_name"
-            android:layout_alignStart="@+id/event_name" />
+            android:layout_below="@+id/event_name"
+            android:layout_marginTop="3dp" />
 
         <TextView
             android:id="@+id/formatted_loctaion_txt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/event_name"
-            android:layout_marginLeft="7dp"
-            android:layout_marginRight="30dp"
             android:layout_toRightOf="@+id/img_arrow"
             android:lines="1"
             android:text="formatted location "
             android:textColor="#000"
-            android:textSize="14dp" />
+            android:textSize="14dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginLeft="7dp" />
 
         <ImageView
             android:id="@+id/img_date"
-            android:layout_width="15dp"
-            android:layout_height="15dp"
+            android:layout_width="18dp"
+            android:layout_height="20dp"
             android:background="@drawable/date"
-            android:layout_alignBottom="@+id/img_more"
-            android:layout_alignLeft="@+id/img_arrow"
-            android:layout_alignStart="@+id/img_arrow" />
+            android:layout_alignLeft="@+id/event_name"
+            android:layout_below="@+id/img_arrow"
+            android:layout_marginTop="3dp" />
 
         <TextView
             android:id="@+id/date_txt"
@@ -83,29 +82,34 @@
             android:layout_height="wrap_content"
             android:text="event date"
             android:textColor="#000"
-            android:layout_alignBottom="@+id/img_date"
-            android:layout_alignLeft="@+id/formatted_loctaion_txt"
-            android:layout_alignStart="@+id/formatted_loctaion_txt" />
+            android:layout_toRightOf="@+id/img_date"
+            android:layout_below="@+id/formatted_loctaion_txt"
+            android:layout_marginLeft="7dp"
+            android:layout_marginTop="7dp" />
 
-        <ImageView
-            android:id="@+id/img_more"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
+        <ToggleButton
+            android:id="@+id/join"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:layout_marginRight="7dp" />
+            android:layout_marginRight="7dp"
+            android:background="@drawable/pg_playing"
+            android:onClick="myClickHandler"
+            android:textOff="Play"
+            android:textOn="Playing"
+            android:paddingTop="30dp"/>
 
         <ImageView
             android:id="@+id/img_distance"
-            android:layout_width="15dp"
-            android:layout_height="15dp"
+            android:layout_width="18dp"
+            android:layout_height="20dp"
             android:background="@drawable/distance"
-            android:layout_marginBottom="10dp"
-            android:layout_alignBottom="@+id/rl_img_round"
-            android:layout_alignParentBottom="true"
+            android:layout_alignParentBottom="false"
             android:paddingBottom="0dp"
-            android:layout_toLeftOf="@+id/distance_txt"
-            android:layout_marginRight="5dp" />
+            android:layout_marginTop="5dp"
+            android:layout_alignLeft="@+id/event_name"
+            android:layout_below="@+id/img_date" />
 
         <TextView
             android:id="@+id/distance_txt"
@@ -113,10 +117,10 @@
             android:layout_height="wrap_content"
             android:text="distance"
             android:textColor="#000"
-            android:layout_alignLeft="@+id/date_txt"
-            android:layout_above="@+id/img_distance"
-            android:layout_marginBottom="10dp"
-            android:layout_alignParentBottom="true" />
+            android:layout_below="@+id/date_txt"
+            android:layout_toRightOf="@+id/img_distance"
+            android:layout_marginLeft="7dp"
+            android:layout_marginTop="7dp" />
 
         <TextView
             android:id="@+id/start_time_txt"
@@ -124,8 +128,23 @@
             android:layout_height="wrap_content"
             android:text="start time"
             android:textColor="#000"
-            android:layout_alignTop="@+id/date_txt"
-            android:layout_centerHorizontal="true" />
+            android:layout_centerHorizontal="true"
+            android:layout_toRightOf="@+id/date_txt"
+            android:layout_below="@+id/formatted_loctaion_txt"
+            android:layout_marginTop="7dp"
+            android:layout_marginLeft="15dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="km"
+            android:id="@+id/kmTxt"
+            android:layout_toRightOf="@+id/distance_txt"
+            android:layout_toEndOf="@+id/date_txt"
+            android:layout_below="@+id/start_time_txt"
+            android:layout_marginTop="7dp"
+            android:layout_marginLeft="7dp" />
     </RelativeLayout>
 
 

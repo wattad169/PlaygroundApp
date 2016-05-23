@@ -140,9 +140,9 @@
     <string name="pref_title_notifications_frequency">Notifications frequency</string>
     //
     <string-array name="pref_example_list_titles">
-        <item>every hour</item>
-        <item>every week</item>
-        <item>every month</item>
+        <item>today</item>
+        <item>this week</item>
+        <item>this month</item>
     </string-array>
     <string-array name="pref_example_list_values">
         <item>1</item>
@@ -183,6 +183,10 @@
     <string name="pref_title_add_friends_to_messages">Add friends to messages</string>
 
     <string name="pref_title_new_message_notifications">New message notifications</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_fragment">fragmentActivity</string>
 
 
 </resources>

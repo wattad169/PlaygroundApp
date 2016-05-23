@@ -55,9 +55,14 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.List;
+
 /**
  * Provides utility methods for communicating with the server..
  */
@@ -209,9 +214,9 @@ final public class NetworkUtilities {
         for(int i=0 ; i<jsonInput.length();i++){
             //Fill the EventObject with data from the JSON
             JSONObject currentObject = (JSONObject) jsonInput.get(i);
-            int eventId = currentObject.getInt(Constants.EVENT_ID);
+            String eventId = currentObject.getString(Constants.EVENT_ID);
             EventsObject currentEvent = new EventsObject();
-            currentEvent.SetId(Integer.toString(eventId));
+            currentEvent.SetId(eventId);
             currentEvent.SetName(currentObject.getString(Constants.EVENT_NAME));
             currentEvent.SetFormattedLocation(currentObject.getString(Constants.EVENT_LOCATION));
             currentEvent.SetType(currentObject.getString(Constants.EVENT_TYPE));

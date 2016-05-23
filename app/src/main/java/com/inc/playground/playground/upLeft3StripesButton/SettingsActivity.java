@@ -2,14 +2,17 @@ package com.inc.playground.playground.upLeft3StripesButton;
 
 
 import android.annotation.TargetApi;
-import android.app.ActivityManager;
-import android.content.ComponentName;
+
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.ListPreference;
@@ -20,12 +23,18 @@ import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.preference.RingtonePreference;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.MenuItem;
 
+import com.inc.playground.playground.AddEvent;
+import com.inc.playground.playground.GlobalVariables;
 import com.inc.playground.playground.MainActivity;
 import com.inc.playground.playground.R;
+import com.inc.playground.playground.utils.DownloadImageBitmapTask;
 
+import java.io.InputStream;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 /**
  * A {@link PreferenceActivity} that presents a set of application settings. On
@@ -33,18 +42,19 @@ import java.util.List;
  * settings are split by category, with category headers shown to the left of
  * the list of settings.
  * <p/>
- * See <a href="http://developer.android.com/design/patterns/settings.html" >
+ * See <a href="http://developer.android.com/design/patterns/settings.html">
  * Android Design: Settings</a> for design guidelines and the <a
  * href="http://developer.android.com/guide/topics/ui/settings.html">Settings
  * API Guide</a> for more information on developing a Settings UI.
  */
-
 public class SettingsActivity extends PreferenceActivity {
-
     /**
      * A preference value change listener that updates the preference's summary
      * to reflect its new value.
      */
+    public static final String MY_PREFS_NAME = "Login";
+    String userLoginId,userFullName,userEmail,userPhoto;
+    public static final String TAG = "SettingActivity";
     private static Preference.OnPreferenceChangeListener sBindPreferenceSummaryToValueListener =
             new Preference.OnPreferenceChangeListener() {
         @Override
@@ -126,17 +136,49 @@ public class SettingsActivity extends PreferenceActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setupActionBar();
+        setPlayGroundActionBar();
     }
 
     /**
      * Set up the {@link android.app.ActionBar}, if the API is available.
      */
-    private void setupActionBar() {
-        ActionBar actionBar = getActionBar();
-        if (actionBar != null) {
-            // Show the Up button in the action bar.
-            actionBar.setDisplayHomeAsUpEnabled(true);
+    public void setPlayGroundActionBar(){
+        String userLoginId,userFullName,userEmail,userPhoto;
+        Bitmap imageBitmap =null;
+        GlobalVariables globalVariables;
+        final ActionBar actionBar = getActionBar();
+        actionBar.setTitle("Mostafa");
+        final String MY_PREFS_NAME = "Login";
+        SharedPreferences prefs = getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
+        globalVariables = ((GlobalVariables) this.getApplication());
+        if (prefs.getString("userid", null) != null){
+            userLoginId = prefs.getString("userid", null);
+            userFullName = prefs.getString("fullname", null);
+            userEmail = prefs.getString("emilid", null);
+            userPhoto = prefs.getString("picture", null);
+            actionBar.setCustomView(R.layout.actionbar_custom_view_home);
+            actionBar.setDisplayShowTitleEnabled(true);
+            actionBar.setDisplayShowCustomEnabled(true);
+            actionBar.setDisplayUseLogoEnabled(true);
+            actionBar.setDisplayShowHomeEnabled(true);
+            ImageView img_profile = (ImageView) findViewById(R.id.img_profile_action_bar);
+            imageBitmap = globalVariables.GetUserPictureBitMap();
+            if(imageBitmap==null){
+                Log.i(TAG,"downloading");
+                try {
+                    imageBitmap = new DownloadImageBitmapTask().execute(userPhoto).get();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                }
+
+            }
+            else {
+                Log.i(TAG,"Image found");
+            }
+            img_profile.setImageBitmap(imageBitmap);
+            globalVariables.SetUserPictureBitMap(imageBitmap); // Make the imageBitMap global to all activities to avoid downloading twice
         }
     }
 
@@ -167,7 +209,33 @@ public class SettingsActivity extends PreferenceActivity {
                 || DataSyncPreferenceFragment.class.getName().equals(fragmentName)
                 || NotificationPreferenceFragment.class.getName().equals(fragmentName);
     }
+    class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
+        ImageView bmImage;
+        Bitmap mIcon11;
 
+        public DownloadImageTask(ImageView bmImage) {
+            this.bmImage = bmImage;
+        }
+
+        @Override
+        protected Bitmap doInBackground(String... urls) {
+            String urldisplay = urls[0];
+
+            try {
+                InputStream in = new java.net.URL(urldisplay).openStream();
+                mIcon11 = BitmapFactory.decodeStream(in);
+            } catch (Exception e) {
+                Log.e("Error", "" + e.getMessage());
+                e.printStackTrace();
+            }
+            return mIcon11;
+        }
+
+        @Override
+        protected void onPostExecute(Bitmap result) {
+            bmImage.setImageBitmap(result);
+        }
+    }
     /**
      * This fragment shows general preferences only. It is used when the
      * activity is showing a two-pane settings UI.
@@ -227,9 +295,6 @@ public class SettingsActivity extends PreferenceActivity {
             }
             return super.onOptionsItemSelected(item);
         }
-
-
-
     }
 
     /**
@@ -260,15 +325,5 @@ public class SettingsActivity extends PreferenceActivity {
             }
             return super.onOptionsItemSelected(item);
         }
-
     }
-
-
-
-
-
-
-
 }
-
-
