@@ -21,47 +21,30 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
-import org.apache.http.NameValuePair;
-import org.apache.http.ParseException;
-import org.apache.http.auth.AuthenticationException;
+
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.conn.params.ConnManagerParams;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
-import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import android.accounts.Account;
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.text.TextUtils;
+
 import android.util.Log;
 
 import com.inc.playground.playground.EventsObject;
-import com.inc.playground.playground.GlobalVariables;
 
 import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+
 import java.util.ArrayList;
-import java.util.Date;
-import java.text.SimpleDateFormat;
+
 import java.util.HashMap;
-import java.util.List;
 
 /**
  * Provides utility methods for communicating with the server..
@@ -164,41 +147,45 @@ final public class NetworkUtilities {
         }
     }
     public static Double calculateDistance(double originLon, double originLat, double distanceLon, double distanceLat){
-//        final HttpResponse resp;
-//        String apiUrl = Constants.apiGetDistanceUrl.replace("X1",Double.toString(originLon));
-//        apiUrl = apiUrl.replace("Y1",Double.toString(originLat));
-//        apiUrl = apiUrl.replace("X2",Double.toString(distanceLon));
-//        apiUrl = apiUrl.replace("Y2",Double.toString(distanceLat));
-//        apiUrl = apiUrl.replace("APIKEY",Constants.apiKey);
-//        HttpGet http_client = new HttpGet(apiUrl);
-//
-//        try {
-//            resp = getHttpClient().execute(http_client);
-//            String resopnseString = null;
-//            if (resp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-//                InputStream istream = (resp.getEntity() != null) ? resp.getEntity().getContent()
-//                        : null;
-//                if (istream != null) {
-//                    BufferedReader ireader = new BufferedReader(new InputStreamReader(istream));
-//                    resopnseString = ireader.readLine();
-//                }
-//            }
-//            if ((resopnseString != null) && (resopnseString.length() > 0)) {
-//                Log.v(TAG, "Successful authentication");
-//                JSONObject convertedResponse = new JSONObject(resopnseString);
-//                Double distanceKm = new Double((convertedResponse.getJSONObject("rows").getJSONObject("elements").getJSONObject("distance").getInt("value"))/1000);
-//                return distanceKm;
-//
-//            } else {
-//                Log.e(TAG, "Error authenticating" + resp.getStatusLine());
-//                return null;
-//            }
-//        } catch (final IOException e) {
-//            Log.e(TAG, "IOException when getting authtoken", e);
-//            return null;
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
+        final HttpResponse resp;
+        String apiUrl = Constants.apiGetDistanceUrl.replace("X1",Double.toString(originLon));
+        apiUrl = apiUrl.replace("Y1",Double.toString(originLat));
+        apiUrl = apiUrl.replace("X2",Double.toString(distanceLon));
+        apiUrl = apiUrl.replace("Y2",Double.toString(distanceLat));
+        apiUrl = apiUrl.replace("APIKEY",Constants.apiKey);
+        HttpGet http_client = new HttpGet(apiUrl);
+
+        try {
+            resp = getHttpClient().execute(http_client);
+            String resopnseString = "";
+            if (resp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+                InputStream istream = (resp.getEntity() != null) ? resp.getEntity().getContent()
+                        : null;
+                if (istream != null) {
+                    BufferedReader ireader = new BufferedReader(new InputStreamReader(istream));
+                    String buf;
+                    while((buf =ireader.readLine() ) != null ){
+                        resopnseString += buf;
+                    }
+                }
+            }
+            if ((resopnseString != null) && (resopnseString.length() > 0)) {
+                Log.v(TAG, "Successful authentication");
+                Log.i(TAG, resopnseString);//resopnseString = "{"
+                JSONObject convertedResponse = new JSONObject(resopnseString); //"{"
+                Double distanceKm = new Double((convertedResponse.getJSONObject("rows").getJSONObject("elements").getJSONObject("distance").getInt("value"))/1000);
+                return distanceKm;
+
+            } else {
+                Log.e(TAG, "Error authenticating" + resp.getStatusLine());
+                return null;
+            }
+        } catch (final IOException e) {
+            Log.e(TAG, "IOException when getting authtoken", e);
+            return null;
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
         return 2.0;
     }
 

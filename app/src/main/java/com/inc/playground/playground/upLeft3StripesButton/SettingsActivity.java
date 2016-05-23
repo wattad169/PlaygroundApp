@@ -25,6 +25,7 @@ import android.preference.RingtonePreference;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
+import android.widget.ImageView;
 
 import com.inc.playground.playground.AddEvent;
 import com.inc.playground.playground.GlobalVariables;

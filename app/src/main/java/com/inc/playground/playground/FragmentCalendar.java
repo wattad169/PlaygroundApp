@@ -10,15 +10,18 @@ import android.view.ViewGroup;
 
 import net.zaim.decoratecalendarview.DecorateCalendarView;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 public class FragmentCalendar extends Fragment implements DecorateCalendarView.OnDecorateCalendarListener {
 
     private DecorateCalendarView calendarView;
-    //ArrayList<EventsObject> homeEvents;
-
+    GlobalVariables globalVariables;
+    ArrayList<EventsObject> homeEvents;
 
 
     @Override
@@ -29,6 +32,10 @@ public class FragmentCalendar extends Fragment implements DecorateCalendarView.O
         super.onCreate(savedInstanceState);
 
         calendarView = (DecorateCalendarView) v.findViewById(R.id.my_calendar);
+
+        this.globalVariables = ((GlobalVariables) getActivity().getApplication());
+        homeEvents = this.globalVariables.GetHomeEvents();
+
         // Set event listener from calendar view
         //calendarView.setOnDecorateCalendarListener((DecorateCalendarView.OnDecorateCalendarListener) this);
 
@@ -57,6 +64,18 @@ public class FragmentCalendar extends Fragment implements DecorateCalendarView.O
 
         //if date in 2014:
             // Decorate cell of day
+            for(int i=0;i<homeEvents.size() ;i++){
+                EventsObject e =  homeEvents.get(i);
+                DateFormat f = new SimpleDateFormat("MMMM d, yyyy", Locale.ENGLISH);
+                String stringDate = e.GetDate();
+
+                //ate dat = f.parse(stringDate);
+                //if(year.equals(2014) )
+                //get the date object
+
+            }
+
+
             calendarView.setTopTextOnDay(10, "top", Color.parseColor("#FFFF4444"));
     }
 
