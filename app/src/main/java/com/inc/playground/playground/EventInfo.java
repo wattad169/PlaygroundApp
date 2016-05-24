@@ -105,7 +105,6 @@ public class EventInfo extends FragmentActivity {
         typeImg = (ImageView) findViewById(R.id.type_img);
 //        // TODO type image
 
-
         //TODO pictures of the members YD
         membersList = (LinearLayout)findViewById(R.id.members_list);
 
