@@ -225,6 +225,7 @@ final public class NetworkUtilities {
             JSONObject currentObject = (JSONObject) jsonInput.get(i);
             String eventId = currentObject.getString(Constants.EVENT_ID);
             EventsObject currentEvent = new EventsObject();
+            ArrayList<String> members = new ArrayList<>();
             currentEvent.SetId(eventId);
             currentEvent.SetName(currentObject.getString(Constants.EVENT_NAME));
             currentEvent.SetFormattedLocation(currentObject.getString(Constants.EVENT_LOCATION));

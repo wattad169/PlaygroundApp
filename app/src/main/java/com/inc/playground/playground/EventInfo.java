@@ -5,6 +5,9 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
+import android.media.Image;
 import android.os.AsyncTask;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -68,7 +71,7 @@ public class EventInfo extends FragmentActivity {
     double latitudecur;
     double longitudecur;
     GoogleMap googleMap;
-
+    GlobalVariables globalVariables;
 
     public static final String TAG = "EventInfoActivity";
     //DahanLina
@@ -76,8 +79,10 @@ public class EventInfo extends FragmentActivity {
     EventsObject currentEvent;
     HashMap<String, String> currentLocation;
     TextView viewName, viewDateEvent, viewStartTime, viewEndTime, viewLocation, viewSize, viewStatus, viewEventDescription;
+    ImageView typeImg;
     private handleEventTask myEventsTask = null;
     public SharedPreferences prefs ;
+    LinearLayout membersList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,15 +102,17 @@ public class EventInfo extends FragmentActivity {
         viewLocation = (TextView) findViewById(R.id.event_formatted_location);
         viewSize = (TextView) findViewById(R.id.event_max_size);
         viewEventDescription = (TextView) findViewById(R.id.event_description);
+        typeImg = (ImageView) findViewById(R.id.type_img);
 //        // TODO type image
 
 
         //TODO pictures of the members YD
-        LinearLayout membersList = (LinearLayout)findViewById(R.id.members_list);
+        membersList = (LinearLayout)findViewById(R.id.members_list);
 
         for(int i=0;i<8;i++)
         {
             ImageView member = new ImageView(this);
+
             member.setImageResource(R.drawable.pg_time);
             member.setId(i);
             membersList.addView(member);
@@ -172,9 +179,13 @@ public class EventInfo extends FragmentActivity {
         //viewEndTime.setText(currentEvent.GetEndTime());
         viewLocation.setText(currentEvent.GetFormattedLocation());
         //viewSize.setText(currentEvent.GetSize());
-        //viewEventDescription.setText(currentEvent.GetDescription());
+        //
+        viewEventDescription.setText(currentEvent.GetDescription());
 
-        // TODO YD Add event name to toolbar title
+        String uri = "@drawable/pg_" + currentEvent.GetType();
+        int imageResource = getResources().getIdentifier(uri,null,getPackageName());
+        Drawable typeDrawable = getResources().getDrawable(imageResource);
+        typeImg.setImageDrawable(typeDrawable);
 
 //		CustomPagerAdapter mCustomPagerAdapter = new CustomPagerAdapter(Detailpage.this);
 //		ViewPager mViewPager = (ViewPager) findViewById(R.id.pager);
@@ -488,6 +499,12 @@ public class EventInfo extends FragmentActivity {
         myEventsTask = new handleEventTask(currentEvent);
         myEventsTask.execute((Void) null);
 
+        ImageView member = new ImageView(this);
+        member.setImageResource(R.drawable.pg_time);
+
+        member.setImageBitmap(globalVariables.GetUserPictureBitMap());
+        membersList.addView(member);
+
         x.setClickable(false);
     }
     public class handleEventTask extends AsyncTask<Void, Void, String> {
@@ -570,7 +587,7 @@ public class EventInfo extends FragmentActivity {
     public void setPlayGroundActionBar(){
         String userLoginId,userFullName,userEmail,userPhoto;
         Bitmap imageBitmap =null;
-        GlobalVariables globalVariables;
+
         final ActionBar actionBar = getActionBar();
         final String MY_PREFS_NAME = "Login";
         SharedPreferences prefs = getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
@@ -604,8 +621,17 @@ public class EventInfo extends FragmentActivity {
             img_profile.setImageBitmap(imageBitmap);
             globalVariables.SetUserPictureBitMap(imageBitmap); // Make the imageBitMap global to all activities to avoid downloading twice
         }
+        actionBar.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.primaryColor)));
     }
 
+    @Override
+    public void onBackPressed()
+    {
+        super.onBackPressed();
+        Intent next = new Intent(getApplication(),Splash.class);
+        startActivity(next);
+        finish();
+    }
 
 }
 

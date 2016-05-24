@@ -9,7 +9,9 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Html;
@@ -26,6 +28,7 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -58,8 +61,8 @@ public class FragmentList extends Fragment{
     GlobalVariables globalVariables;
     private handleEventTask myEventsTask = null;
     public SharedPreferences prefs ;
-
-
+    Boolean isOK = true;
+    String userLoginId;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -68,7 +71,7 @@ public class FragmentList extends Fragment{
         homeEvents = this.globalVariables.GetHomeEvents();
         new getList().execute();
         prefs = getActivity().getSharedPreferences("Login",getActivity().MODE_PRIVATE);
-
+        userLoginId = prefs.getString("userid", null);
 
         return rootView;
     }
@@ -175,43 +178,57 @@ public class FragmentList extends Fragment{
         public View getView(final int position, View convertView, ViewGroup parent) {
             View view = convertView;
 
+
             if (convertView == null) {
                 view = inflater.inflate(R.layout.fragment_list_item, null);
-            }//TODO YD update event icon according to event type
-//            try {
-//                Spanned namefirst = Html.fromHtml(data.get(position).GetName());
-//                String s = String.valueOf(namefirst).substring(0, 1).toUpperCase();
-//
-//                TextView txt_first = (TextView) view.findViewById(R.id.txt_first);
-//                txt_first.setText("" + Html.fromHtml(s));
-//            } catch (StringIndexOutOfBoundsException e) {
-//                // TODO: handle exception
-//                e.printStackTrace();
-//            }
+                if(position%2==0)
+                {
+                    view.setBackground(getResources().getDrawable(R.drawable.pg_cell_first));
+                }else {
+                    view.setBackground(getResources().getDrawable(R.drawable.pg_cell_first_b));
+                }
+            }
+            Typeface fontText = Typeface.createFromAsset(getActivity().getAssets(),"sansation.ttf");
+            Typeface fontText2 = Typeface.createFromAsset(getActivity().getAssets(),"kimberly.ttf");
+            Typeface fontText3 = Typeface.createFromAsset(getActivity().getAssets(),"crayon.ttf");
+           // update type icon according to event type
+            String uri = "@drawable/" + data.get(position).GetType();
+            int imageResource = getResources().getIdentifier(uri,null,getActivity().getPackageName());
+            ImageView typeImg = (ImageView) view.findViewById(R.id.type_img);
+            Drawable typeDrawable = getResources().getDrawable(imageResource);
+            typeImg.setImageDrawable(typeDrawable);
 
             TextView eventName = (TextView) view.findViewById(R.id.event_name);
             eventName.setText(data.get(position).GetName());
+            eventName.setTypeface(fontText);
 
             TextView formattedLocation = (TextView) view.findViewById(R.id.formatted_loctaion_txt);
             formattedLocation.setText(data.get(position).GetFormattedLocation());
+            formattedLocation.setTypeface(fontText3);
 
             TextView eventDate = (TextView) view.findViewById(R.id.date_txt);
             eventDate.setText(data.get(position).GetDate());
+            eventDate.setTypeface(fontText3);
 //            TODO uncomment once start time is added to the db
 //            TextView starTime = (TextView) view.findViewById(R.id.start_time_txt);
 //            starTime.setText(data.get(position).GetStartTime());
+//            startTime.setTypeface(fontText3);
 
             TextView eventDistance = (TextView) view.findViewById(R.id.distance_txt);
             eventDistance.setText(data.get(position).GetDistance());
+            eventDistance.setTypeface(fontText3);
 
-            ToggleButton playButton = (ToggleButton)view.findViewById(R.id.join);
+            TextView kmTxt = (TextView) view.findViewById(R.id.kmTxt);
+            kmTxt.setTypeface(fontText3);
+
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
 
                     Intent intent = new Intent(getActivity().getApplicationContext(), EventInfo.class);
-                    intent.putExtra("eventObject", data.get(position) );
+                    intent.putExtra("eventObject", data.get(position));
                     startActivity(intent);
+
 
                     //your ON CLICK CODE
 //                    ToggleButton playButton = (ToggleButton) v;
@@ -220,10 +237,32 @@ public class FragmentList extends Fragment{
 
                 }
             });
+
+            ToggleButton playButton = (ToggleButton)view.findViewById(R.id.join);
+            playButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    ToggleButton playButton = (ToggleButton) v;
+                    myEventsTask = new handleEventTask(data.get(position));
+                    myEventsTask.execute((Void) null);
+                    if(isOK) {
+                        playButton.setSelected(true);
+                        playButton.setClickable(false);
+                    }
+                    else
+                    {
+                        playButton.setSelected(false);
+                    }
+
+                }});
+
+            //TODO check if userLoginId is on members event
             return view;
 
         }
     }
+
     public class handleEventTask extends AsyncTask<Void, Void, String> {
 
         //        private Context context;
@@ -271,9 +310,11 @@ public class FragmentList extends Fragment{
                 if (myObject != null && responseStatus != null) {
                     if (responseStatus.equals(Constants.RESPONSE_OK.toString())) {
                         myEventsTask = null;
+                        isOK = true;
                         //TODO YD Switch toggle button text to "playing"
                     } else {
                         myEventsTask = null;
+                        isOK = false;
                         //TODO YD override toggle method -> not to switch text to "playing"
                     }
                 }
@@ -284,6 +325,7 @@ public class FragmentList extends Fragment{
                 Intent intent = new Intent(getActivity().getApplicationContext(), Login.class);
                 startActivity(intent);
             }
+
             return null;
 
         }
