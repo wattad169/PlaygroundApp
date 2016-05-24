@@ -5,6 +5,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 
 import com.inc.playground.playground.utils.GPSTracker;
+import com.inc.playground.playground.utils.User;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,6 +22,8 @@ public class GlobalVariables extends Application {
     private ArrayList<EventsObject> homeEvents;
 
     private Bitmap userPictureBitmap=null;
+
+    private User currentUser;
 
     public HashMap<String, Double> GetCurrentLocation(){
         return this.currentLocation;
@@ -53,5 +56,9 @@ public class GlobalVariables extends Application {
     public Bitmap GetUserPictureBitMap(){
         return this.userPictureBitmap;
     }
+
+    public void SetCurrentUser(User currentUser) { this.currentUser = currentUser; }
+
+    public User GetCurrentUser() {return this.currentUser; }
 
 }

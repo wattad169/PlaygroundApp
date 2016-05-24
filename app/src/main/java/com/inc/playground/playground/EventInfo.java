@@ -2,7 +2,6 @@ package com.inc.playground.playground;
 
 import android.app.ActionBar;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -16,11 +15,9 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 import android.widget.ToggleButton;
@@ -39,9 +36,7 @@ import com.inc.playground.playground.utils.CustomMarker;
 import com.inc.playground.playground.utils.DownloadImageBitmapTask;
 import com.inc.playground.playground.utils.GPSTracker;
 import com.inc.playground.playground.utils.NetworkUtilities;
-import com.inc.playground.playground.utils.RoundedImageView;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -51,8 +46,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
-
-import static com.inc.playground.playground.utils.NetworkUtilities.eventListToArrayList;
 
 /**
  * Created by lina on 5/13/2016.
@@ -85,18 +78,19 @@ public class EventInfo extends FragmentActivity {
 
     EventsObject currentEvent;
     HashMap<String, String> currentLocation;
-    TextView viewName, viewDateEvent, viewStartTime, viewEndTime, viewLocation, viewSize, viewStatus, viewEventDescription;
+    TextView viewName, viewDateEvent, viewStartTime, viewEndTime, viewLocation, viewSize, viewCurrentSize, viewEventDescription;
     ImageView typeImg;
     JSONArray membersImagesUrls;
     private handleEventTask myEventsTask = null;
     public SharedPreferences prefs ;
     LinearLayout membersList;
+    User currentUser;
+    ToggleButton playButton;
     Bitmap imageBitmap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        setContentView(activity_event_info);
         setContentView(R.layout.activity_event_info);
         prefs = getSharedPreferences("Login", MODE_PRIVATE);
 
@@ -104,23 +98,22 @@ public class EventInfo extends FragmentActivity {
         setPlayGroundActionBar();
         Intent intent = getIntent();
         currentEvent = (EventsObject) intent.getSerializableExtra("eventObject");
+        currentUser = globalVariables.GetCurrentUser();
         viewName = (TextView) findViewById(R.id.event_name);
         viewDateEvent = (TextView) findViewById(R.id.event_date);
         viewStartTime = (TextView) findViewById(R.id.event_start_time);
         viewEndTime = (TextView) findViewById(R.id.event_end_time);
         viewLocation = (TextView) findViewById(R.id.event_formatted_location);
         viewSize = (TextView) findViewById(R.id.event_max_size);
+        viewCurrentSize = (TextView) findViewById(R.id.current_size);
         viewEventDescription = (TextView) findViewById(R.id.event_description);
         typeImg = (ImageView) findViewById(R.id.type_img);
+        playButton = (ToggleButton) findViewById(R.id.playing_btn);
 //        // TODO type image
 
         //TODO pictures of the members YD
         membersList = (LinearLayout)findViewById(R.id.members_list);
         new GetMembersImages(this).execute();
-//        getMembersImages();
-
-
-
         gps = new GPSTracker(EventInfo.this);
         // check if GPS enabled
         if (gps.canGetLocation()) {
@@ -177,17 +170,30 @@ public class EventInfo extends FragmentActivity {
         // Set event view values
         viewName.setText(currentEvent.GetName());
         viewDateEvent.setText(currentEvent.GetDate());
-       // viewStartTime.setText(currentEvent.GetStartTime());
-        //viewEndTime.setText(currentEvent.GetEndTime());
+        viewStartTime.setText(currentEvent.GetStartTime());
+        viewEndTime.setText(currentEvent.GetEndTime());
         viewLocation.setText(currentEvent.GetFormattedLocation());
-        //viewSize.setText(currentEvent.GetSize());
-        //
+        viewSize.setText(currentEvent.GetSize());
+       // viewCurrentSize.setText();
         viewEventDescription.setText(currentEvent.GetDescription());
 
-//        String uri = "@drawable/pg_" + currentEvent.GetType();
-//        int imageResource = getResources().getIdentifier(uri,null,getPackageName());
-//        Drawable typeDrawable = getResources().getDrawable(imageResource);
-//        typeImg.setImageDrawable(typeDrawable);
+
+        if(currentUser != null ) { // the user is login
+            Set<String> userEvents = currentUser.GetUserEvents();
+            if(! userEvents.isEmpty())
+            {
+                if(userEvents.contains(currentEvent.GetId()))
+                {
+                    playButton.setClickable(false);
+                    playButton.setChecked(true);
+                }
+            }
+        }
+
+        String uri = "@drawable/pg_" + currentEvent.GetType();
+        int imageResource = getResources().getIdentifier(uri,null,getPackageName());
+        Drawable typeDrawable = getResources().getDrawable(imageResource);
+        typeImg.setImageDrawable(typeDrawable);
 
 //		CustomPagerAdapter mCustomPagerAdapter = new CustomPagerAdapter(Detailpage.this);
 //		ViewPager mViewPager = (ViewPager) findViewById(R.id.pager);
@@ -492,6 +498,9 @@ public class EventInfo extends FragmentActivity {
         googleMap.animateCamera(cu);
 
     }
+    
+    
+    
     public void onPlayClick(View v){
         ToggleButton x = (ToggleButton)v;
 
