@@ -13,6 +13,7 @@ import com.inc.playground.playground.Splash;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -52,6 +53,29 @@ public class Utils {
         currentLocation.put(Constants.LOCATION_LAT, latitude);
         currentLocation.put(Constants.LOCATION_LON, longitude);
         return currentLocation;
+    }
+
+    // Create an array with all unique elements
+    public static int[] removeDuplicates(int[] A) {
+        if (A.length < 2)
+            return A;
+
+        int j = 0;
+        int i = 1;
+
+        while (i < A.length) {
+            if (A[i] == A[j]) {
+                i++;
+            } else {
+                j++;
+                A[j] = A[i];
+                i++;
+            }
+        }
+
+        int[] B = Arrays.copyOf(A, j + 1);
+
+        return B;
     }
 
 }

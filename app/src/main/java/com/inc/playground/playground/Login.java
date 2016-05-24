@@ -1,5 +1,6 @@
 package com.inc.playground.playground;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.IntentSender.SendIntentException;
@@ -7,6 +8,7 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
+import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -103,6 +105,9 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
 
 		facebook = new Facebook(APP_ID);
 		mAsyncRunner = new AsyncFacebookRunner(facebook);
+
+		final ActionBar actionBar = getActionBar();
+		actionBar.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.primaryColor)));
 
 		init();
 
@@ -367,7 +372,7 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
 					editor.commit();
 //					if (value.equals("home")) {
 
-                    Intent iv = new Intent(Login.this,MainActivity.class);
+                    Intent iv = new Intent(Login.this,Splash.class);
                     startActivity(iv);
 					Toast.makeText(Login.this, "Login Successful", Toast.LENGTH_LONG).show();
 //					} else if (value.equals("review")) {

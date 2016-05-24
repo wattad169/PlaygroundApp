@@ -52,9 +52,10 @@ public class Constants {
 
     public static final String EVENT_ID = "id";
 
-    public static final String EVENT_SIZE = "event_size";
+    public static final String EVENT_SIZE = "min_attend";
 
-    public static final String START_TIME = "start_time";
+    public static final String START_TIME = "from_time";
+
 
     public static final String END_TIME = "end_time";
 

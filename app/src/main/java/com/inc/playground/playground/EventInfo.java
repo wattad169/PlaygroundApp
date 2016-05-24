@@ -2,6 +2,7 @@ package com.inc.playground.playground;
 
 import android.app.ActionBar;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -36,7 +37,9 @@ import com.inc.playground.playground.utils.CustomMarker;
 import com.inc.playground.playground.utils.DownloadImageBitmapTask;
 import com.inc.playground.playground.utils.GPSTracker;
 import com.inc.playground.playground.utils.NetworkUtilities;
+import com.inc.playground.playground.utils.User;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -45,6 +48,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -78,16 +82,19 @@ public class EventInfo extends FragmentActivity {
 
     EventsObject currentEvent;
     HashMap<String, String> currentLocation;
-    TextView viewName, viewDateEvent, viewStartTime, viewEndTime, viewLocation, viewSize, viewStatus, viewEventDescription;
+    TextView viewName, viewDateEvent, viewStartTime, viewEndTime, viewLocation, viewSize, viewCurrentSize, viewEventDescription;
     ImageView typeImg;
+    JSONArray membersImagesUrls;
     private handleEventTask myEventsTask = null;
     public SharedPreferences prefs ;
     LinearLayout membersList;
+    User currentUser;
+    ToggleButton playButton;
+    Bitmap imageBitmap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        setContentView(activity_event_info);
         setContentView(R.layout.activity_event_info);
         prefs = getSharedPreferences("Login", MODE_PRIVATE);
 
@@ -95,29 +102,22 @@ public class EventInfo extends FragmentActivity {
         setPlayGroundActionBar();
         Intent intent = getIntent();
         currentEvent = (EventsObject) intent.getSerializableExtra("eventObject");
+        currentUser = globalVariables.GetCurrentUser();
         viewName = (TextView) findViewById(R.id.event_name);
         viewDateEvent = (TextView) findViewById(R.id.event_date);
         viewStartTime = (TextView) findViewById(R.id.event_start_time);
         viewEndTime = (TextView) findViewById(R.id.event_end_time);
         viewLocation = (TextView) findViewById(R.id.event_formatted_location);
         viewSize = (TextView) findViewById(R.id.event_max_size);
+        viewCurrentSize = (TextView) findViewById(R.id.current_size);
         viewEventDescription = (TextView) findViewById(R.id.event_description);
         typeImg = (ImageView) findViewById(R.id.type_img);
+        playButton = (ToggleButton) findViewById(R.id.playing_btn);
 //        // TODO type image
 
         //TODO pictures of the members YD
         membersList = (LinearLayout)findViewById(R.id.members_list);
-
-        for(int i=0;i<8;i++)
-        {
-            ImageView member = new ImageView(this);
-
-            member.setImageResource(R.drawable.pg_time);
-            member.setId(i);
-            membersList.addView(member);
-        }
-
-
+        new GetMembersImages(this).execute();
         gps = new GPSTracker(EventInfo.this);
         // check if GPS enabled
         if (gps.canGetLocation()) {
@@ -174,12 +174,25 @@ public class EventInfo extends FragmentActivity {
         // Set event view values
         viewName.setText(currentEvent.GetName());
         viewDateEvent.setText(currentEvent.GetDate());
-       // viewStartTime.setText(currentEvent.GetStartTime());
-        //viewEndTime.setText(currentEvent.GetEndTime());
+        viewStartTime.setText(currentEvent.GetStartTime());
+        viewEndTime.setText(currentEvent.GetEndTime());
         viewLocation.setText(currentEvent.GetFormattedLocation());
-        //viewSize.setText(currentEvent.GetSize());
-        //
+        viewSize.setText(currentEvent.GetSize());
+       // viewCurrentSize.setText();
         viewEventDescription.setText(currentEvent.GetDescription());
+
+
+        if(currentUser != null ) { // the user is login
+            Set<String> userEvents = currentUser.GetUserEvents();
+            if(! userEvents.isEmpty())
+            {
+                if(userEvents.contains(currentEvent.GetId()))
+                {
+                    playButton.setClickable(false);
+                    playButton.setChecked(true);
+                }
+            }
+        }
 
         String uri = "@drawable/pg_" + currentEvent.GetType();
         int imageResource = getResources().getIdentifier(uri,null,getPackageName());
@@ -630,6 +643,79 @@ public class EventInfo extends FragmentActivity {
         Intent next = new Intent(getApplication(),Splash.class);
         startActivity(next);
         finish();
+    }
+
+    public class GetMembersImages extends AsyncTask<String, String, String> {
+
+        Context thisContext;
+
+        GetMembersImages(Context thisCon){
+            thisContext = thisCon;
+
+        }
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected String doInBackground(String... strings) {
+            String responseString;
+            try {
+                JSONObject cred = new JSONObject();
+                String userToken = "StubToken";//TODO Replace with real token
+                try {
+                    cred.put(NetworkUtilities.TOKEN, userToken);
+                    cred.put("event_id",currentEvent.GetId());
+                } catch (JSONException e) {
+                    Log.i(TAG, e.toString());
+                }
+                responseString = NetworkUtilities.doPost(cred, NetworkUtilities.BASE_URL + "/get_members_urls/");
+
+            } catch (Exception ex) {
+                Log.e(TAG, "getMembersUrls.doInBackground: failed to doPost");
+                Log.i(TAG, ex.toString());
+                responseString = "";
+            }
+            // Convert string received from server to JSON array
+            JSONArray eventsFromServerJSON = null;
+            JSONObject responseJSON= null;
+            try {
+                responseJSON = new JSONObject(responseString);
+                eventsFromServerJSON = responseJSON.getJSONArray(Constants.RESPONSE_MESSAGE);
+                membersImagesUrls = eventsFromServerJSON;
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String lenghtOfFile) {
+            // do stuff after posting data
+            for(int i=0;i<membersImagesUrls.length();i++)
+            {
+                try {
+                    imageBitmap = new DownloadImageBitmapTask().execute(membersImagesUrls.getString(i)).get();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                ImageView member = new ImageView(thisContext);
+                member.setImageBitmap(imageBitmap);
+                //member.setImageResource(R.drawable.pg_time);
+                member.getAdjustViewBounds();
+                member.setId(i);
+                LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(150, 150);
+                member.setLayoutParams(layoutParams);
+                membersList.addView(member);
+            }
+
+            Log.d(TAG, "getMembersUrls.successful" + membersImagesUrls.toString());
+        }
     }
 
 }

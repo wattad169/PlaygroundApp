@@ -132,6 +132,7 @@ final public class NetworkUtilities {
                 if (istream != null) {
                     BufferedReader ireader = new BufferedReader(new InputStreamReader(istream));
                     resopnseString = ireader.readLine().trim();
+                    Log.i("DOPOST",resopnseString);
                 }
             }
             if ((resopnseString != null) && (resopnseString.length() > 0)) {
@@ -230,18 +231,17 @@ final public class NetworkUtilities {
             currentEvent.SetName(currentObject.getString(Constants.EVENT_NAME));
             currentEvent.SetFormattedLocation(currentObject.getString(Constants.EVENT_LOCATION));
             currentEvent.SetType(currentObject.getString(Constants.EVENT_TYPE));
-//            currentEvent.SetSize(currentObject.getString(Constants.EVENT_SIZE));
+            currentEvent.SetSize(currentObject.getString(Constants.EVENT_SIZE));
             currentEvent.SetDate(currentObject.getString(Constants.EVENT_DATE));
-//            currentEvent.SetStartTime(currentObject.getString(Constants.START_TIME));
-//            currentEvent.SetEndTime(currentObject.getString(Constants.END_TIME));
-//            currentEvent.SetStatus(currentObject.getString(Constants.EVENT_STATUS));
-//            currentEvent.SetDescription(currentObject.getString(Constants.EVENT_DESCRIPTION));
+            currentEvent.SetStartTime(currentObject.getString(Constants.START_TIME));
+            currentEvent.SetEndTime(currentObject.getString(Constants.END_TIME));
+            currentEvent.SetDescription(currentObject.getString(Constants.EVENT_DESCRIPTION));
+
             //Calculate and set the event distance
 
             //ADD
 
             //??? = currentObject.getString(or key or something else)
-
 
             double currentLon  = currentLocation.get(Constants.LOCATION_LON);
             double  currentLat= currentLocation.get(Constants.LOCATION_LAT);
