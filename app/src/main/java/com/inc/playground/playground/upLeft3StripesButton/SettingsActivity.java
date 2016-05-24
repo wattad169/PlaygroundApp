@@ -9,6 +9,7 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.ColorDrawable;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -148,6 +149,7 @@ public class SettingsActivity extends PreferenceActivity {
         Bitmap imageBitmap =null;
         GlobalVariables globalVariables;
         final ActionBar actionBar = getActionBar();
+        actionBar.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.primaryColor)));
         actionBar.setTitle("Mostafa");
         final String MY_PREFS_NAME = "Login";
         SharedPreferences prefs = getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);

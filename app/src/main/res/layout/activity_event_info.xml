@@ -21,7 +21,7 @@
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="100dp"
-                android:id="@+id/imageView3"
+                android:id="@+id/type_img"
                  />
 
         </TableRow>
@@ -33,7 +33,9 @@
             android:text="Event Name"
             android:id="@+id/event_name"
             android:textAlignment="center"
-            android:layout_gravity="center_horizontal" />
+            android:layout_gravity="center_horizontal"
+            android:textStyle="bold"
+            android:textColor="#7092BE" />
 
         <View
             android:layout_width="match_parent"
@@ -61,6 +63,7 @@
                 android:textOn="Playing"
                 android:paddingTop="50dp"
                 android:background="@drawable/pg_playing"
+                android:textColor="@color/material_blue_500"
                 android:onClick="onPlayClick"
                 android:layout_alignParentBottom="false" />
 

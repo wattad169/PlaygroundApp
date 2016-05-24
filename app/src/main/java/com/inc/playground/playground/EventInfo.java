@@ -36,6 +36,7 @@ import com.inc.playground.playground.utils.CustomMarker;
 import com.inc.playground.playground.utils.DownloadImageBitmapTask;
 import com.inc.playground.playground.utils.GPSTracker;
 import com.inc.playground.playground.utils.NetworkUtilities;
+import com.inc.playground.playground.utils.User;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -45,6 +46,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -78,16 +80,16 @@ public class EventInfo extends FragmentActivity {
 
     EventsObject currentEvent;
     HashMap<String, String> currentLocation;
-    TextView viewName, viewDateEvent, viewStartTime, viewEndTime, viewLocation, viewSize, viewStatus, viewEventDescription;
+    TextView viewName, viewDateEvent, viewStartTime, viewEndTime, viewLocation, viewSize, viewCurrentSize, viewEventDescription;
     ImageView typeImg;
     private handleEventTask myEventsTask = null;
     public SharedPreferences prefs ;
     LinearLayout membersList;
-
+    User currentUser;
+    ToggleButton playButton;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        setContentView(activity_event_info);
         setContentView(R.layout.activity_event_info);
         prefs = getSharedPreferences("Login", MODE_PRIVATE);
 
@@ -95,14 +97,17 @@ public class EventInfo extends FragmentActivity {
         setPlayGroundActionBar();
         Intent intent = getIntent();
         currentEvent = (EventsObject) intent.getSerializableExtra("eventObject");
+        currentUser = globalVariables.GetCurrentUser();
         viewName = (TextView) findViewById(R.id.event_name);
         viewDateEvent = (TextView) findViewById(R.id.event_date);
         viewStartTime = (TextView) findViewById(R.id.event_start_time);
         viewEndTime = (TextView) findViewById(R.id.event_end_time);
         viewLocation = (TextView) findViewById(R.id.event_formatted_location);
         viewSize = (TextView) findViewById(R.id.event_max_size);
+        viewCurrentSize = (TextView) findViewById(R.id.current_size);
         viewEventDescription = (TextView) findViewById(R.id.event_description);
         typeImg = (ImageView) findViewById(R.id.type_img);
+        playButton = (ToggleButton) findViewById(R.id.playing_btn);
 //        // TODO type image
 
         //TODO pictures of the members YD
@@ -174,12 +179,25 @@ public class EventInfo extends FragmentActivity {
         // Set event view values
         viewName.setText(currentEvent.GetName());
         viewDateEvent.setText(currentEvent.GetDate());
-       // viewStartTime.setText(currentEvent.GetStartTime());
-        //viewEndTime.setText(currentEvent.GetEndTime());
+        viewStartTime.setText(currentEvent.GetStartTime());
+        viewEndTime.setText(currentEvent.GetEndTime());
         viewLocation.setText(currentEvent.GetFormattedLocation());
-        //viewSize.setText(currentEvent.GetSize());
-        //
+        viewSize.setText(currentEvent.GetSize());
+       // viewCurrentSize.setText();
         viewEventDescription.setText(currentEvent.GetDescription());
+
+
+        if(currentUser != null ) { // the user is login
+            Set<String> userEvents = currentUser.GetUserEvents();
+            if(! userEvents.isEmpty())
+            {
+                if(userEvents.contains(currentEvent.GetId()))
+                {
+                    playButton.setClickable(false);
+                    playButton.setChecked(true);
+                }
+            }
+        }
 
         String uri = "@drawable/pg_" + currentEvent.GetType();
         int imageResource = getResources().getIdentifier(uri,null,getPackageName());

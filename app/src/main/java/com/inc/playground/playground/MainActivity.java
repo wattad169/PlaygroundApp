@@ -368,4 +368,10 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         }
     }
 
+    @Override
+    public void onBackPressed()
+    {
+        super.onBackPressed();
+        finish();
+    }
 }

@@ -36,6 +36,7 @@ import android.widget.ToggleButton;
 
 import com.inc.playground.playground.utils.Constants;
 import com.inc.playground.playground.utils.NetworkUtilities;
+import com.inc.playground.playground.utils.User;
 import com.melnykov.fab.FloatingActionButton;
 import com.melnykov.fab.ObservableScrollView;
 import com.melnykov.fab.ScrollDirectionListener;
@@ -49,6 +50,7 @@ import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Set;
 
 /**
  * Created by mostafawattad on 30/04/2016.
@@ -63,6 +65,7 @@ public class FragmentList extends Fragment{
     public SharedPreferences prefs ;
     Boolean isOK = true;
     String userLoginId;
+    User currentUser;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -72,7 +75,7 @@ public class FragmentList extends Fragment{
         new getList().execute();
         prefs = getActivity().getSharedPreferences("Login",getActivity().MODE_PRIVATE);
         userLoginId = prefs.getString("userid", null);
-
+        currentUser = globalVariables.GetCurrentUser();
         return rootView;
     }
 
@@ -192,34 +195,34 @@ public class FragmentList extends Fragment{
             Typeface fontText2 = Typeface.createFromAsset(getActivity().getAssets(),"kimberly.ttf");
             Typeface fontText3 = Typeface.createFromAsset(getActivity().getAssets(),"crayon.ttf");
            // update type icon according to event type
-//            String uri = "@drawable/" + data.get(position).GetType();
-//            int imageResource = getResources().getIdentifier(uri,null,getActivity().getPackageName());
-//            ImageView typeImg = (ImageView) view.findViewById(R.id.type_img);
-//            Drawable typeDrawable = getResources().getDrawable(imageResource);
-//            typeImg.setImageDrawable(typeDrawable);
+            String uri = "@drawable/pg_" + data.get(position).GetType()+ "_icon";
+            int imageResource = getResources().getIdentifier(uri,null,getActivity().getPackageName());
+            ImageView typeImg = (ImageView) view.findViewById(R.id.type_img);
+            Drawable typeDrawable = getResources().getDrawable(imageResource);
+            typeImg.setImageDrawable(typeDrawable);
 
             TextView eventName = (TextView) view.findViewById(R.id.event_name);
             eventName.setText(data.get(position).GetName());
-            eventName.setTypeface(fontText);
+//            eventName.setTypeface(fontText);
 
             TextView formattedLocation = (TextView) view.findViewById(R.id.formatted_loctaion_txt);
             formattedLocation.setText(data.get(position).GetFormattedLocation());
-            formattedLocation.setTypeface(fontText3);
+//            formattedLocation.setTypeface(fontText3);
 
             TextView eventDate = (TextView) view.findViewById(R.id.date_txt);
             eventDate.setText(data.get(position).GetDate());
-            eventDate.setTypeface(fontText3);
-//            TODO uncomment once start time is added to the db
-//            TextView starTime = (TextView) view.findViewById(R.id.start_time_txt);
-//            starTime.setText(data.get(position).GetStartTime());
+//            eventDate.setTypeface(fontText3);
+
+            TextView starTime = (TextView) view.findViewById(R.id.start_time_txt);
+            starTime.setText(data.get(position).GetStartTime());
 //            startTime.setTypeface(fontText3);
 
             TextView eventDistance = (TextView) view.findViewById(R.id.distance_txt);
             eventDistance.setText(data.get(position).GetDistance());
-            eventDistance.setTypeface(fontText3);
+//            eventDistance.setTypeface(fontText3);
 
             TextView kmTxt = (TextView) view.findViewById(R.id.kmTxt);
-            kmTxt.setTypeface(fontText3);
+//            kmTxt.setTypeface(fontText3);
 
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -228,13 +231,6 @@ public class FragmentList extends Fragment{
                     Intent intent = new Intent(getActivity().getApplicationContext(), EventInfo.class);
                     intent.putExtra("eventObject", data.get(position));
                     startActivity(intent);
-
-
-                    //your ON CLICK CODE
-//                    ToggleButton playButton = (ToggleButton) v;
-//                    myEventsTask = new handleEventTask(data.get(position));
-//                    myEventsTask.execute((Void) null);
-
                 }
             });
 
@@ -258,6 +254,18 @@ public class FragmentList extends Fragment{
                 }});
 
             //TODO check if userLoginId is on members event
+            if(currentUser != null ) { // the user is login
+                Set<String> userEvents = currentUser.GetUserEvents();
+                if(! userEvents.isEmpty())
+                {
+                    if(userEvents.contains(data.get(position).GetId()))
+                    {
+                        playButton.setClickable(false);
+                        playButton.setChecked(true);
+                    }
+                }
+            }
+
             return view;
 
         }
