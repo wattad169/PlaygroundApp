@@ -192,11 +192,11 @@ public class FragmentList extends Fragment{
             Typeface fontText2 = Typeface.createFromAsset(getActivity().getAssets(),"kimberly.ttf");
             Typeface fontText3 = Typeface.createFromAsset(getActivity().getAssets(),"crayon.ttf");
            // update type icon according to event type
-            String uri = "@drawable/" + data.get(position).GetType();
-            int imageResource = getResources().getIdentifier(uri,null,getActivity().getPackageName());
-            ImageView typeImg = (ImageView) view.findViewById(R.id.type_img);
-            Drawable typeDrawable = getResources().getDrawable(imageResource);
-            typeImg.setImageDrawable(typeDrawable);
+//            String uri = "@drawable/" + data.get(position).GetType();
+//            int imageResource = getResources().getIdentifier(uri,null,getActivity().getPackageName());
+//            ImageView typeImg = (ImageView) view.findViewById(R.id.type_img);
+//            Drawable typeDrawable = getResources().getDrawable(imageResource);
+//            typeImg.setImageDrawable(typeDrawable);
 
             TextView eventName = (TextView) view.findViewById(R.id.event_name);
             eventName.setText(data.get(position).GetName());
