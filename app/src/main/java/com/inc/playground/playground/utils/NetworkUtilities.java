@@ -132,6 +132,7 @@ final public class NetworkUtilities {
                 if (istream != null) {
                     BufferedReader ireader = new BufferedReader(new InputStreamReader(istream));
                     resopnseString = ireader.readLine().trim();
+                    Log.i("DOPOST",resopnseString);
                 }
             }
             if ((resopnseString != null) && (resopnseString.length() > 0)) {
