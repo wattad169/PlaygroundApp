@@ -62,21 +62,24 @@ public class FragmentCalendar extends Fragment implements DecorateCalendarView.O
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM");
         //Toast.makeText(this, format.format(date), Toast.LENGTH_SHORT).show();
 
-        //if date in 2014:
+        /*if date in 2014:
             // Decorate cell of day
             for(int i=0;i<homeEvents.size() ;i++){
                 EventsObject e =  homeEvents.get(i);
                 DateFormat f = new SimpleDateFormat("MMMM d, yyyy", Locale.ENGLISH);
                 String stringDate = e.GetDate();
-
                 //ate dat = f.parse(stringDate);
                 //if(year.equals(2014) )
                 //get the date object
 
             }
+            */
 
 
-            calendarView.setTopTextOnDay(10, "top", Color.parseColor("#FFFF4444"));
+            calendarView.setBottomTextOnDay(28, "Football3", Color.parseColor("#FF99cc00"));
+            calendarView.setMiddleTextOnDay(22, "SoccerTau", Color.parseColor("#FFFF4444"));
+
+
     }
 
 }

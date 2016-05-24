@@ -42,6 +42,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 
+import java.math.BigDecimal;
+import java.math.MathContext;
 import java.util.ArrayList;
 
 import java.util.HashMap;
@@ -148,10 +150,30 @@ final public class NetworkUtilities {
     }
     public static Double calculateDistance(double originLon, double originLat, double distanceLon, double distanceLat){
         final HttpResponse resp;
-        String apiUrl = Constants.apiGetDistanceUrl.replace("X1",Double.toString(originLon));
-        apiUrl = apiUrl.replace("Y1",Double.toString(originLat));
-        apiUrl = apiUrl.replace("X2",Double.toString(distanceLon));
-        apiUrl = apiUrl.replace("Y2",Double.toString(distanceLat));
+
+        BigDecimal originLon_tune_bg =new BigDecimal(originLon, MathContext.DECIMAL64);
+        BigDecimal originLat_tune_bg =new BigDecimal(originLat, MathContext.DECIMAL64);
+        BigDecimal distanceLon_tune_bg =new BigDecimal(distanceLon, MathContext.DECIMAL64);
+        BigDecimal distanceLat_tune_bg =new BigDecimal(distanceLat, MathContext.DECIMAL64);
+
+
+        String str_originLon_tune  =  (originLon_tune_bg+"").substring(0,6);
+        String str_originLat_tune  =  (originLat_tune_bg+"").substring(0,6);
+        String str_distanceLon_tune=  (distanceLon_tune_bg+"").substring(0,6);
+        String str_distanceLat_tune=  (distanceLat_tune_bg+"").substring(0,6);
+
+/*
+        String originLon_tune = String.format("%.3f", ( originLon));
+        String originLat_tune =  String.format("%.3f", (originLat));
+        String distanceLon_tune =String.format("%.3f", (distanceLon));
+        String distanceLat_tune =String.format("%.3f", (distanceLat)) ;
+*/
+
+        String apiUrl = Constants.apiGetDistanceUrl.replace("X1",
+                str_originLon_tune);
+        apiUrl = apiUrl.replace("Y1",str_originLat_tune);
+        apiUrl = apiUrl.replace("X2",str_distanceLon_tune);
+        apiUrl = apiUrl.replace("Y2",str_distanceLat_tune);
         apiUrl = apiUrl.replace("APIKEY",Constants.apiKey);
         HttpGet http_client = new HttpGet(apiUrl);
 
@@ -214,12 +236,18 @@ final public class NetworkUtilities {
 //            currentEvent.SetStatus(currentObject.getString(Constants.EVENT_STATUS));
 //            currentEvent.SetDescription(currentObject.getString(Constants.EVENT_DESCRIPTION));
             //Calculate and set the event distance
-            double currentLon = currentLocation.get(Constants.LOCATION_LON);
-            double currentLat = currentLocation.get(Constants.LOCATION_LAT);
-            String eventLon = currentObject.getJSONObject("location").getString(Constants.LOCATION_LON);
+
+            //ADD
+
+            //??? = currentObject.getString(or key or something else)
+
+
+            double currentLon  = currentLocation.get(Constants.LOCATION_LON);
+            double  currentLat= currentLocation.get(Constants.LOCATION_LAT);
+            String eventLon  = currentObject.getJSONObject("location").getString(Constants.LOCATION_LON);
             String eventLat = currentObject.getJSONObject("location").getString(Constants.LOCATION_LAT);
-            currentEvent.SetPosition(eventLat, eventLon);
-            currentEvent.SetDistance(Double.toString(calculateDistance(currentLon, currentLat, Double.parseDouble(eventLon), Double.parseDouble(eventLat))));
+            currentEvent.SetPosition( eventLat ,eventLon);
+            currentEvent.SetDistance(Double.toString(calculateDistance(currentLon ,currentLat, Double.parseDouble(eventLon), Double.parseDouble(eventLat))));//change order
             // add event to Hashmap
             events.add(currentEvent);
         }
