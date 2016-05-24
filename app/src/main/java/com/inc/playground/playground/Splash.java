@@ -57,7 +57,7 @@ public class Splash extends Activity {
         };
         th.start();
     }
-    public class GetEventsAsyncTask extends AsyncTask<String, String, String> {
+    public static class GetEventsAsyncTask extends AsyncTask<String, String, String> {
 
         @Override
         protected void onPreExecute() {

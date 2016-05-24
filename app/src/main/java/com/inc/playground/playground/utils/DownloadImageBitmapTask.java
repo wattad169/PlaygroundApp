@@ -38,4 +38,7 @@ final public class DownloadImageBitmapTask extends AsyncTask<String, Void, Bitma
         return myValue;
     }
 
+
+
+
 }

@@ -10,10 +10,12 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
+import android.graphics.Movie;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.Html;
 import android.text.Spanned;
 import android.util.Log;
@@ -44,19 +46,28 @@ import com.inc.playground.playground.utils.AlertDialogManager;
 import com.inc.playground.playground.utils.ConnectionDetector;
 import com.melnykov.fab.ScrollDirectionListener;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.List;
+
+import static com.inc.playground.playground.utils.NetworkUtilities.eventListToArrayList;
 
 /**
  * Created by mostafawattad on 30/04/2016.
  */
 
-public class FragmentList extends Fragment{
-    ListView events_list;
-    ArrayList<EventsObject> homeEvents;
+public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefreshListener{
+
+    private SwipeRefreshLayout swipeRefreshLayout;
+    ListView events_list; //ListView listView;
+    ArrayList<EventsObject> homeEvents;; //List<Movie> movieList;
+    //SwipeListAdapter adapter (in code already - HomeEventsAdapter homeEventsAdapter)
+
+
     ProgressDialog progressDialog;
     GlobalVariables globalVariables;
     private handleEventTask myEventsTask = null;
@@ -94,35 +105,38 @@ public class FragmentList extends Fragment{
 
 //            if (progressDialog.isShowing()) {
 //                progressDialog.dismiss();
-                events_list = (ListView) getActivity().findViewById(R.id.list_detail);
-                FloatingActionButton fab = (FloatingActionButton) getActivity().findViewById(R.id.fab);
-                fab.attachToListView(events_list, new ScrollDirectionListener() {
-                    @Override
-                    public void onScrollDown() {
-                        Log.d("ListViewFragment", "onScrollDown()");
-                    }
+            events_list = (ListView) getActivity().findViewById(R.id.list_detail);
+            SwipeRefreshLayout swipeRefreshLayout =  (SwipeRefreshLayout)getActivity().
+            findViewById(R.id.swipe_refresh_layout);
 
-                    @Override
-                    public void onScrollUp() {
-                        Log.d("ListViewFragment", "onScrollUp()");
-                    }
-                }, new AbsListView.OnScrollListener() {
-                    @Override
-                    public void onScrollStateChanged(AbsListView view, int scrollState) {
-                        Log.d("ListViewFragment", "onScrollStateChanged()");
-                    }
+            FloatingActionButton fab = (FloatingActionButton) getActivity().findViewById(R.id.fab);
+            fab.attachToListView(events_list, new ScrollDirectionListener() {
+                @Override
+                public void onScrollDown() {
+                    Log.d("ListViewFragment", "onScrollDown()");
+                }
 
-                    @Override
-                    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-                        Log.d("ListViewFragment", "onScroll()");
-                    }
-                });
-                fab.setOnClickListener(new View.OnClickListener() {
-                        public void onClick(View v) {
-                            Intent iv = new Intent(getActivity().getApplicationContext(), AddEvent.class);
-                            startActivity(iv);
-                        }
-                    });
+                @Override
+                public void onScrollUp() {
+                    Log.d("ListViewFragment", "onScrollUp()");
+                }
+            }, new AbsListView.OnScrollListener() {
+                @Override
+                public void onScrollStateChanged(AbsListView view, int scrollState) {
+                    Log.d("ListViewFragment", "onScrollStateChanged()");
+                }
+
+                @Override
+                public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                    Log.d("ListViewFragment", "onScroll()");
+                }
+            });
+            fab.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    Intent iv = new Intent(getActivity().getApplicationContext(), AddEvent.class);
+                    startActivity(iv);
+                }
+            });
             if (homeEvents !=  null) {
                 if (homeEvents.size() == 0) {// If no events are found
                     Toast.makeText(getActivity().getApplicationContext(), "No Events Found", Toast.LENGTH_LONG).show();
@@ -133,6 +147,22 @@ public class FragmentList extends Fragment{
                     HomeEventsAdapter homeEventsAdapter = new HomeEventsAdapter(getActivity(), homeEvents);
                     homeEventsAdapter.notifyDataSetChanged();
                     events_list.setAdapter(homeEventsAdapter);
+
+                    //swipe listener
+                    swipeRefreshLayout.setOnRefreshListener(FragmentList.this);
+                    /*swipeRefreshLayout.post(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    swipeRefreshLayout.setRefreshing(true);
+
+                                                    //fetchMovies();
+                                                }
+                                            }
+                    );*/
+
+
+
+
                     events_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
                         @Override
@@ -191,12 +221,13 @@ public class FragmentList extends Fragment{
             Typeface fontText = Typeface.createFromAsset(getActivity().getAssets(),"sansation.ttf");
             Typeface fontText2 = Typeface.createFromAsset(getActivity().getAssets(),"kimberly.ttf");
             Typeface fontText3 = Typeface.createFromAsset(getActivity().getAssets(),"crayon.ttf");
-           // update type icon according to event type
-//            String uri = "@drawable/" + data.get(position).GetType();
-//            int imageResource = getResources().getIdentifier(uri,null,getActivity().getPackageName());
-//            ImageView typeImg = (ImageView) view.findViewById(R.id.type_img);
-//            Drawable typeDrawable = getResources().getDrawable(imageResource);
-//            typeImg.setImageDrawable(typeDrawable);
+            // update type icon according to event type
+            /*String uri = "@drawable/" + data.get(position).GetType();
+            int imageResource = getResources().getIdentifier(uri,null,getActivity().getPackageName());
+            ImageView typeImg = (ImageView) view.findViewById(R.id.type_img);
+            Drawable typeDrawable = getResources().getDrawable(imageResource);
+            typeImg.setImageDrawable(typeDrawable);
+            */
 
             TextView eventName = (TextView) view.findViewById(R.id.event_name);
             eventName.setText(data.get(position).GetName());
@@ -341,6 +372,30 @@ public class FragmentList extends Fragment{
 
 
     }
+
+
+
+
+    @Override
+    public void onRefresh() {
+        Log.i("Enter on refresh", "");
+
+        SwipeRefreshLayout swipeRefreshLayout =  (SwipeRefreshLayout)getActivity().
+                findViewById(R.id.swipe_refresh_layout);
+
+        swipeRefreshLayout.setRefreshing(true);
+
+        Splash.GetEventsAsyncTask getEventsAsyncTask = new Splash.GetEventsAsyncTask();
+        getEventsAsyncTask.execute();
+        HomeEventsAdapter homeEventsAdapter = new HomeEventsAdapter(  getActivity(),globalVariables.GetHomeEvents() );
+        homeEventsAdapter.notifyDataSetChanged();
+        events_list.setAdapter(homeEventsAdapter);
+
+
+        swipeRefreshLayout.setRefreshing(false);
+
+    }
+
 
 
 }
