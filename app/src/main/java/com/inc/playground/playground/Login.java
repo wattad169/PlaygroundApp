@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.IntentSender.SendIntentException;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
@@ -93,6 +94,7 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_login);
+		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LOCKED);
 
 		SharedPreferences prefs = getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
 		if (prefs.getString("userid", null) != null) {

@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
@@ -96,6 +97,8 @@ public class EventInfo extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_info);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LOCKED);
+
         prefs = getSharedPreferences("Login", MODE_PRIVATE);
 
        
