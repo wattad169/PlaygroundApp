@@ -72,16 +72,20 @@ public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefre
     Boolean isOK = true;
     String userLoginId;
     User currentUser;
+    Set<String> userEvents;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_list, container, false);
         this.globalVariables = ((GlobalVariables) getActivity().getApplication());
         homeEvents = this.globalVariables.GetHomeEvents();
-        new getList().execute();
         prefs = getActivity().getSharedPreferences("Login",getActivity().MODE_PRIVATE);
         userLoginId = prefs.getString("userid", null);
         currentUser = globalVariables.GetCurrentUser();
+        if(currentUser != null ) { // the user is login
+            userEvents = currentUser.GetUserEvents();
+        }
+        new getList().execute();
         return rootView;
     }
 
@@ -256,13 +260,6 @@ public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefre
                     Intent intent = new Intent(getActivity().getApplicationContext(), EventInfo.class);
                     intent.putExtra("eventObject", data.get(position));
                     startActivity(intent);
-
-
-                    //your ON CLICK CODE
-//                    ToggleButton playButton = (ToggleButton) v;
-//                    myEventsTask = new handleEventTask(data.get(position));
-//                    myEventsTask.execute((Void) null);
-
                 }
             });
 
@@ -271,27 +268,25 @@ public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefre
                 @Override
                 public void onClick(View v) {
 
-                    ToggleButton playButton = (ToggleButton) v;
+                    ToggleButton curplayButton = (ToggleButton) v;
                     myEventsTask = new handleEventTask(data.get(position));
                     myEventsTask.execute((Void) null);
                     if(isOK) {
-                        playButton.setSelected(true);
-                        playButton.setClickable(false);
+                        curplayButton.setChecked(true);
+                        curplayButton.setClickable(false);
                     }
                     else
                     {
-                        playButton.setSelected(false);
+                        curplayButton.setChecked(false);
                     }
 
                 }});
 
             //TODO check if userLoginId is on members event
-            if(currentUser != null ) { // the user is login
-                Set<String> userEvents = currentUser.GetUserEvents();
-                if(! userEvents.isEmpty())
-                {
-                    if(userEvents.contains(data.get(position).GetId()))
-                    {
+
+            if(currentUser != null ) {
+                if (!userEvents.isEmpty()) {
+                    if (userEvents.contains(data.get(position).GetId())) {
                         playButton.setClickable(false);
                         playButton.setChecked(true);
                     }
@@ -351,6 +346,8 @@ public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefre
                     if (responseStatus.equals(Constants.RESPONSE_OK.toString())) {
                         myEventsTask = null;
                         isOK = true;
+                        userEvents.add(currentEvent.GetId());
+                        currentUser.SetUserEvents(userEvents);
                         //TODO YD Switch toggle button text to "playing"
                     } else {
                         myEventsTask = null;

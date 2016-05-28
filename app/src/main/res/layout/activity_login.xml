@@ -63,9 +63,9 @@
                     android:layout_marginTop="5dp"
                     android:background="@drawable/google_btn"
                     android:text="Login With Google+"
-                    android:textColor="#fff" />
+                    android:textColor="#fff" /><![CDATA[
 
-                <TextView
+                TextView
                     android:id="@+id/txt_or"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -76,46 +76,10 @@
                     android:textColor="#000"
                     android:textSize="20dp" />
 
-                <EditText
-                    android:id="@+id/edit_user"
-                    android:layout_width="fill_parent"
-                    android:layout_height="50dp"
-                    android:layout_below="@+id/txt_or"
-                    android:layout_marginLeft="5dp"
-                    android:layout_marginRight="5dp"
-                    android:layout_marginTop="7dp"
-                    android:background="@drawable/username_btn"
-                    android:hint="@string/hint_usermailid"
-                    android:paddingLeft="50dp"
-                    android:textColor="#000" />
 
-                <EditText
-                    android:id="@+id/edit_pwd"
-                    android:layout_width="fill_parent"
-                    android:layout_height="50dp"
-                    android:layout_below="@+id/edit_user"
-                    android:layout_marginLeft="5dp"
-                    android:layout_marginRight="5dp"
-                    android:layout_marginTop="7dp"
-                    android:background="@drawable/username_btn"
-                    android:hint="@string/hint_Password"
-                    android:paddingLeft="50dp"
-                    android:textColor="#000" />
 
-                <Button
-                    android:id="@+id/btn_login"
-                    android:layout_width="fill_parent"
-                    android:layout_height="50dp"
-                    android:layout_below="@+id/edit_pwd"
-                    android:layout_marginLeft="5dp"
-                    android:layout_marginRight="5dp"
-                    android:layout_marginTop="10dp"
-                    android:background="@drawable/login_btn"
-                    android:text="@string/btn_login1"
-                    android:textColor="#fff"
-                    android:textSize="20dp" />
 
-                <TextView
+                TextView
                     android:id="@+id/txt_or1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -126,7 +90,7 @@
                     android:textColor="#000"
                     android:textSize="20dp" />
 
-                <Button
+                Button
                     android:id="@+id/btn_register"
                     android:layout_width="fill_parent"
                     android:layout_height="50dp"
@@ -138,6 +102,7 @@
                     android:text="@string/btn_register1"
                     android:textColor="#fff"
                     android:textSize="20dp" />
+            ]]>
             </RelativeLayout>
         </ScrollView>
     </RelativeLayout>

@@ -32,6 +32,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -70,8 +71,11 @@ public class AddEvent extends Activity {
 				responseJSON = new JSONObject(toast);
 				eventsFromServerJSON = responseJSON.getJSONArray(Constants.RESPONSE_MESSAGE);
 				Intent iv = new Intent(AddEvent.this,EventInfo.class);
-				iv.putExtra("eventObject",eventListToArrayList(eventsFromServerJSON, globalVariables.GetCurrentLocation()).get(0));
-				iv.putExtra("parentActivity",Constants.createParentMode);
+				EventsObject newEvent = eventListToArrayList(eventsFromServerJSON, globalVariables.GetCurrentLocation()).get(0);
+				ArrayList<EventsObject> newHomeEvents = globalVariables.GetHomeEvents();
+				newHomeEvents.add(newEvent);
+				globalVariables.SetHomeEvents(newHomeEvents);
+				iv.putExtra("eventObject",newEvent);
 				startActivity(iv);
 			} catch (JSONException e) {
 				e.printStackTrace();

@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
@@ -96,6 +97,8 @@ public class EventInfo extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_info);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LOCKED);
+
         prefs = getSharedPreferences("Login", MODE_PRIVATE);
 
        
@@ -113,9 +116,9 @@ public class EventInfo extends FragmentActivity {
         viewEventDescription = (TextView) findViewById(R.id.event_description);
         typeImg = (ImageView) findViewById(R.id.type_img);
         playButton = (ToggleButton) findViewById(R.id.playing_btn);
-//        // TODO type image
 
-        //TODO pictures of the members YD
+
+
         membersList = (LinearLayout)findViewById(R.id.members_list);
         new GetMembersImages(this).execute();
         gps = new GPSTracker(EventInfo.this);
@@ -178,7 +181,6 @@ public class EventInfo extends FragmentActivity {
         viewEndTime.setText(currentEvent.GetEndTime());
         viewLocation.setText(currentEvent.GetFormattedLocation());
         viewSize.setText(currentEvent.GetSize());
-       // viewCurrentSize.setText();
         viewEventDescription.setText(currentEvent.GetDescription());
 
 
@@ -517,6 +519,8 @@ public class EventInfo extends FragmentActivity {
         member.setImageBitmap(globalVariables.GetUserPictureBitMap());
         membersList.addView(member);
 
+        viewCurrentSize.setText(Integer.toString(membersImagesUrls.length() + 1));
+
         x.setClickable(false);
     }
     public class handleEventTask extends AsyncTask<Void, Void, String> {
@@ -640,7 +644,7 @@ public class EventInfo extends FragmentActivity {
     public void onBackPressed()
     {
         super.onBackPressed();
-        Intent next = new Intent(getApplication(),Splash.class);
+        Intent next = new Intent(getApplication(),MainActivity.class);
         startActivity(next);
         finish();
     }
@@ -693,6 +697,7 @@ public class EventInfo extends FragmentActivity {
         @Override
         protected void onPostExecute(String lenghtOfFile) {
             // do stuff after posting data
+            viewCurrentSize.setText(Integer.toString(membersImagesUrls.length()));
             for(int i=0;i<membersImagesUrls.length();i++)
             {
                 try {
