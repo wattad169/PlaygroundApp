@@ -24,7 +24,6 @@ public class User {
 	}
 
 	public void SetUserEvents(Set <String> userEvents) {
-		this.userEvents = new HashSet<>();
 		this.userEvents = userEvents; }
 
 	public Set <String> GetUserEvents() { return this.userEvents; }

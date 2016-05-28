@@ -35,6 +35,7 @@ import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListe
 import com.google.android.gms.plus.Plus;
 import com.google.android.gms.plus.model.people.Person;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -45,6 +46,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 import com.inc.playground.playground.utils.Constants;
 import com.inc.playground.playground.utils.Logingetset;
@@ -52,15 +55,15 @@ import com.inc.playground.playground.utils.NetworkUtilities;
 
 import com.inc.playground.playground.Register;
 import com.inc.playground.playground.Review;
+import com.inc.playground.playground.utils.User;
 
 public class Login extends Activity implements ConnectionCallbacks, OnConnectionFailedListener {
-	EditText edt_user, edt_pwd;
 	private static final String TAG = "MainActivity";
 	String Error, user2;
 	String key, id, method;
-	Button btn_login, btn_loginfb, btn_logingoogle;
+	Button btn_loginfb, btn_logingoogle;
 	ArrayList<Logingetset> login;
-	String username, password, imagefb,facebook_id,image_url;
+	String imagefb,facebook_id;
 	public static final String MY_PREFS_NAME = "Login";
 	String value, personname, personemail,user_token;
 	private static final int RC_SIGN_IN = 0;
@@ -68,34 +71,28 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
 	private boolean mIntentInProgress;
 	String personPhotoUrl;
 	String ppic,fullname,user_name,fullimage,email_id;
-	Button btn_register;
 
 	private boolean mSignInClicked;
 
 	private ConnectionResult mConnectionResult;
-	private static final String[] PERMISSIONS = new String[] { "publish_actions" };
-	private static final String TOKEN = "access_token";
-	private static final String EXPIRES = "expires_in";
-	private static final String KEY = "facebook-credentials";
 	String name, email,userloginid;
 	// private static String APP_ID = "823483137763059";
 	private static String APP_ID = "1609067259420394";
 	// Instance of Facebook Class
 	private Facebook facebook;
-	private static final String FACEBOOK_PERMISSION = "publish_stream";
 	private AsyncFacebookRunner mAsyncRunner;
-	
-	String FILENAME = "AndroidSSO_data";
+
 	private SharedPreferences mPrefs;
 	View v;
-	Typeface tf1;
+	public static GlobalVariables globalVariables;
+	public User currentUser;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_login);
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LOCKED);
-
+		globalVariables = ((GlobalVariables) this.getApplication());
 		SharedPreferences prefs = getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
 		if (prefs.getString("userid", null) != null) {
 			userloginid = prefs.getString("userid", null);
@@ -122,56 +119,6 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
 		id = iv.getStringExtra("id");
 
 		login = new ArrayList<Logingetset>();
-		edt_user = (EditText) findViewById(R.id.edit_user);
-		edt_pwd = (EditText) findViewById(R.id.edit_pwd);
-
-		btn_register = (Button) findViewById(R.id.btn_register);
-		btn_register.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View arg0) {
-				// TODO Auto-generated method stub
-			/*	if (userloginid!=null) {
-					Intent iv = new Intent(Login.this, freaktemplate.storage.Profile.class);
-					startActivity(iv);
-				}else {*/
-				String prodel = "new";
-				SharedPreferences.Editor editor = getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE).edit();
-				editor.putString("delete", "" + prodel);
-
-				editor.commit();
-					Intent iv = new Intent(Login.this, Register.class);
-					startActivity(iv);
-				//}
-				
-			}
-		});
-
-		btn_login = (Button) findViewById(R.id.btn_login);
-		btn_login.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View arg0) {
-				// TODO Auto-generated method stub
-				String prodel = "new";
-				SharedPreferences.Editor editor = getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE).edit();
-				editor.putString("delete", "" + prodel);
-				editor.commit();
-				method = "login";
-				username = edt_user.getText().toString();
-				password = edt_pwd.getText().toString();
-
-				if (username != null) {
-					if (password != null) {
-						new getlogin().execute();
-					} else {
-						edt_pwd.setError("enter password");
-					}
-				} else {
-					edt_user.setError("enter username");
-				}
-			}
-		});
 
 		btn_loginfb = (Button) findViewById(R.id.btn_fb);
 
@@ -181,7 +128,7 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
 			public void onClick(View arg0) {
 				// TODO Auto-generated method stub
 				String prodel = "new";
-				
+
 				method = "facebook";
 				SharedPreferences.Editor editor = getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE).edit();
 				editor.putString("myfbpic", "" + method);
@@ -325,7 +272,6 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
 
                     }
 
-//
 					temp.setUser_id(user_token);
 					temp.setName(fullname);
 					temp.setUsername(email_id);
@@ -377,11 +323,6 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
                     Intent iv = new Intent(Login.this,Splash.class);
                     startActivity(iv);
 					Toast.makeText(Login.this, "Login Successful", Toast.LENGTH_LONG).show();
-//					} else if (value.equals("review")) {
-//						Intent iv = new Intent(Login.this, Review.class);
-//						iv.putExtra("id", "" + id);
-//						startActivity(iv);
-//					}
 
 				} else if (key.equals("status")) {
 					Toast.makeText(Login.this, "Username or Password is Incorrect", Toast.LENGTH_LONG)
@@ -399,7 +340,9 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
 					editor.commit();
                     Log.i("UserLogin",user_token);
 
-                    Intent iv = new Intent(Login.this,MainActivity.class);
+					// create userObject
+					createUserObject();
+					Intent iv = new Intent(Login.this,MainActivity.class);
                     startActivity(iv);
                     Toast.makeText(Login.this, "Login Successful with Facebook", Toast.LENGTH_LONG).show();
 
@@ -418,9 +361,10 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
 					editor.putString("picture", "" + fullimage);
 					editor.commit();
                     Log.i("UserLogin", user_token);
-
+					// create userObject
+					createUserObject();
                     Intent iv = new Intent(Login.this,MainActivity.class);
-                    startActivity(iv);
+					startActivity(iv);
                     Toast.makeText(Login.this, "Login Successful with Google+", Toast.LENGTH_LONG).show();
 
 				} else if (key.equals("status")) {
@@ -769,4 +713,61 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
 		}
 	}
 
+	private void createUserObject()
+	{
+		currentUser = new User();
+		currentUser.SetUserId(user_token);
+		new GetUserEventsAsyncTask().execute();
+	}
+	public class GetUserEventsAsyncTask extends AsyncTask<String, String, String> {
+
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+		}
+
+		@Override
+		protected String doInBackground(String... strings) {
+			String responseString;
+			try {
+				JSONObject cred = new JSONObject();
+				try {
+					cred.put(NetworkUtilities.TOKEN,"StubToken");
+					cred.put(NetworkUtilities.USER_ID,currentUser.GetUserId());
+				} catch (JSONException e) {
+					Log.i(TAG, e.toString());
+				}
+				responseString = NetworkUtilities.doPost(cred, NetworkUtilities.BASE_URL + "/get_events_by_user/");
+
+			} catch (Exception ex) {
+				Log.e(TAG, "getUserEvents.doInBackground: failed to doPost");
+				Log.i(TAG, ex.toString());
+				responseString = "";
+			}
+			// Convert string received from server to JSON array
+			JSONArray eventsFromServerJSON = null;
+			JSONObject responseJSON= null;
+			try {
+				responseJSON = new JSONObject(responseString);
+				eventsFromServerJSON = responseJSON.getJSONArray(Constants.RESPONSE_MESSAGE);
+				Set<String> userEvents = new HashSet<>();
+				for(int i=0 ; i<eventsFromServerJSON.length();i++){
+					JSONObject currentObject = (JSONObject) eventsFromServerJSON.get(i);
+					String eventId = currentObject.getString(Constants.EVENT_ID);
+					userEvents.add(eventId);
+				}
+				currentUser.SetUserEvents(userEvents);
+				globalVariables.SetCurrentUser(currentUser);
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+			return null;
+		}
+
+		@Override
+		protected void onPostExecute(String lenghtOfFile) {
+			// do stuff after posting data
+			Log.d("successful", "successful");
+		}
+	}
 }
