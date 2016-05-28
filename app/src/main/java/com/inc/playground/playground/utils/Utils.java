@@ -7,9 +7,12 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.ImageView;
 
+import com.google.android.gms.gcm.GcmPubSub;
 import com.inc.playground.playground.GlobalVariables;
+import com.inc.playground.playground.RegistrationIntentService;
 import com.inc.playground.playground.Splash;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -50,6 +53,8 @@ public class Utils {
             gpsTracker.showSettingsAlert();
         }
         HashMap<String, Double> currentLocation = new HashMap<>();
+        Log.i("locationLattest",String.valueOf(latitude));
+
         currentLocation.put(Constants.LOCATION_LAT, latitude);
         currentLocation.put(Constants.LOCATION_LON, longitude);
         return currentLocation;
@@ -77,5 +82,7 @@ public class Utils {
 
         return B;
     }
+
+
 
 }

@@ -2,12 +2,19 @@ package com.inc.playground.playground;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.inc.playground.playground.utils.Constants;
 import com.inc.playground.playground.utils.GPSTracker;
@@ -23,6 +30,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
+import android.content.BroadcastReceiver;
+
 import static com.inc.playground.playground.utils.NetworkUtilities.eventListToArrayList;
 
 
@@ -31,6 +40,10 @@ public class Splash extends Activity {
     public static final String MY_PREFS_NAME = "Login";
     public static GlobalVariables globalVariables;
     public User currentUser;
+    private BroadcastReceiver mRegistrationBroadcastReceiver;
+    private ProgressBar mRegistrationProgressBar;
+    private TextView mInformationTextView;
+    private boolean isReceiverRegistered;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,6 +63,28 @@ public class Splash extends Activity {
         // Get events from server
         globalVariables = ((GlobalVariables) this.getApplication());
         setContentView(R.layout.activity_splash);
+//        mRegistrationProgressBar = (ProgressBar) findViewById(R.id.registrationProgressBar);
+//        mRegistrationBroadcastReceiver = new BroadcastReceiver() {
+//            @Override
+//            public void onReceive(Context context, Intent intent) {
+//                mRegistrationProgressBar.setVisibility(ProgressBar.GONE);
+//                SharedPreferences sharedPreferences =
+//                        PreferenceManager.getDefaultSharedPreferences(context);
+//                boolean sentToken = sharedPreferences
+//                        .getBoolean(QuickstartPreferences.SENT_TOKEN_TO_SERVER, false);
+//                if (sentToken) {
+//                    mInformationTextView.setText(getString(R.string.gcm_send_message));
+//                } else {
+//                    mInformationTextView.setText(getString(R.string.token_error_message));
+//                }
+//            }
+//        };
+//        mInformationTextView = (TextView) findViewById(R.id.informationTextView);
+
+        // Registering BroadcastReceiver
+//        registerReceiver();
+
+
         globalVariables.InitGPS(Splash.this);
         globalVariables.SetCurrentLocation(Utils.getMyLocation(globalVariables.GetGPS()));
         // Create server call
@@ -73,6 +108,13 @@ public class Splash extends Activity {
             }
         };
         th.start();
+    }
+    private void registerReceiver(){
+        if(!isReceiverRegistered) {
+            LocalBroadcastManager.getInstance(this).registerReceiver(mRegistrationBroadcastReceiver,
+                    new IntentFilter(QuickstartPreferences.REGISTRATION_COMPLETE));
+            isReceiverRegistered = true;
+        }
     }
     public static class GetEventsAsyncTask extends AsyncTask<String, String, String> {
 
@@ -169,6 +211,18 @@ public class Splash extends Activity {
             // do stuff after posting data
             Log.d("successful", "successful");
         }
+    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        registerReceiver();
+    }
+
+    @Override
+    protected void onPause() {
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mRegistrationBroadcastReceiver);
+        isReceiverRegistered = false;
+        super.onPause();
     }
 }
 

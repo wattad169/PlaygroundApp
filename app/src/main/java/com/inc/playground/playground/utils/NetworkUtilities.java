@@ -221,6 +221,7 @@ final public class NetworkUtilities {
      */
     public static ArrayList<EventsObject> eventListToArrayList(JSONArray jsonInput,HashMap<String, Double> currentLocation) throws JSONException {
         ArrayList<EventsObject> events = new ArrayList<>();
+        Log.i("testi",String.valueOf(jsonInput.length()));
         for(int i=0 ; i<jsonInput.length();i++){
             //Fill the EventObject with data from the JSON
             JSONObject currentObject = (JSONObject) jsonInput.get(i);

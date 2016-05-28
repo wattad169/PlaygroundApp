@@ -114,6 +114,8 @@ public class Constants {
 
     public static final String FULLNAME = "fullname";
 
+    public static final String NOTIFICATIONS_TOKEN = "notifications_token";
+
 
 
 }

@@ -5,9 +5,5 @@
     android:background="@drawable/splash"
     tools:context="com.inc.playground.playground.Splash" >
 
-   <!--  <WebView
-        android:id="@+id/webview"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent" /> -->
 
 </RelativeLayout>
