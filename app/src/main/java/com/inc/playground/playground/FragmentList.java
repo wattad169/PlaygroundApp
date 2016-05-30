@@ -68,6 +68,7 @@ public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefre
     ProgressDialog progressDialog;
     GlobalVariables globalVariables;
     private handleEventTask myEventsTask = null;
+    private LeaveHandleEventTask LeaveEventTask = null;
     public SharedPreferences prefs ;
     Boolean isOK = true;
     String userLoginId;
@@ -137,6 +138,7 @@ public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefre
                 public void onClick(View v) {
                     Intent iv = new Intent(getActivity().getApplicationContext(), AddEvent.class);
                     startActivity(iv);
+                    getActivity().finish();
                 }
             });
             if (homeEvents !=  null) {
@@ -173,6 +175,8 @@ public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefre
                             Intent intent = new Intent(getActivity().getApplicationContext(), EventInfo.class);
                             intent.putExtra("eventObject", homeEvents.get(position));
                             startActivity(intent);
+                            getActivity().finish();
+
                         }
                     });
                 }
@@ -224,11 +228,11 @@ public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefre
             Typeface fontText2 = Typeface.createFromAsset(getActivity().getAssets(),"kimberly.ttf");
             Typeface fontText3 = Typeface.createFromAsset(getActivity().getAssets(),"crayon.ttf");
            // update type icon according to event type
-//            String uri = "@drawable/pg_" + data.get(position).GetType()+ "_icon";
-//            int imageResource = getResources().getIdentifier(uri,null,getActivity().getPackageName());
-//            ImageView typeImg = (ImageView) view.findViewById(R.id.type_img);
-//            Drawable typeDrawable = getResources().getDrawable(imageResource);
-//            typeImg.setImageDrawable(typeDrawable);
+            String uri = "@drawable/pg_" + data.get(position).GetType()+ "_icon";
+            int imageResource = getResources().getIdentifier(uri,null,getActivity().getPackageName());
+            ImageView typeImg = (ImageView) view.findViewById(R.id.type_img);
+            Drawable typeDrawable = getResources().getDrawable(imageResource);
+            typeImg.setImageDrawable(typeDrawable);
 
             TextView eventName = (TextView) view.findViewById(R.id.event_name);
             eventName.setText(data.get(position).GetName());
@@ -260,6 +264,7 @@ public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefre
                     Intent intent = new Intent(getActivity().getApplicationContext(), EventInfo.class);
                     intent.putExtra("eventObject", data.get(position));
                     startActivity(intent);
+                    getActivity().finish();
                 }
             });
 
@@ -267,19 +272,18 @@ public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefre
             playButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
                     ToggleButton curplayButton = (ToggleButton) v;
-                    myEventsTask = new handleEventTask(data.get(position));
-                    myEventsTask.execute((Void) null);
-                    if(isOK) {
-                        curplayButton.setChecked(true);
-                        curplayButton.setClickable(false);
-                    }
-                    else
-                    {
-                        curplayButton.setChecked(false);
-                    }
-
+//                    if(curplayButton.isChecked())//leave event
+//                    {
+//                        LeaveEventTask = new LeaveHandleEventTask(data.get(position));
+//                        LeaveEventTask.execute((Void) null);
+//                    }
+//                    else
+//                    {
+                        myEventsTask = new handleEventTask(data.get(position));
+                        myEventsTask.execute((Void) null);
+                    curplayButton.setClickable(false);
+//                    }
                 }});
 
             //TODO check if userLoginId is on members event
@@ -361,6 +365,7 @@ public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefre
                 // If user is not logged -> in send to login activity
                 Intent intent = new Intent(getActivity().getApplicationContext(), Login.class);
                 startActivity(intent);
+                getActivity().finish();
             }
 
             return null;
@@ -378,7 +383,83 @@ public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefre
 
 
     }
+    public class LeaveHandleEventTask extends AsyncTask<Void, Void, String> {
 
+        //        private Context context;
+        private EventsObject currentEvent;
+        public LeaveHandleEventTask(EventsObject currentEvent) {
+            this.currentEvent = currentEvent;
+
+        }
+
+        private String responseString;
+        protected void onPreExecute() {
+        }
+
+        @Override
+        protected String doInBackground(Void... params) {
+            // TODO: attempt authentication against a network service.
+            JSONObject cred = new JSONObject();
+            if (prefs.getString("userid", null) != null) {
+                //If the user is logged in
+                String userId = prefs.getString("userid", null);
+
+                try {//Send request to server for joining event
+                    cred.put(NetworkUtilities.TOKEN, userId);
+                    cred.put("event_id", currentEvent.GetId());
+                    responseString = NetworkUtilities.doPost(cred, NetworkUtilities.BASE_URL + "/leave_event/");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+                if(responseString == null) {
+
+                    Log.i("TESTID",currentEvent.GetId());
+                }
+
+                //Check response
+                JSONObject myObject = null;
+                String responseStatus = null;
+                try {
+                    myObject = new JSONObject(responseString);
+                    responseStatus = myObject.getString(Constants.RESPONSE_STATUS);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                if (myObject != null && responseStatus != null) {
+                    if (responseStatus.equals(Constants.RESPONSE_OK.toString())) {
+                        LeaveEventTask = null;
+                        //TODO YD Switch toggle button text to "playing"
+                    } else {
+                        LeaveEventTask = null;
+                        //TODO YD override toggle method -> not to switch text to "playing"
+                    }
+                }
+
+            }
+            else
+            {
+                // If user is not logged -> in send to login activity
+                Intent intent = new Intent(getActivity().getApplicationContext(), Login.class);
+                startActivity(intent);
+            }
+
+            return null;
+
+        }
+
+        @Override
+        protected void onPostExecute(final String responseString) {
+
+
+
+        }
+
+
+
+
+    }
 
 
 

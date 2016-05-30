@@ -160,6 +160,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
                 // new changes
                 Intent iv = new Intent(MainActivity.this, Login.class);
                 startActivity(iv);
+                finish();
             }
         });
         // add another Linearlayout like I did for ll_login tag in the xml for other buttons in the menu bar
@@ -175,6 +176,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
                         com.inc.playground.playground.upLeft3StripesButton.
                                 SettingsActivity.class );
                 startActivity(iv);
+                finish();
             }
         });
         /*Onclick for the Setting button (idan) */
@@ -187,6 +189,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
                 Intent iv = new Intent(MainActivity.this,
                         FilterActivity.class );
                 startActivity(iv);
+                finish();
             }
         });
 
@@ -377,7 +380,6 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
     @Override
     public void onBackPressed()
     {
-        super.onBackPressed();
         finish();
     }
 }

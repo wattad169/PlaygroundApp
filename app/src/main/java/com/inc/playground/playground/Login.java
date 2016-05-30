@@ -344,6 +344,7 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
 					createUserObject();
 					Intent iv = new Intent(Login.this,MainActivity.class);
                     startActivity(iv);
+					finish();
                     Toast.makeText(Login.this, "Login Successful with Facebook", Toast.LENGTH_LONG).show();
 
 
@@ -365,6 +366,7 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
 					createUserObject();
                     Intent iv = new Intent(Login.this,MainActivity.class);
 					startActivity(iv);
+					finish();
                     Toast.makeText(Login.this, "Login Successful with Google+", Toast.LENGTH_LONG).show();
 
 				} else if (key.equals("status")) {

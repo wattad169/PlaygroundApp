@@ -47,6 +47,7 @@ import org.json.JSONObject;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -86,13 +87,14 @@ public class EventInfo extends FragmentActivity {
     TextView viewName, viewDateEvent, viewStartTime, viewEndTime, viewLocation, viewSize, viewCurrentSize, viewEventDescription;
     ImageView typeImg;
     JSONArray membersImagesUrls;
-    private handleEventTask myEventsTask = null;
+    private handleEventTask JoinEventsTask = null;
+    public LeaveHandleEventTask LeaveEventTask = null;
     public SharedPreferences prefs ;
     LinearLayout membersList;
     User currentUser;
     ToggleButton playButton;
     Bitmap imageBitmap;
-
+    Set<String> userEvents;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -185,13 +187,13 @@ public class EventInfo extends FragmentActivity {
 
 
         if(currentUser != null ) { // the user is login
-            Set<String> userEvents = currentUser.GetUserEvents();
+            userEvents = currentUser.GetUserEvents();
             if(! userEvents.isEmpty())
             {
                 if(userEvents.contains(currentEvent.GetId()))
                 {
-                    playButton.setClickable(false);
                     playButton.setChecked(true);
+                    playButton.setClickable(false);
                 }
             }
         }
@@ -509,20 +511,108 @@ public class EventInfo extends FragmentActivity {
     
     public void onPlayClick(View v){
         ToggleButton x = (ToggleButton)v;
+//        if(!x.isChecked()) {
+//            LeaveEventTask = new LeaveHandleEventTask(currentEvent);
+//            LeaveEventTask.execute((Void)null);
+//        }
+//        else {//join
+            JoinEventsTask = new handleEventTask(currentEvent);
+            JoinEventsTask.execute((Void) null);
 
-        myEventsTask = new handleEventTask(currentEvent);
-        myEventsTask.execute((Void) null);
+            ImageView member = new ImageView(this);
+            member.setImageResource(R.drawable.pg_time);
 
-        ImageView member = new ImageView(this);
-        member.setImageResource(R.drawable.pg_time);
+            member.setImageBitmap(globalVariables.GetUserPictureBitMap());
+            membersList.addView(member);
+            x.setClickable(false);
+            viewCurrentSize.setText(Integer.toString(membersImagesUrls.length() + 1));
 
-        member.setImageBitmap(globalVariables.GetUserPictureBitMap());
-        membersList.addView(member);
-
-        viewCurrentSize.setText(Integer.toString(membersImagesUrls.length() + 1));
-
-        x.setClickable(false);
+            if (userEvents == null)
+                userEvents = new HashSet<>();
+            userEvents.add(currentEvent.GetId());
+            currentUser.SetUserEvents(userEvents);
+            globalVariables.SetCurrentUser(currentUser);
+//        }
     }
+    public class LeaveHandleEventTask extends AsyncTask<Void, Void, String> {
+
+        //        private Context context;
+        private EventsObject currentEvent;
+        public LeaveHandleEventTask(EventsObject currentEvent) {
+            this.currentEvent = currentEvent;
+
+        }
+
+        private String responseString;
+        protected void onPreExecute() {
+        }
+
+        @Override
+        protected String doInBackground(Void... params) {
+            // TODO: attempt authentication against a network service.
+            JSONObject cred = new JSONObject();
+            if (prefs.getString("userid", null) != null) {
+                //If the user is logged in
+                String userId = prefs.getString("userid", null);
+
+                try {//Send request to server for joining event
+                    cred.put(NetworkUtilities.TOKEN, userId);
+                    cred.put("event_id", currentEvent.GetId());
+                    responseString = NetworkUtilities.doPost(cred, NetworkUtilities.BASE_URL + "/leave_event/");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+                if(responseString == null) {
+
+                    Log.i("TESTID",currentEvent.GetId());
+                }
+
+                //Check response
+                JSONObject myObject = null;
+                String responseStatus = null;
+                try {
+                    myObject = new JSONObject(responseString);
+                    responseStatus = myObject.getString(Constants.RESPONSE_STATUS);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                if (myObject != null && responseStatus != null) {
+                    if (responseStatus.equals(Constants.RESPONSE_OK.toString())) {
+                        LeaveEventTask = null;
+                        //TODO YD Switch toggle button text to "playing"
+                    } else {
+                        LeaveEventTask = null;
+                        //TODO YD override toggle method -> not to switch text to "playing"
+                    }
+                }
+
+            }
+            else
+            {
+                // If user is not logged -> in send to login activity
+                Intent intent = new Intent(getApplicationContext(), Login.class);
+                startActivity(intent);
+            }
+
+            return null;
+
+        }
+
+        @Override
+        protected void onPostExecute(final String responseString) {
+
+
+
+        }
+
+
+
+
+    }
+
+
     public class handleEventTask extends AsyncTask<Void, Void, String> {
 
         //        private Context context;
@@ -569,10 +659,10 @@ public class EventInfo extends FragmentActivity {
                 }
                 if (myObject != null && responseStatus != null) {
                     if (responseStatus.equals(Constants.RESPONSE_OK.toString())) {
-                        myEventsTask = null;
+                        JoinEventsTask = null;
                         //TODO YD Switch toggle button text to "playing"
                     } else {
-                        myEventsTask = null;
+                        JoinEventsTask = null;
                         //TODO YD override toggle method -> not to switch text to "playing"
                     }
                 }
@@ -600,6 +690,17 @@ public class EventInfo extends FragmentActivity {
 
 
     }
+
+
+
+
+
+
+
+
+
+
+
     public void setPlayGroundActionBar(){
         String userLoginId,userFullName,userEmail,userPhoto;
         Bitmap imageBitmap =null;
