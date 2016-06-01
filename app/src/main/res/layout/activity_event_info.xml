@@ -35,37 +35,37 @@
             android:textAlignment="center"
             android:layout_gravity="center_horizontal"
             android:textStyle="bold"
-            android:textColor="#7092BE" />
+            android:textColor="#7092BE"
+            android:paddingTop="5dp" />
 
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="@android:color/darker_gray"
+            android:background="#b2dfee"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
             android:layout_marginTop="5dp" />
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="90dp">
+            android:layout_height="100dp">
 
             <ToggleButton
-                android:layout_width="70dp"
-                android:layout_height="70dp"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
                 android:id="@+id/playing_btn"
                 android:layout_marginLeft="48dp"
-                android:layout_marginStart="48dp"
                 android:checked="false"
                 android:layout_alignParentTop="true"
                 android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:textOff="Play"
-                android:textOn="Playing"
+                android:layout_alignParentStart="false"
                 android:paddingTop="50dp"
-                android:background="@drawable/pg_playing"
-                android:textColor="@color/material_blue_500"
+                android:background="@drawable/play_toggle_btn_bg"
+                android:drawableTop="@drawable/play_toggle_btn"
                 android:onClick="onPlayClick"
-                android:layout_alignParentBottom="false" />
+                android:layout_alignParentBottom="false"
+                android:layout_marginTop="20dp"
+                />
 
             <ImageButton
                 android:layout_width="40dp"
@@ -73,7 +73,11 @@
                 android:id="@+id/share_btn"
                 android:layout_centerVertical="true"
                 android:layout_centerHorizontal="true"
-                android:background="@drawable/pg_share"/>
+                android:background="@drawable/pg_share"
+                android:layout_marginTop="15dp"
+                android:layout_alignParentTop="false"
+                android:layout_alignParentLeft="false"
+                android:layout_alignParentBottom="false" />
 
             <ImageButton
                 android:layout_width="40dp"
@@ -99,9 +103,11 @@
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:text="/"
                 android:id="@+id/textView2"
-                android:layout_alignParentBottom="true"
+                android:layout_alignParentBottom="false"
                 android:layout_toRightOf="@+id/current_size"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:layout_below="@+id/Play_txt"
+                android:layout_marginTop="1dp" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -110,12 +116,28 @@
                 android:id="@+id/event_max_size"
                 android:layout_alignParentBottom="true"
                 android:layout_toRightOf="@+id/textView2" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="Play"
+                android:id="@+id/Play_txt"
+                android:layout_below="@+id/playing_btn"
+                android:gravity="center"
+                android:layout_alignLeft="@+id/playing_btn"
+                android:layout_marginLeft="6dp"
+                android:layout_marginTop="-8dp"
+                android:textColor="#1874cd"
+                android:textStyle="bold" />
+
+
         </RelativeLayout>
 
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="@android:color/darker_gray"
+            android:background="#b2dfee"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
             android:layout_marginTop="5dp" />
@@ -184,7 +206,7 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="@android:color/darker_gray"
+            android:background="#b2dfee"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
             android:layout_marginTop="5dp" />
@@ -237,7 +259,7 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="@android:color/darker_gray"
+            android:background="#b2dfee"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
             android:layout_marginTop="5dp" />
@@ -269,6 +291,14 @@
                 android:id="@+id/members_list"></LinearLayout>
         </HorizontalScrollView>
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#b2dfee"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="5dp" />
+
         <TableRow
             android:layout_width="match_parent"
             android:layout_height="30dp">
@@ -286,11 +316,18 @@
             android:layout_height="wrap_content">
 
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:text="Small Text"
-                android:id="@+id/event_description" />
+                android:background="@drawable/back_rectangle"
+                android:id="@+id/event_description"
+                android:layout_gravity="center"
+                android:textAlignment="center"
+                android:gravity="center"
+                android:foregroundGravity="center"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp" />
         </TableRow>
 
     </LinearLayout>

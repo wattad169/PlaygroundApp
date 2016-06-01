@@ -285,7 +285,7 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
 				// sorting data from miles wise in home page list
 				/*
 				 * Collections.sort(rest, new Comparator<Restgetset>() {
-				 * 
+				 *
 				 * @Override public int compare(Restgetset lhs, Restgetset rhs)
 				 * { // TODO Auto-generated method stub return
 				 * Double.compare(lhs.getMiles(), rhs.getMiles()); } });

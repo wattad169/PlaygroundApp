@@ -257,6 +257,7 @@ public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefre
             TextView kmTxt = (TextView) view.findViewById(R.id.kmTxt);
 //            kmTxt.setTypeface(fontText3);
 
+            final TextView playTxt = (TextView) view.findViewById(R.id.play_txt);
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -277,12 +278,16 @@ public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefre
 //                    {
 //                        LeaveEventTask = new LeaveHandleEventTask(data.get(position));
 //                        LeaveEventTask.execute((Void) null);
+//                    playTxt.setText("Play");
+//                    playTxt.setTextColor(Color.parseColor("#1874cd"));
 //                    }
 //                    else
 //                    {
                         myEventsTask = new handleEventTask(data.get(position));
                         myEventsTask.execute((Void) null);
                     curplayButton.setClickable(false);
+                    playTxt.setText("Playing");
+                    playTxt.setTextColor(Color.parseColor("#00ced1"));
 //                    }
                 }});
 
@@ -293,6 +298,8 @@ public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefre
                     if (userEvents.contains(data.get(position).GetId())) {
                         playButton.setClickable(false);
                         playButton.setChecked(true);
+                        playTxt.setText("Playing");
+                        playTxt.setTextColor(Color.parseColor("#00ced1"));
                     }
                 }
             }

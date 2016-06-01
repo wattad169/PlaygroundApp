@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.media.Image;
@@ -84,7 +85,7 @@ public class EventInfo extends FragmentActivity {
 
     EventsObject currentEvent;
     HashMap<String, String> currentLocation;
-    TextView viewName, viewDateEvent, viewStartTime, viewEndTime, viewLocation, viewSize, viewCurrentSize, viewEventDescription;
+    TextView viewName, viewDateEvent, viewStartTime, viewEndTime, viewLocation, viewSize, viewCurrentSize, viewEventDescription , viewPlay;
     ImageView typeImg;
     JSONArray membersImagesUrls;
     private handleEventTask JoinEventsTask = null;
@@ -118,7 +119,7 @@ public class EventInfo extends FragmentActivity {
         viewEventDescription = (TextView) findViewById(R.id.event_description);
         typeImg = (ImageView) findViewById(R.id.type_img);
         playButton = (ToggleButton) findViewById(R.id.playing_btn);
-
+        viewPlay = (TextView) findViewById(R.id.Play_txt);
 
 
         membersList = (LinearLayout)findViewById(R.id.members_list);
@@ -194,6 +195,8 @@ public class EventInfo extends FragmentActivity {
                 {
                     playButton.setChecked(true);
                     playButton.setClickable(false);
+                    viewPlay.setText("Playing");
+                    viewPlay.setTextColor(Color.parseColor("#00ced1"));
                 }
             }
         }
@@ -514,6 +517,8 @@ public class EventInfo extends FragmentActivity {
 //        if(!x.isChecked()) {
 //            LeaveEventTask = new LeaveHandleEventTask(currentEvent);
 //            LeaveEventTask.execute((Void)null);
+//        viewPlay.setText("Play");
+//        viewPlay.setTextColor(Color.parseColor("#1874cd"));
 //        }
 //        else {//join
             JoinEventsTask = new handleEventTask(currentEvent);
@@ -521,7 +526,9 @@ public class EventInfo extends FragmentActivity {
 
             ImageView member = new ImageView(this);
             member.setImageResource(R.drawable.pg_time);
-
+            viewPlay.setText("Playing");
+            viewPlay.setTextColor(Color.parseColor("#00ced1"));
+        
             member.setImageBitmap(globalVariables.GetUserPictureBitMap());
             membersList.addView(member);
             x.setClickable(false);
