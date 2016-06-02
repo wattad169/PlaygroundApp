@@ -88,26 +88,26 @@ public class Splash extends Activity {
         globalVariables.InitGPS(Splash.this);
         globalVariables.SetCurrentLocation(Utils.getMyLocation(globalVariables.GetGPS()));
         // Create server call
-        new GetEventsAsyncTask().execute();
-        Thread th = new Thread() {
-            @Override
-            public void run() {
-                try {
+        new GetEventsAsyncTask(this).execute();
 
-                    //WebView wv = (WebView) findViewById(R.id.webview);
-                    //wv.loadUrl("file:///android_asset/splashimage.gif");
-                    // call eventListToHashMap from NetwrokUtiltites and putExtra hasmash to MainActivity
-                    sleep(2000);
-                    Intent i = new Intent(getBaseContext(), MainActivity.class);
-                    startActivity(i);
-                    finish();
-                } catch (Exception e) {
-
-                }
-
-            }
-        };
-        th.start();
+//        Thread th = new Thread() {
+//            @Override
+//            public void run() {
+//                try {
+//
+//                    //WebView wv = (WebView) findViewById(R.id.webview);
+//                    //wv.loadUrl("file:///android_asset/splashimage.gif");
+//                    // call eventListToHashMap from NetwrokUtiltites and putExtra hasmash to MainActivity
+//                    sleep(2000);
+//
+//                    finish();
+//                } catch (Exception e) {
+//
+//                }
+//
+//            }
+//        };
+//        th.start();
     }
     private void registerReceiver(){
         if(!isReceiverRegistered) {
@@ -117,6 +117,10 @@ public class Splash extends Activity {
         }
     }
     public static class GetEventsAsyncTask extends AsyncTask<String, String, String> {
+        private Context context;
+        GetEventsAsyncTask(Context cntx){
+            this.context = cntx;
+        }
 
         @Override
         protected void onPreExecute() {
@@ -157,6 +161,9 @@ public class Splash extends Activity {
         @Override
         protected void onPostExecute(String lenghtOfFile) {
             // do stuff after posting data
+            Intent i = new Intent(this.context, MainActivity.class);
+            this.context.startActivity(i);
+            ((Activity)this.context).finish();
             Log.d("successful", "successful");
         }
     }

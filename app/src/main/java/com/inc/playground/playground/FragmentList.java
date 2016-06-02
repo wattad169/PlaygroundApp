@@ -1,6 +1,7 @@
 package com.inc.playground.playground;
 
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -83,6 +84,10 @@ public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefre
         prefs = getActivity().getSharedPreferences("Login",getActivity().MODE_PRIVATE);
         userLoginId = prefs.getString("userid", null);
         currentUser = globalVariables.GetCurrentUser();
+        GlobalVariables globalVariables;
+        final String MY_PREFS_NAME = "Login";
+        SharedPreferences prefs = this.getActivity().getSharedPreferences(MY_PREFS_NAME, 0);
+
         if(currentUser != null ) { // the user is login
             userEvents = currentUser.GetUserEvents();
         }
@@ -111,8 +116,8 @@ public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefre
             events_list = (ListView) getActivity().findViewById(R.id.list_detail);
             SwipeRefreshLayout swipeRefreshLayout =  (SwipeRefreshLayout)getActivity().
             findViewById(R.id.swipe_refresh_layout);
-
             FloatingActionButton fab = (FloatingActionButton) getActivity().findViewById(R.id.fab);
+
             fab.attachToListView(events_list, new ScrollDirectionListener() {
                 @Override
                 public void onScrollDown() {
@@ -141,6 +146,11 @@ public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefre
                     getActivity().finish();
                 }
             });
+            if (prefs.getString("userid", null) != null){
+                fab.setVisibility(View.VISIBLE);
+
+            }
+
             if (homeEvents !=  null) {
                 if (homeEvents.size() == 0) {// If no events are found
                     Toast.makeText(getActivity().getApplicationContext(), "No Events Found", Toast.LENGTH_LONG).show();
@@ -479,7 +489,7 @@ public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefre
 
         swipeRefreshLayout.setRefreshing(true);
 
-        Splash.GetEventsAsyncTask getEventsAsyncTask = new Splash.GetEventsAsyncTask();
+        Splash.GetEventsAsyncTask getEventsAsyncTask = new Splash.GetEventsAsyncTask(this.getContext());
         getEventsAsyncTask.execute();
         HomeEventsAdapter homeEventsAdapter = new HomeEventsAdapter(  getActivity(),globalVariables.GetHomeEvents() );
         homeEventsAdapter.notifyDataSetChanged();
