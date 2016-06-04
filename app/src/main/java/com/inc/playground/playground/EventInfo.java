@@ -56,6 +56,7 @@ import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -246,6 +247,16 @@ public class EventInfo extends FragmentActivity {
 
                                 DialogFragment newFragment =  new MyDialogFragment(currentEvent.GetId(),currentUser.GetUserId());
                                 newFragment.show(ft, "dialog");
+                            case R.id.share_calendar:
+                                Calendar cal = Calendar.getInstance();
+                                Intent intent = new Intent(Intent.ACTION_EDIT);
+                                intent.setType("vnd.android.cursor.item/event");
+                                intent.putExtra("beginTime", cal.getTimeInMillis());
+                                intent.putExtra("allDay", true);
+                                intent.putExtra("rrule", "FREQ=YEARLY");
+                                intent.putExtra("endTime", cal.getTimeInMillis()+60*60*1000);
+                                intent.putExtra("title", "A Test Event from android app");
+                                startActivity(intent);
                         }
 //
 
