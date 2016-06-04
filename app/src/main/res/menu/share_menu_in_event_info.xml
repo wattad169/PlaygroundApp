@@ -1,0 +1,20 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.inc.playground.playground.EventInfo">
+    <item
+        android:id="@+id/share_invite"
+        android:icon="@drawable/share_invite"
+        android:title="Invite Friend"/>
+
+    <item
+        android:id="@+id/share_calendar"
+        android:icon="@drawable/share_calendar"
+        android:title="Add to calendar"/>
+
+    <item
+        android:id="@+id/share_whatsapp"
+        android:icon="@drawable/share_whatsapp"
+        android:title="Send in whatapp"/>
+
+</menu>

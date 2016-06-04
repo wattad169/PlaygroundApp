@@ -116,6 +116,7 @@ public class Constants {
 
     public static final String NOTIFICATIONS_TOKEN = "notifications_token";
 
+    public static final String INVITEE = "invitee";
 
 
 }

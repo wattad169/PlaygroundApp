@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 
 import com.inc.playground.playground.utils.GPSTracker;
 import com.inc.playground.playground.utils.User;
+import com.inc.playground.playground.utils.UserImageEntry;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -17,9 +18,13 @@ public class GlobalVariables extends Application {
 
     public HashMap<String, Double> currentLocation;
 
+    public HashMap<String, Bitmap> usersImagesMap;
+
     private GPSTracker gps;
 
     private ArrayList<EventsObject> homeEvents;
+
+    private ArrayList<UserImageEntry> usersList;
 
     private Bitmap userPictureBitmap=null;
 
@@ -45,6 +50,7 @@ public class GlobalVariables extends Application {
         return this.homeEvents;
     }
 
+
     public void SetHomeEvents(ArrayList<EventsObject> events){
         this.homeEvents = new ArrayList<>();
         this.homeEvents = events;
@@ -61,4 +67,17 @@ public class GlobalVariables extends Application {
 
     public User GetCurrentUser() {return this.currentUser; }
 
+    public void SetUsersImagesMap(HashMap<String,Bitmap> usersImagesMapIn){
+        this.usersImagesMap = usersImagesMapIn;
+    }
+    public HashMap<String,Bitmap> GetUsersImagesMap(){
+        return this.usersImagesMap;
+    }
+
+    public void SetUsersList(ArrayList<UserImageEntry> usersListIn){
+        this.usersList=usersListIn;
+    }
+    public ArrayList<UserImageEntry> GetUsersList(){
+        return this.usersList;
+    }
 }
