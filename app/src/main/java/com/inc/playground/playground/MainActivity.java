@@ -17,7 +17,6 @@
 package com.inc.playground.playground;
 
 import android.app.ActionBar;
-import android.app.Activity;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -25,7 +24,6 @@ import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -34,8 +32,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.ListFragment;
-import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
@@ -45,9 +41,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.inc.playground.playground.upLeft3StripesButton.MyProfile;
 import com.inc.playground.playground.utils.DownloadImageBitmapTask;
 
 import java.io.InputStream;
@@ -179,8 +175,9 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
                 finish();
             }
         });
-        /*Onclick for the Setting button (idan) */
-        LinearLayout ll_temp = (LinearLayout) findViewById(R.id.ll_fav);
+        /*Onclick for the Setting button (idan)- why ll_temp? what is it here?
+         * please document!
+        LinearLayout ll_temp = (LinearLayout) findViewById(R.id.ll_my_profile);
         ll_temp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -192,6 +189,25 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
                 finish();
             }
         });
+                  * */
+
+        /*Onclick for the my profile button (idan) */
+        LinearLayout ll_my_profile = (LinearLayout) findViewById(R.id.ll_my_profile);
+        ll_my_profile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // new changes
+                Intent iv = new Intent(MainActivity.this,
+                        com.inc.playground.playground.upLeft3StripesButton.
+                                MyProfile.class );
+                startActivity(iv);
+                finish();
+            }
+        });
+
+
+
+
 
 
     }

@@ -83,7 +83,7 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/ll_fav"
+            android:id="@+id/ll_my_profile"
             android:layout_width="200dp"
             android:layout_height="45dp"
             android:background="@drawable/pg_favourite"

@@ -16,14 +16,11 @@ import java.util.HashMap;
 public class GlobalVariables extends Application {
 
     public HashMap<String, Double> currentLocation;
-
     private GPSTracker gps;
-
     private ArrayList<EventsObject> homeEvents;
-
     private Bitmap userPictureBitmap=null;
+    public User currentUser;
 
-    private User currentUser;
 
     public HashMap<String, Double> GetCurrentLocation(){
         return this.currentLocation;
