@@ -97,7 +97,7 @@
             android:onClick="myClickHandler"
             android:background="@drawable/play_toggle_btn_bg"
             android:drawableTop="@drawable/play_toggle_btn"
-           />
+            android:checked="false" />
 
         <ImageView
             android:id="@+id/img_distance"

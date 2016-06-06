@@ -78,6 +78,8 @@ final public class NetworkUtilities {
 
     public static final String USER_ID = "user_id";
 
+    public static final String PHOTO_URL = "photo_url";
+
 
 
 
@@ -213,7 +215,7 @@ final public class NetworkUtilities {
     }
 
     /**
-     *  Converts JSON Object containing events info to hash map of events objects
+     *  Converts JSON Object containing events info to ArrayList of events objects
      * @param jsonInput - The JSON object received from server
      * @param currentLocation   - Location of phone (for calculating distance)
      * @return hash map containing event objects as values and eventId as key
@@ -237,6 +239,10 @@ final public class NetworkUtilities {
             currentEvent.SetStartTime(currentObject.getString(Constants.START_TIME));
             currentEvent.SetEndTime(currentObject.getString(Constants.END_TIME));
             currentEvent.SetDescription(currentObject.getString(Constants.EVENT_DESCRIPTION));
+
+            /*extract created fields + played field */
+
+
 
             //Calculate and set the event distance
 

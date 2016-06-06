@@ -57,6 +57,8 @@ import com.inc.playground.playground.Register;
 import com.inc.playground.playground.Review;
 import com.inc.playground.playground.utils.User;
 
+import static com.inc.playground.playground.utils.NetworkUtilities.eventListToArrayList;
+
 public class Login extends Activity implements ConnectionCallbacks, OnConnectionFailedListener {
 	private static final String TAG = "MainActivity";
 	String Error, user2;
@@ -86,6 +88,7 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
 	View v;
 	public static GlobalVariables globalVariables;
 	public User currentUser;
+	public int createdCount;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -255,6 +258,8 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
                         user2 = email_id;
                         fullimage = "https://storage.googleapis.com/sports-bucket/Source/1965583_10204825358656748_4079077085336938408_o.jpg";
                         //TODO:Upload user image instead
+						createdCount = Integer.parseInt(resonseMessage.getString(Constants.CREATED_COUNT));
+
                     }
                     else if(method.equals("facebook")){
                         user_token = resonseMessage.getString(Constants.ID);
@@ -319,6 +324,7 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
 					editor.putString("picture", "" + fullimage);
 					editor.commit();
 //					if (value.equals("home")) {
+
 
                     Intent iv = new Intent(Login.this,Splash.class);
                     startActivity(iv);
@@ -719,6 +725,11 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
 	{
 		currentUser = new User();
 		currentUser.SetUserId(user_token);
+		currentUser.setName(fullname);
+		currentUser.setEmail(email_id);
+		currentUser.setPhotoUrl(fullimage);
+
+
 		new GetUserEventsAsyncTask().execute();
 	}
 	public class GetUserEventsAsyncTask extends AsyncTask<String, String, String> {
@@ -753,12 +764,19 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
 				responseJSON = new JSONObject(responseString);
 				eventsFromServerJSON = responseJSON.getJSONArray(Constants.RESPONSE_MESSAGE);
 				Set<String> userEvents = new HashSet<>();
+
+
+
+
+				ArrayList<EventsObject> userEventsObjects =  eventListToArrayList(eventsFromServerJSON, globalVariables.GetCurrentLocation());
+
 				for(int i=0 ; i<eventsFromServerJSON.length();i++){
 					JSONObject currentObject = (JSONObject) eventsFromServerJSON.get(i);
 					String eventId = currentObject.getString(Constants.EVENT_ID);
 					userEvents.add(eventId);
 				}
 				currentUser.SetUserEvents(userEvents);
+				currentUser.setUserEventsObjects(userEventsObjects);
 				globalVariables.SetCurrentUser(currentUser);
 			} catch (JSONException e) {
 				e.printStackTrace();

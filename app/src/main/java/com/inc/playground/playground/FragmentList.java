@@ -80,6 +80,7 @@ public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefre
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_list, container, false);
         this.globalVariables = ((GlobalVariables) getActivity().getApplication());
+
         homeEvents = this.globalVariables.GetHomeEvents();
         prefs = getActivity().getSharedPreferences("Login",getActivity().MODE_PRIVATE);
         userLoginId = prefs.getString("userid", null);
@@ -158,7 +159,7 @@ public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefre
                 } else {
                     // Display events
                     events_list.setVisibility(View.VISIBLE);
-                    HomeEventsAdapter homeEventsAdapter = new HomeEventsAdapter(getActivity(), homeEvents);
+                    HomeEventsAdapter homeEventsAdapter = new HomeEventsAdapter(getActivity(), homeEvents);//homeEvents= globalVariable.currentuserevents
                     homeEventsAdapter.notifyDataSetChanged();
                     events_list.setAdapter(homeEventsAdapter);
 
@@ -400,6 +401,7 @@ public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefre
 
 
     }
+
     public class LeaveHandleEventTask extends AsyncTask<Void, Void, String> {
 
         //        private Context context;
@@ -492,6 +494,10 @@ public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefre
         Splash.GetEventsAsyncTask getEventsAsyncTask = new Splash.GetEventsAsyncTask(this.getContext());
         getEventsAsyncTask.execute();
         HomeEventsAdapter homeEventsAdapter = new HomeEventsAdapter(  getActivity(),globalVariables.GetHomeEvents() );
+
+        //userEventsAdapter userEventsAdapter = new userEventsAdapter(  getActivity(),globalVariables.GetHomeEvents() );
+
+
         homeEventsAdapter.notifyDataSetChanged();
         events_list.setAdapter(homeEventsAdapter);
 

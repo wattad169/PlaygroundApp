@@ -61,7 +61,14 @@ public class Splash extends Activity {
         actionBar.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.primaryColor)));
         //Check if user is login
         SharedPreferences prefs = getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
+
         currentUser = new User();
+
+        if (prefs.getString("fullname", null) != null){
+            String userName = prefs.getString("fullname", null);
+            currentUser.setName(userName);
+        }
+
         if (prefs.getString("userid", null) != null)
         { // Get users events
             String userLoginId = prefs.getString("userid", null);
@@ -100,27 +107,31 @@ public class Splash extends Activity {
 
         @Override
         protected String doInBackground(String... strings) {
-            String responseString;
+            String allEventsResponseString;
+            String userProfileResponseString;
             try {
                 JSONObject cred = new JSONObject();
                 String userToken = "StubToken";//TODO Replace with real token
+
                 try {
                     cred.put(NetworkUtilities.TOKEN, userToken);
                 } catch (JSONException e) {
                     Log.i(TAG, e.toString());
                 }
-                responseString = NetworkUtilities.doPost(cred, NetworkUtilities.BASE_URL + "/get_all_events/");
+                //"get all events"
+                allEventsResponseString = NetworkUtilities.doPost(cred, NetworkUtilities.BASE_URL + "/get_all_events/");
+
 
             } catch (Exception ex) {
                 Log.e(TAG, "getUserEvents.doInBackground: failed to doPost");
                 Log.i(TAG, ex.toString());
-                responseString = "";
+                allEventsResponseString = "";
             }
             // Convert string received from server to JSON array
             JSONArray eventsFromServerJSON = null;
             JSONObject responseJSON= null;
             try {
-                responseJSON = new JSONObject(responseString);
+                responseJSON = new JSONObject(allEventsResponseString);
                 eventsFromServerJSON = responseJSON.getJSONArray(Constants.RESPONSE_MESSAGE);
                 globalVariables.SetHomeEvents(eventListToArrayList(eventsFromServerJSON, globalVariables.GetCurrentLocation()));
             } catch (JSONException e) {
@@ -140,7 +151,7 @@ public class Splash extends Activity {
     }
 
     public class GetUserEventsAsyncTask extends AsyncTask<String, String, String> {
-
+        ArrayList<EventsObject> userEventsObjects;
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -168,14 +179,20 @@ public class Splash extends Activity {
             JSONArray eventsFromServerJSON = null;
             JSONObject responseJSON= null;
             try {
+
                 responseJSON = new JSONObject(responseString);
                 eventsFromServerJSON = responseJSON.getJSONArray(Constants.RESPONSE_MESSAGE);
+                userEventsObjects =  eventListToArrayList(eventsFromServerJSON, globalVariables.GetCurrentLocation());
                 Set<String> userEvents = new HashSet<>();
                 for(int i=0 ; i<eventsFromServerJSON.length();i++){
                     JSONObject currentObject = (JSONObject) eventsFromServerJSON.get(i);
+                    //getuser events:
+
+                    //
                     String eventId = currentObject.getString(Constants.EVENT_ID);
                     userEvents.add(eventId);
                 }
+                currentUser.setUserEventsObjects(userEventsObjects);
                 currentUser.SetUserEvents(userEvents);
                 globalVariables.SetCurrentUser(currentUser);
             } catch (JSONException e) {

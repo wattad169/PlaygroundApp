@@ -17,7 +17,6 @@
 package com.inc.playground.playground;
 
 import android.app.ActionBar;
-import android.app.Activity;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -25,7 +24,6 @@ import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -35,8 +33,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.ListFragment;
-import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
@@ -47,10 +43,11 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.inc.playground.playground.upLeft3StripesButton.MyProfile;
 import com.inc.playground.playground.utils.DownloadImageBitmapTask;
+import com.inc.playground.playground.utils.User;
 
 import java.io.InputStream;
 import java.util.concurrent.ExecutionException;
@@ -67,6 +64,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
     private ActionBarDrawerToggle mDrawerToggle;
     AppSectionsPagerAdapter mAppSectionsPagerAdapter;
     private CharSequence mDrawerTitle;
+    public static GlobalVariables globalVariables;
     private CharSequence mTitle;
     public static final String MY_PREFS_NAME = "Login";
     public static final String TAG = "MainActivity";
@@ -183,6 +181,42 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
                 finish();
             }
         });
+        /*Onclick for the Setting button (idan)- why ll_temp? what is it here?
+         * please document!
+        LinearLayout ll_temp = (LinearLayout) findViewById(R.id.ll_my_profile);
+        ll_temp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // TODO Auto-generated method stub
+                // new changes
+                Intent iv = new Intent(MainActivity.this,
+                        FilterActivity.class );
+                startActivity(iv);
+                finish();
+            }
+        });
+                  * */
+
+        /*Onclick for the my profile button (idan) */
+        LinearLayout ll_my_profile = (LinearLayout) findViewById(R.id.ll_my_profile);
+        ll_my_profile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // new changes
+                Intent iv = new Intent(MainActivity.this,
+                        com.inc.playground.playground.upLeft3StripesButton.
+                                MyProfile.class);
+                globalVariables = ((GlobalVariables) getApplication());
+                User currentUser = globalVariables.GetCurrentUser();
+                //for my profile
+                iv.putExtra("name", currentUser.getName());
+                iv.putExtra("createdNumOfEvents", currentUser.getCreatedNumOfEvents());
+                iv.putExtra("userEventsObjects", currentUser.getUserEventsObjects());//ArrayList<EventsObject>
+                iv.putExtra("photoUrl",currentUser.getPhotoUrl());
+                startActivity(iv);
+                finish();
+            }
+        });
         /*Onclick for the Setting button (idan) */
 //        LinearLayout ll_temp = (LinearLayout) findViewById(R.id.ll_fav);
 //        ll_temp.setOnClickListener(new View.OnClickListener() {
@@ -221,7 +255,6 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 
 
 
-
     }
     public void setPlayGroundActionBar(){
         String userLoginId,userFullName,userEmail,userPhoto;
@@ -237,6 +270,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
             userFullName = prefs.getString("fullname", null);
             userEmail = prefs.getString("emilid", null);
             userPhoto = prefs.getString("picture", null);
+            globalVariables.GetCurrentUser().setPhotoUrl(userPhoto);
             actionBar.setCustomView(R.layout.actionbar_custom_view_home);
             actionBar.setDisplayShowTitleEnabled(true);
             actionBar.setDisplayShowCustomEnabled(true);
