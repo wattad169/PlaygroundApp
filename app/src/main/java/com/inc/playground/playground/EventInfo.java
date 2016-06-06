@@ -209,7 +209,7 @@ public class EventInfo extends FragmentActivity {
                     playButton.setChecked(true);
                     playButton.setClickable(false);
                     viewPlay.setText("Playing");
-                    viewPlay.setTextColor(Color.parseColor("#00ced1"));
+                    viewPlay.setTextColor(Color.parseColor("#104E8B"));
                 }
             }
         }
@@ -247,6 +247,7 @@ public class EventInfo extends FragmentActivity {
 
                                 DialogFragment newFragment =  new MyDialogFragment(currentEvent.GetId(),currentUser.GetUserId());
                                 newFragment.show(ft, "dialog");
+                                break;
                             case R.id.share_calendar:
                                 Calendar cal = Calendar.getInstance();
                                 Intent intent = new Intent(Intent.ACTION_EDIT);
@@ -257,6 +258,7 @@ public class EventInfo extends FragmentActivity {
                                 intent.putExtra("endTime", cal.getTimeInMillis()+60*60*1000);
                                 intent.putExtra("title", "A Test Event from android app");
                                 startActivity(intent);
+                                break;
                         }
 //
 
@@ -606,7 +608,7 @@ public class EventInfo extends FragmentActivity {
             ImageView member = new ImageView(this);
             member.setImageResource(R.drawable.pg_time);
             viewPlay.setText("Playing");
-            viewPlay.setTextColor(Color.parseColor("#00ced1"));
+            viewPlay.setTextColor(Color.parseColor("#104E8B"));
         
             member.setImageBitmap(globalVariables.GetUserPictureBitMap());
             membersList.addView(member);

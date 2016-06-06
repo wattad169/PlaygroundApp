@@ -331,4 +331,12 @@ public class SettingsActivity extends PreferenceActivity {
             return super.onOptionsItemSelected(item);
         }
     }
+
+    public void onBackPressed()
+    {
+        super.onBackPressed();
+        Intent next = new Intent(getApplication(),MainActivity.class);
+        startActivity(next);
+        finish();
+    }
 }

@@ -17,7 +17,6 @@
 package com.inc.playground.playground;
 
 import android.app.ActionBar;
-import android.app.Activity;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -25,20 +24,17 @@ import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
-import android.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.ListFragment;
-import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -47,7 +43,6 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.inc.playground.playground.utils.DownloadImageBitmapTask;
@@ -77,7 +72,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
      * time.
      */
     ViewPager mViewPager;
-
+    Toolbar toolbar = null;
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -85,6 +80,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         // Create the adapter that will return a fragment for each of the three primary sections
         // of the app.
         mAppSectionsPagerAdapter = new AppSectionsPagerAdapter(getSupportFragmentManager());
+
 
         // Set up the action bar.
         final ActionBar actionBar = getActionBar();
@@ -94,8 +90,8 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         actionBar.setStackedBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.secondaryColor)));
         // Specify that the Home/Up button should not be enabled, since there is no hierarchical
         // parent.
-        actionBar.setHomeButtonEnabled(false);
-
+        //actionBar.setHomeButtonEnabled(false);
+        actionBar.setDisplayShowHomeEnabled(false);
         // Specify that we will be displaying tabs in the action bar.
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 
@@ -131,7 +127,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         mDrawerToggle = new ActionBarDrawerToggle(
                 this,                  /* host Activity */
                 mDrawerLayout,         /* DrawerLayout object */
-                R.drawable.pg_menu,  /* nav drawer icon to replace 'Up' caret */
+                R.drawable.pg_action_menu,  /* nav drawer icon to replace 'Up' caret */
                 R.string.drawer_open,  /* "open drawer" description */
                 R.string.drawer_close  /* "close drawer" description */
         ) {
@@ -154,6 +150,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 
         getActionBar().setDisplayHomeAsUpEnabled(true);
                 getActionBar().setHomeButtonEnabled(true);
+
         // all linear layout from slider menu
         LinearLayout ll_home = (LinearLayout) findViewById(R.id.ll_login);
         ll_home.setOnClickListener(new View.OnClickListener() {
@@ -216,13 +213,8 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 //            }
 //        });
 
-
-
-
-
-
-
     }
+
     public void setPlayGroundActionBar(){
         String userLoginId,userFullName,userEmail,userPhoto;
         Bitmap imageBitmap =null;
@@ -241,8 +233,10 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
             actionBar.setDisplayShowTitleEnabled(true);
             actionBar.setDisplayShowCustomEnabled(true);
             actionBar.setDisplayUseLogoEnabled(true);
-            actionBar.setDisplayShowHomeEnabled(true);
-            ImageView img_profile = (ImageView) findViewById(R.id.img_profile_action_bar);
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            ImageView logo_image = (ImageView) findViewById(R.id.img_profile_action_bar);
+            logo_image.setBackgroundResource(R.drawable.pg_logo);
+            ImageView img_profile = (ImageView) findViewById(R.id.profile_image);
             imageBitmap = globalVariables.GetUserPictureBitMap();
             if(imageBitmap==null){
                 Log.i(TAG,"downloading");

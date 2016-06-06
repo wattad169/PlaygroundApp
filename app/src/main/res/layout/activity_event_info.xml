@@ -51,20 +51,21 @@
             android:layout_height="100dp">
 
             <ToggleButton
-                android:layout_width="50dp"
-                android:layout_height="50dp"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
                 android:id="@+id/playing_btn"
                 android:layout_marginLeft="48dp"
                 android:checked="false"
                 android:layout_alignParentTop="true"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="false"
-                android:paddingTop="50dp"
-                android:background="@drawable/play_toggle_btn_bg"
-                android:drawableTop="@drawable/play_toggle_btn"
+                android:paddingTop="30dp"
+                android:textOn=""
+                android:textOff=""
+                android:background="@drawable/play_toggle_btn"
                 android:onClick="onPlayClick"
                 android:layout_alignParentBottom="false"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="9dp"
                 />
 
             <ImageButton
@@ -126,9 +127,9 @@
                 android:layout_below="@+id/playing_btn"
                 android:gravity="center"
                 android:layout_alignLeft="@+id/playing_btn"
-                android:layout_marginLeft="6dp"
-                android:layout_marginTop="-8dp"
-                android:textColor="#1874cd"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="-17dp"
+                android:textColor="#D0D0D0"
                 android:textStyle="bold" />
 
 

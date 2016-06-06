@@ -43,16 +43,7 @@
                     android:textSize="20dp"
                     />
 
-                <RatingBar
-                    android:id="@+id/rate1234"
-                    style="@style/foodRatingShowreview"
-                    android:layout_width="wrap_content"
-                    android:layout_height="28dp"
-                    android:scaleX="0.8"
-                    android:scaleY="0.8"
-                    android:stepSize="1.0"
-                    android:layout_alignParentBottom="true"
-                    android:layout_centerHorizontal="true" />
+
 
             </LinearLayout>
 

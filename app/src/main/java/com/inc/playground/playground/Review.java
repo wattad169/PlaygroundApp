@@ -130,7 +130,7 @@ public class Review extends Activity {
 						rl_dialoguser.addView(layout12);
 
 						edt_comment = (EditText) layout12.findViewById(R.id.txt_description);
-						rb1234 = (RatingBar) layout12.findViewById(R.id.rate1234);
+//						rb1234 = (RatingBar) layout12.findViewById(R.id.rate1234);
 						Button btn_submit = (Button) layout12.findViewById(R.id.btn_submit);
 						btn_submit.setOnClickListener(new OnClickListener() {
 
@@ -285,8 +285,8 @@ public class Review extends Activity {
 								TextView txt_name_comment = (TextView) layout12.findViewById(R.id.txt_nameuser);
 								txt_name_comment.setText("" +Html.fromHtml(rest.get(position).getUsername()));
 								try {
-									RatingBar rb = (RatingBar) layout12.findViewById(R.id.rate1234);
-									rb.setRating(Float.parseFloat(rest.get(position).getRatting()));
+//									RatingBar rb = (RatingBar) layout12.findViewById(R.id.rate1234);
+//									rb.setRating(Float.parseFloat(rest.get(position).getRatting()));
 								} catch (NumberFormatException e) {
 									// TODO: handle exception
 								}
@@ -506,9 +506,8 @@ public class Review extends Activity {
 			}
 
 			try {
-				RatingBar rb = (RatingBar) vi.findViewById(R.id.rate1);
-
-				rb.setRating(Float.parseFloat(data.get(position).getRatting()));
+//				RatingBar rb = (RatingBar) vi.findViewById(R.id.rate1);
+//				rb.setRating(Float.parseFloat(data.get(position).getRatting()));
 			} catch (NumberFormatException e) {
 				// TODO: handle exception
 			}
