@@ -17,7 +17,9 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/menu_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+
+    >
 
     <android.support.v4.view.ViewPager xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/pager"
@@ -25,6 +27,7 @@
         android:layout_height="match_parent" />
 
     <!-- The main content view -->
+
     <LinearLayout
         android:id="@+id/ll_data"
         android:layout_width="300dp"
