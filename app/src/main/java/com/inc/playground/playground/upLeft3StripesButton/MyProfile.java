@@ -13,6 +13,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,8 +34,10 @@ import com.inc.playground.playground.EventsObject;
 import com.inc.playground.playground.FragmentList;
 import com.inc.playground.playground.GlobalVariables;
 import com.inc.playground.playground.Login;
+import com.inc.playground.playground.MainActivity;
 import com.inc.playground.playground.R;
 import com.inc.playground.playground.utils.Constants;
+import com.inc.playground.playground.utils.DownloadImageBitmapTask;
 import com.inc.playground.playground.utils.NetworkUtilities;
 import com.inc.playground.playground.utils.User;
 import com.melnykov.fab.FloatingActionButton;
@@ -49,36 +52,23 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Created by idanaroz on 03-Jun-16.
  */
 public class MyProfile extends Activity {
-
-
-    public static Bitmap getBitmapFromURL(String src) {
-        try {
-            URL url = new URL(src);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setDoInput(true);
-            connection.connect();
-            InputStream input = connection.getInputStream();
-            Bitmap myBitmap = BitmapFactory.decodeStream(input);
-            return myBitmap;
-        } catch (IOException e) {
-            // Log exception
-            return null;
-        }
-    }
-
+/* must send to this class data e.g :                 iv.putExtra("name",currentUser.getName());*/
+//Todo change name to userprofile
 
     public static GlobalVariables globalVariables;
     /*my variables*/
     private ProgressBar spinner;     //for loading
     ListView listView;              //ListView listView;
     ArrayList<EventsObject> myEventsArrayList;
-    ;
+
 
 
     /*Yarden and lina variables:*/
@@ -92,11 +82,16 @@ public class MyProfile extends Activity {
     String userLoginId;
     User currentUser;
     Set<String> userEvents;
+    Bundle bundle;
 
 
     @Override
+
     protected void onCreate(Bundle savedInstanceState) {
+
         globalVariables = ((GlobalVariables) this.getApplication());//critical !
+        bundle = getIntent().getExtras();
+
         currentUser = globalVariables.GetCurrentUser();
 
         //spinner = (ProgressBar)findViewById(R.id.progressBar);
@@ -107,24 +102,81 @@ public class MyProfile extends Activity {
 
         //set name
         TextView user_profile_name = (TextView) findViewById(R.id.user_profile_name);
-        user_profile_name.setText(currentUser.getName());//name should be as facebook?
+        user_profile_name.setText(bundle.getString("name"));//name should be as facebook?
         //set createdCount
         TextView createdCount_textView = (TextView) findViewById(R.id.createdCount_textView);
-        createdCount_textView.setText(String.valueOf(globalVariables.GetCurrentUser().getCreatedNumOfEvents()));
+        createdCount_textView.setText(createdCount_textView.getText()+
+                String.valueOf(bundle.getInt("createdNumOfEvents")));
         //set url
         ImageView user_profile_photo = (ImageView) findViewById(R.id.user_profile_photo);
+        Bitmap imageBitmap=null;
+        String picture_url= bundle.getString("photoUrl");
+        if(imageBitmap==null){
+            Log.i("myProfile", "downloading");
+            try {
+                imageBitmap = new DownloadImageBitmapTask().execute(picture_url).get();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
+        }
+
+        else {
+            Log.i("myProfile","Image found");
+        }
+        user_profile_photo.setImageBitmap(imageBitmap);
         /*Error setting url - need fix */
         //user_profile_photo.setImageBitmap(getBitmapFromURL("https://www.facebook.com/photo.php?fbid=10153556040874658&set=a.429615654657.232270.798789657&type=3&theater"));
 
+
+
+
+
+
     }
+    @Override
+    protected void onStart() {
+        super.onStart();
+        homeEvents = (ArrayList<EventsObject>) bundle.getSerializable("userEventsObjects");    //currentUser.getUserEventsObjects();
+        //prefs = this.getSharedPreferences("Login", this.MODE_PRIVATE);
+        //userLoginId = prefs.getString("userid", null);
+
+        new getList().execute();
+
+
+        // The activity is about to become visible.
+    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // The activity has become visible (it is now "resumed").
+    }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        // Another activity is taking focus (this activity is about to be "paused").
+    }
+    @Override
+    protected void onStop() {
+        super.onStop();
+        // The activity is no longer visible (it is now "stopped")
+    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // The activity is about to be destroyed.
+    }
+
+
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
             /*copied with change from list_fragment*/
-        View rootView = inflater.inflate(R.layout.fragment_list, container, false);
+        View rootView = inflater.inflate(R.layout.profile, container, false);
 
         currentUser = globalVariables.GetCurrentUser();
-        homeEvents = currentUser.getUserEventsObjects();
+        homeEvents = (ArrayList<EventsObject>) bundle.getSerializable("userEventsObjects") ;
         prefs = this.getSharedPreferences("Login", this.MODE_PRIVATE);
         userLoginId = prefs.getString("userid", null);
         //final String MY_PREFS_NAME = "Login";
@@ -321,8 +373,18 @@ public class MyProfile extends Activity {
         }
     }
 
+    public void onBackPressed()
+    {
+        super.onBackPressed();
+        //Intent next = new Intent(getApplication(),MainActivity.class);
+        //startActivity(next);
+        finish();
+    }
 
 }
+
+
+
 
 
 

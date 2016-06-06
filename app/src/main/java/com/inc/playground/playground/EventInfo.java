@@ -1,8 +1,11 @@
 package com.inc.playground.playground;
 
 import android.app.ActionBar;
+import android.app.DialogFragment;
+import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
@@ -17,11 +20,15 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.PopupMenu;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 import android.widget.ToggleButton;
 
@@ -46,7 +53,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -79,6 +89,7 @@ public class EventInfo extends FragmentActivity {
     double longitudecur;
     GoogleMap googleMap;
     GlobalVariables globalVariables;
+    ImageButton shareButton ;
 
     public static final String TAG = "EventInfoActivity";
     //DahanLina
@@ -120,7 +131,7 @@ public class EventInfo extends FragmentActivity {
         typeImg = (ImageView) findViewById(R.id.type_img);
         playButton = (ToggleButton) findViewById(R.id.playing_btn);
         viewPlay = (TextView) findViewById(R.id.Play_txt);
-
+        shareButton = (ImageButton) findViewById(R.id.share_btn);
 
         membersList = (LinearLayout)findViewById(R.id.members_list);
         new GetMembersImages(this).execute();
@@ -137,6 +148,8 @@ public class EventInfo extends FragmentActivity {
             gps.showSettingsAlert();
 
         }
+
+
         setdata();
 
 // btn_fvrt = (Button) findViewById(R.id.btn_fvrt);
@@ -206,6 +219,53 @@ public class EventInfo extends FragmentActivity {
         Drawable typeDrawable = getResources().getDrawable(imageResource);
         typeImg.setImageDrawable(typeDrawable);
 
+
+        shareButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                //Creating the instance of PopupMenu
+                PopupMenu popup = new PopupMenu(EventInfo.this, shareButton);
+                setForceShowIcon(popup);
+                //Inflating the Popup using xml file
+                popup.getMenuInflater().inflate(R.menu.share_menu_in_event_info, popup.getMenu());
+
+                //registering popup with OnMenuItemClickListener
+                popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    public boolean onMenuItemClick(MenuItem item) {
+
+                        switch (item.getItemId()){
+                            case R.id.share_invite:
+                                FragmentTransaction ft = getFragmentManager().beginTransaction();
+                                android.app.Fragment prev = getFragmentManager().findFragmentByTag("dialog");
+                                if (prev != null) {
+                                    ft.remove(prev);
+                                }
+                                ft.addToBackStack(null);
+
+                                String inputText = "asd";
+
+                                DialogFragment newFragment =  new MyDialogFragment(currentEvent.GetId(),currentUser.GetUserId());
+                                newFragment.show(ft, "dialog");
+                            case R.id.share_calendar:
+                                Calendar cal = Calendar.getInstance();
+                                Intent intent = new Intent(Intent.ACTION_EDIT);
+                                intent.setType("vnd.android.cursor.item/event");
+                                intent.putExtra("beginTime", cal.getTimeInMillis());
+                                intent.putExtra("allDay", true);
+                                intent.putExtra("rrule", "FREQ=YEARLY");
+                                intent.putExtra("endTime", cal.getTimeInMillis()+60*60*1000);
+                                intent.putExtra("title", "A Test Event from android app");
+                                startActivity(intent);
+                        }
+//
+
+                        return true;
+                    }
+                });
+                popup.show();//showing popup menu
+            }
+        });//closing the setOnClickListener method
 //		CustomPagerAdapter mCustomPagerAdapter = new CustomPagerAdapter(Detailpage.this);
 //		ViewPager mViewPager = (ViewPager) findViewById(R.id.pager);
 //		mViewPager.setAdapter(mCustomPagerAdapter);
@@ -395,6 +455,25 @@ public class EventInfo extends FragmentActivity {
 //				myDbHelper.close();
 //            }
 //        });
+    }
+    public static void setForceShowIcon(PopupMenu popupMenu) {
+        try {
+            Field[] fields = popupMenu.getClass().getDeclaredFields();
+            for (Field field : fields) {
+                if ("mPopup".equals(field.getName())) {
+                    field.setAccessible(true);
+                    Object menuPopupHelper = field.get(popupMenu);
+                    Class<?> classPopupHelper = Class.forName(menuPopupHelper
+                            .getClass().getName());
+                    Method setForceIcons = classPopupHelper.getMethod(
+                            "setForceShowIcon", boolean.class);
+                    setForceIcons.invoke(menuPopupHelper, true);
+                    break;
+                }
+            }
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
     }
 //
 //	class CustomPagerAdapter extends PagerAdapter {

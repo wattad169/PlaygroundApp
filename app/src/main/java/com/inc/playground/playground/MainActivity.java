@@ -28,6 +28,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
+import android.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -39,12 +40,14 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.inc.playground.playground.upLeft3StripesButton.MyProfile;
 import com.inc.playground.playground.utils.DownloadImageBitmapTask;
+import com.inc.playground.playground.utils.User;
 
 import java.io.InputStream;
 import java.util.concurrent.ExecutionException;
@@ -61,9 +64,12 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
     private ActionBarDrawerToggle mDrawerToggle;
     AppSectionsPagerAdapter mAppSectionsPagerAdapter;
     private CharSequence mDrawerTitle;
+    public static GlobalVariables globalVariables;
     private CharSequence mTitle;
     public static final String MY_PREFS_NAME = "Login";
     public static final String TAG = "MainActivity";
+    EditText inputTextField;
+
     /**
      * The {@link ViewPager} that will display the three primary sections of the app, one at a
      * time.
@@ -170,7 +176,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
                 // new changes
                 Intent iv = new Intent(MainActivity.this,
                         com.inc.playground.playground.upLeft3StripesButton.
-                                SettingsActivity.class );
+                                SettingsActivity.class);
                 startActivity(iv);
                 finish();
             }
@@ -199,11 +205,50 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
                 // new changes
                 Intent iv = new Intent(MainActivity.this,
                         com.inc.playground.playground.upLeft3StripesButton.
-                                MyProfile.class );
+                                MyProfile.class);
+                globalVariables = ((GlobalVariables) getApplication());
+                User currentUser = globalVariables.GetCurrentUser();
+                //for my profile
+                iv.putExtra("name", currentUser.getName());
+                iv.putExtra("createdNumOfEvents", currentUser.getCreatedNumOfEvents());
+                iv.putExtra("userEventsObjects", currentUser.getUserEventsObjects());//ArrayList<EventsObject>
+                iv.putExtra("photoUrl",currentUser.getPhotoUrl());
                 startActivity(iv);
                 finish();
             }
         });
+        /*Onclick for the Setting button (idan) */
+//        LinearLayout ll_temp = (LinearLayout) findViewById(R.id.ll_fav);
+//        ll_temp.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                // TODO Auto-generated method stub
+//                // new changes
+//                Intent iv = new Intent(MainActivity.this,
+//                        FilterActivity.class );
+//                startActivity(iv);
+//                finish();
+//            }
+//        });
+//        LinearLayout invite = (LinearLayout) findViewById(R.id.ll_fav);
+//        invite.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                // TODO Auto-generated method stub
+//                // new changes
+//                FragmentTransaction ft = getFragmentManager().beginTransaction();
+//                android.app.Fragment prev = getFragmentManager().findFragmentByTag("dialog");
+//                if (prev != null) {
+//                    ft.remove(prev);
+//                }
+//                ft.addToBackStack(null);
+//
+//                String inputText = "asd";
+//
+//                DialogFragment newFragment = MyDialogFragment.newInstance(inputText);
+//                newFragment.show(ft, "dialog");
+//            }
+//        });
 
 
 
@@ -225,6 +270,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
             userFullName = prefs.getString("fullname", null);
             userEmail = prefs.getString("emilid", null);
             userPhoto = prefs.getString("picture", null);
+            globalVariables.GetCurrentUser().setPhotoUrl(userPhoto);
             actionBar.setCustomView(R.layout.actionbar_custom_view_home);
             actionBar.setDisplayShowTitleEnabled(true);
             actionBar.setDisplayShowCustomEnabled(true);

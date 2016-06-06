@@ -78,6 +78,8 @@ final public class NetworkUtilities {
 
     public static final String USER_ID = "user_id";
 
+    public static final String PHOTO_URL = "photo_url";
+
 
 
 

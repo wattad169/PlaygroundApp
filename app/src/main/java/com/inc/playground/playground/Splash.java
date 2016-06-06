@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -17,9 +18,11 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.inc.playground.playground.utils.Constants;
+import com.inc.playground.playground.utils.DownloadImageBitmapTask;
 import com.inc.playground.playground.utils.GPSTracker;
 import com.inc.playground.playground.utils.NetworkUtilities;
 import com.inc.playground.playground.utils.User;
+import com.inc.playground.playground.utils.UserImageEntry;
 import com.inc.playground.playground.utils.Utils;
 
 import org.json.JSONArray;
@@ -30,6 +33,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
 
 import android.content.BroadcastReceiver;
 
@@ -44,6 +48,10 @@ public class Splash extends Activity {
     private BroadcastReceiver mRegistrationBroadcastReceiver;
     private ProgressBar mRegistrationProgressBar;
     private TextView mInformationTextView;
+
+    JSONArray getAllUsersResponse;
+    HashMap<String,Bitmap> userToImage = new HashMap<String,Bitmap>();
+    ArrayList<UserImageEntry> usersList = new ArrayList<UserImageEntry>() ;
     private boolean isReceiverRegistered;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,8 +64,8 @@ public class Splash extends Activity {
 
         currentUser = new User();
 
-        if (prefs.getString("username", null) != null){
-            String userName = prefs.getString("username", null);
+        if (prefs.getString("fullname", null) != null){
+            String userName = prefs.getString("fullname", null);
             currentUser.setName(userName);
         }
 
@@ -71,51 +79,13 @@ public class Splash extends Activity {
         // Get events from server
         globalVariables = ((GlobalVariables) this.getApplication());
         setContentView(R.layout.activity_splash);
-//        mRegistrationProgressBar = (ProgressBar) findViewById(R.id.registrationProgressBar);
-//        mRegistrationBroadcastReceiver = new BroadcastReceiver() {
-//            @Override
-//            public void onReceive(Context context, Intent intent) {
-//                mRegistrationProgressBar.setVisibility(ProgressBar.GONE);
-//                SharedPreferences sharedPreferences =
-//                        PreferenceManager.getDefaultSharedPreferences(context);
-//                boolean sentToken = sharedPreferences
-//                        .getBoolean(QuickstartPreferences.SENT_TOKEN_TO_SERVER, false);
-//                if (sentToken) {
-//                    mInformationTextView.setText(getString(R.string.gcm_send_message));
-//                } else {
-//                    mInformationTextView.setText(getString(R.string.token_error_message));
-//                }
-//            }
-//        };
-//        mInformationTextView = (TextView) findViewById(R.id.informationTextView);
-
-        // Registering BroadcastReceiver
-//        registerReceiver();
-
 
         globalVariables.InitGPS(Splash.this);
         globalVariables.SetCurrentLocation(Utils.getMyLocation(globalVariables.GetGPS()));
         // Create server call
         new GetEventsAsyncTask(this).execute();
+        new GetUsersImages(this).execute();
 
-//        Thread th = new Thread() {
-//            @Override
-//            public void run() {
-//                try {
-//
-//                    //WebView wv = (WebView) findViewById(R.id.webview);
-//                    //wv.loadUrl("file:///android_asset/splashimage.gif");
-//                    // call eventListToHashMap from NetwrokUtiltites and putExtra hasmash to MainActivity
-//                    sleep(2000);
-//
-//                    finish();
-//                } catch (Exception e) {
-//
-//                }
-//
-//            }
-//        };
-//        th.start();
     }
     private void registerReceiver(){
         if(!isReceiverRegistered) {
@@ -150,9 +120,6 @@ public class Splash extends Activity {
                 }
                 //"get all events"
                 allEventsResponseString = NetworkUtilities.doPost(cred, NetworkUtilities.BASE_URL + "/get_all_events/");
-                //"get user entry"
-                userProfileResponseString = NetworkUtilities.doPost(cred, NetworkUtilities.BASE_URL + "/get_all_events/");
-
 
 
             } catch (Exception ex) {
@@ -240,6 +207,83 @@ public class Splash extends Activity {
             Log.d("successful", "successful");
         }
     }
+    public class GetUsersImages extends AsyncTask<String, String, String> {
+        public static final String TAG = "GetUsersImages";
+
+        Bitmap imageBitmap;
+        ArrayList<Bitmap> usersImages;
+        Context thisContext;
+
+        GetUsersImages(Context thisCon){
+            thisContext = thisCon;
+
+        }
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected String doInBackground(String... strings) {
+            String responseString;
+            try {
+                JSONObject cred = new JSONObject();
+                String userToken = "StubToken";//TODO Replace with real token
+                try {
+                    cred.put(NetworkUtilities.TOKEN, userToken);
+                } catch (JSONException e) {
+                    Log.i(TAG, e.toString());
+                }
+                responseString = NetworkUtilities.doPost(cred, NetworkUtilities.BASE_URL + "/get_all_users/");
+
+            } catch (Exception ex) {
+                Log.e(TAG, "getMembersUrls.doInBackground: failed to doPost");
+                Log.i(TAG, ex.toString());
+                responseString = "";
+            }
+            // Convert string received from server to JSON array
+            JSONArray eventsFromServerJSON = null;
+            JSONObject responseJSON= null;
+            try {
+                responseJSON = new JSONObject(responseString);
+                getAllUsersResponse = responseJSON.getJSONArray(Constants.RESPONSE_MESSAGE);
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String lenghtOfFile) {
+            // do stuff after posting data
+            for(int i=0;i<getAllUsersResponse.length();i++)
+            {
+                try {
+
+                    JSONObject currentObject = (JSONObject) getAllUsersResponse.get(i);
+                    String fullname = currentObject.getString(Constants.FULLNAME);
+
+                    Bitmap currentImage = new DownloadImageBitmapTask().execute(currentObject.getString(Constants.PHOTO_URL)).get();
+                    String userId = currentObject.getString(Constants.ID);
+                    UserImageEntry currentUser = new UserImageEntry(fullname,currentImage,userId) ;
+                    usersList.add(currentUser);
+                    userToImage.put(fullname, currentImage);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+            globalVariables.SetUsersList(usersList);
+            globalVariables.SetUsersImagesMap(userToImage);
+            Log.d(TAG, "getUsersImages.successful" + userToImage.toString());
+        }
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
