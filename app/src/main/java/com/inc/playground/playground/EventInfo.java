@@ -1,6 +1,7 @@
 package com.inc.playground.playground;
 
 import android.app.ActionBar;
+import android.app.ActivityOptions;
 import android.app.DialogFragment;
 import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
@@ -247,6 +248,7 @@ public class EventInfo extends FragmentActivity {
 
                                 DialogFragment newFragment =  new MyDialogFragment(currentEvent.GetId(),currentUser.GetUserId());
                                 newFragment.show(ft, "dialog");
+                                break;
                             case R.id.share_calendar:
                                 Calendar cal = Calendar.getInstance();
                                 Intent intent = new Intent(Intent.ACTION_EDIT);
@@ -257,6 +259,16 @@ public class EventInfo extends FragmentActivity {
                                 intent.putExtra("endTime", cal.getTimeInMillis()+60*60*1000);
                                 intent.putExtra("title", "A Test Event from android app");
                                 startActivity(intent);
+                                break;
+                            case R.id.share_whatsapp:
+                                Intent iv = new Intent(EventInfo.this,
+                                        FilterActivity.class );
+                                Bundle bndlanimation =
+                                ActivityOptions.makeCustomAnimation(getApplicationContext(), R.anim.slide_down, R.anim.slide_up).toBundle();
+                                startActivity(iv,bndlanimation);
+//                            finish();
+                                break;
+
                         }
 //
 

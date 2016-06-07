@@ -31,9 +31,9 @@ public class FilterActivity extends PreferenceActivity {
         // Load the preferences from an XML resource
         addPreferencesFromResource(R.xml.filter);
 //        Preference button = (Preference)findPreference("exitlink");
-        Button buttonOne = (Button) findViewById(R.id.btn_register);
-        ListView v = getListView();
-        v.addFooterView(buttonOne);
+//        Button buttonOne = (Button) findViewById(R.id.btn_register);
+//        ListView v = getListView();
+//        v.addFooterView(buttonOne);
 //        setContentView(R.layout.buttons_layout);
 //        Button buttonOne = (Button) findViewById(R.id.btn_register);
 //
