@@ -310,7 +310,7 @@ public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefre
                         playButton.setClickable(false);
                         playButton.setChecked(true);
                         playTxt.setText("Playing");
-                        playTxt.setTextColor(Color.parseColor("#104E8B"));
+                        playTxt.setTextColor(Color.parseColor("#00ced1"));
                     }
                 }
             }

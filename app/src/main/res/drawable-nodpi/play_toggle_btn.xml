@@ -2,8 +2,8 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:state_checked="false"
-        android:drawable="@drawable/pg_play_icon" />
+        android:drawable="@drawable/pg_playing" />
     <item
         android:state_checked="true"
-        android:drawable="@drawable/pg_playing_icon" />
+        android:drawable="@drawable/pg_playing" />
 </selector>
