@@ -5,17 +5,14 @@ import android.app.DialogFragment;
 import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
-import android.media.Image;
-import android.os.AsyncTask;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -28,10 +25,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.ToggleButton;
-import android.widget.ToggleButton;
-
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -45,13 +39,13 @@ import com.inc.playground.playground.utils.Constants;
 import com.inc.playground.playground.utils.CustomMarker;
 import com.inc.playground.playground.utils.DownloadImageBitmapTask;
 import com.inc.playground.playground.utils.GPSTracker;
+import com.inc.playground.playground.utils.LatLngInterpolator;
 import com.inc.playground.playground.utils.NetworkUtilities;
+import com.inc.playground.playground.utils.RoundedImageView;
 import com.inc.playground.playground.utils.User;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -71,15 +65,6 @@ import java.util.concurrent.ExecutionException;
 
 public class EventInfo extends FragmentActivity {
 
-    ProgressDialog progressDialog;
-    ArrayList<EventsObject> rest;
-    View layout12;
-
-    String Error;
-
-    Button btn_fvrt, btn_fvrt1;
-
-
     CustomMarker customMarkerOne;
     private HashMap<CustomMarker, Marker> markersHashMap;
     private Iterator<Map.Entry<CustomMarker, Marker>> iter;
@@ -92,17 +77,15 @@ public class EventInfo extends FragmentActivity {
     ImageButton shareButton ;
 
     public static final String TAG = "EventInfoActivity";
-    //DahanLina
 
     EventsObject currentEvent;
-    HashMap<String, String> currentLocation;
-    TextView viewName, viewDateEvent, viewStartTime, viewEndTime, viewLocation, viewSize, viewCurrentSize, viewEventDescription , viewPlay;
+    TextView viewName, viewDateEvent, viewStartTime, viewEndTime, viewCurMembers, viewLocation, viewSize, viewCurrentSize, viewEventDescription , viewPlay;
     ImageView typeImg;
     JSONArray membersImagesUrls;
     private handleEventTask JoinEventsTask = null;
     public LeaveHandleEventTask LeaveEventTask = null;
     public SharedPreferences prefs ;
-    LinearLayout membersList;
+    LinearLayout  membersList;
     User currentUser;
     ToggleButton playButton;
     Bitmap imageBitmap;
@@ -110,11 +93,10 @@ public class EventInfo extends FragmentActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_event_info);
+        setContentView(R.layout.activity_event_info2);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LOCKED);
 
         prefs = getSharedPreferences("Login", MODE_PRIVATE);
-
        
         setPlayGroundActionBar();
         Intent intent = getIntent();
@@ -124,6 +106,7 @@ public class EventInfo extends FragmentActivity {
         viewDateEvent = (TextView) findViewById(R.id.event_date);
         viewStartTime = (TextView) findViewById(R.id.event_start_time);
         viewEndTime = (TextView) findViewById(R.id.event_end_time);
+        viewCurMembers = (TextView) findViewById(R.id.cur_membersTxt);
         viewLocation = (TextView) findViewById(R.id.event_formatted_location);
         viewSize = (TextView) findViewById(R.id.event_max_size);
         viewCurrentSize = (TextView) findViewById(R.id.current_size);
@@ -149,16 +132,7 @@ public class EventInfo extends FragmentActivity {
 
         }
 
-
         setdata();
-
-// btn_fvrt = (Button) findViewById(R.id.btn_fvrt);
-//		btn_fvrt1 = (Button) findViewById(R.id.btn_fvrt1);
-
-
-//		txt_header = (TextView) findViewById(R.id.txt_header);
-//		txt_header.setTypeface(tfh);
-
     }
 
 
@@ -190,6 +164,9 @@ public class EventInfo extends FragmentActivity {
         addMarkerToHashMap(customMarkerOne, newMark);
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(position, 15));
 
+        Typeface fontText = Typeface.createFromAsset(getAssets(), "kimberly.ttf");
+        viewName.setTypeface(fontText);
+
         // Set event view values
         viewName.setText(currentEvent.GetName());
         viewDateEvent.setText(currentEvent.GetDate());
@@ -214,7 +191,7 @@ public class EventInfo extends FragmentActivity {
             }
         }
 
-        String uri = "@drawable/pg_" + currentEvent.GetType();
+        String uri = "@drawable/pg_" + currentEvent.GetType() + "_icon";
         int imageResource = getResources().getIdentifier(uri,null,getPackageName());
         Drawable typeDrawable = getResources().getDrawable(imageResource);
         typeImg.setImageDrawable(typeDrawable);
@@ -603,18 +580,20 @@ public class EventInfo extends FragmentActivity {
 //        }
 //        else {//join
             JoinEventsTask = new handleEventTask(currentEvent);
-            JoinEventsTask.execute((Void) null);
+        JoinEventsTask.execute((Void) null);
 
+
+        viewPlay.setText("Playing");
+        viewPlay.setTextColor(Color.parseColor("#104E8B"));
             ImageView member = new ImageView(this);
-            member.setImageResource(R.drawable.pg_time);
-            viewPlay.setText("Playing");
-            viewPlay.setTextColor(Color.parseColor("#104E8B"));
-        
             member.setImageBitmap(globalVariables.GetUserPictureBitMap());
+            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(150, 150);
+            member.setLayoutParams(layoutParams);
+            member.setPadding(7,2,7,2);
             membersList.addView(member);
             x.setClickable(false);
             viewCurrentSize.setText(Integer.toString(membersImagesUrls.length() + 1));
-
+            viewCurMembers.setText(Integer.toString(membersImagesUrls.length() + 1));
             if (userEvents == null)
                 userEvents = new HashSet<>();
             userEvents.add(currentEvent.GetId());
@@ -887,6 +866,7 @@ public class EventInfo extends FragmentActivity {
         protected void onPostExecute(String lenghtOfFile) {
             // do stuff after posting data
             viewCurrentSize.setText(Integer.toString(membersImagesUrls.length()));
+            viewCurMembers.setText(Integer.toString(membersImagesUrls.length()));
             for(int i=0;i<membersImagesUrls.length();i++)
             {
                 try {
@@ -905,6 +885,7 @@ public class EventInfo extends FragmentActivity {
                 member.setId(i);
                 LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(150, 150);
                 member.setLayoutParams(layoutParams);
+                member.setPadding(7,1,7,1);
                 membersList.addView(member);
             }
 

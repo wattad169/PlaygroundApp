@@ -22,7 +22,7 @@
                 android:id="@+id/img_header"
                 android:layout_width="fill_parent"
                 android:layout_height="50dp"
-                android:background="@drawable/title_bg" />
+                android:background="#104e8b" />
 
             <TextView
                 android:id="@+id/textView1"
@@ -30,10 +30,11 @@
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:layout_centerVertical="true"
-                android:text="Add Event"
+                android:text="Create new event"
                 android:textColor="#fff"
                 android:textSize="20dp"
-                android:typeface="sans" />
+                android:typeface="sans"
+                android:textStyle="bold|italic" />
         </RelativeLayout>
 
         <RelativeLayout

@@ -116,7 +116,7 @@
         </View>
 
         <LinearLayout
-            android:id="@+id/ll_cat"
+            android:id="@+id/ll_my_profile"
             android:layout_width="300dp"
             android:layout_height="50dp"
             android:background="#FFFFFF"
