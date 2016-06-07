@@ -17,6 +17,7 @@
 package com.inc.playground.playground;
 
 import android.app.ActionBar;
+import android.app.Activity;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -24,6 +25,7 @@ import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -33,8 +35,11 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.ListFragment;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -43,6 +48,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.inc.playground.playground.upLeft3StripesButton.MyProfile;
@@ -75,7 +81,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
      * time.
      */
     ViewPager mViewPager;
-
+    Toolbar toolbar = null;
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -83,6 +89,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         // Create the adapter that will return a fragment for each of the three primary sections
         // of the app.
         mAppSectionsPagerAdapter = new AppSectionsPagerAdapter(getSupportFragmentManager());
+
 
         // Set up the action bar.
         final ActionBar actionBar = getActionBar();
@@ -92,8 +99,8 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         actionBar.setStackedBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.secondaryColor)));
         // Specify that the Home/Up button should not be enabled, since there is no hierarchical
         // parent.
-        actionBar.setHomeButtonEnabled(false);
-
+        //actionBar.setHomeButtonEnabled(false);
+        actionBar.setDisplayShowHomeEnabled(false);
         // Specify that we will be displaying tabs in the action bar.
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 
@@ -152,9 +159,25 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 
         getActionBar().setDisplayHomeAsUpEnabled(true);
                 getActionBar().setHomeButtonEnabled(true);
+
         // all linear layout from slider menu
-        LinearLayout ll_home = (LinearLayout) findViewById(R.id.ll_login);
-        ll_home.setOnClickListener(new View.OnClickListener() {
+
+        /*Home button */
+        LinearLayout ll_Home = (LinearLayout) findViewById(R.id.ll_home);
+        ll_Home.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // TODO Auto-generated method stub
+                // new changes
+                Intent iv = new Intent(MainActivity.this,
+                                MainActivity.class);
+                startActivity(iv);
+                finish();
+            }
+        });
+        /*Login button */
+        LinearLayout ll_Login = (LinearLayout) findViewById(R.id.ll_login);
+        ll_Login.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
@@ -165,9 +188,8 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
                 finish();
             }
         });
-        // add another Linearlayout like I did for ll_login tag in the xml for other buttons in the menu bar
 
-        /*Onclick for the Setting button (idan) */
+        /*Setting button*/
         LinearLayout ll_Setting = (LinearLayout) findViewById(R.id.ll_settings);
         ll_Setting.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -181,23 +203,8 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
                 finish();
             }
         });
-        /*Onclick for the Setting button (idan)- why ll_temp? what is it here?
-         * please document!
-        LinearLayout ll_temp = (LinearLayout) findViewById(R.id.ll_my_profile);
-        ll_temp.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // TODO Auto-generated method stub
-                // new changes
-                Intent iv = new Intent(MainActivity.this,
-                        FilterActivity.class );
-                startActivity(iv);
-                finish();
-            }
-        });
-                  * */
 
-        /*Onclick for the my profile button (idan) */
+        /*My profile button*/
         LinearLayout ll_my_profile = (LinearLayout) findViewById(R.id.ll_my_profile);
         ll_my_profile.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -217,44 +224,6 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
                 finish();
             }
         });
-        /*Onclick for the Setting button (idan) */
-//        LinearLayout ll_temp = (LinearLayout) findViewById(R.id.ll_fav);
-//        ll_temp.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                // TODO Auto-generated method stub
-//                // new changes
-//                Intent iv = new Intent(MainActivity.this,
-//                        FilterActivity.class );
-//                startActivity(iv);
-//                finish();
-//            }
-//        });
-//        LinearLayout invite = (LinearLayout) findViewById(R.id.ll_fav);
-//        invite.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                // TODO Auto-generated method stub
-//                // new changes
-//                FragmentTransaction ft = getFragmentManager().beginTransaction();
-//                android.app.Fragment prev = getFragmentManager().findFragmentByTag("dialog");
-//                if (prev != null) {
-//                    ft.remove(prev);
-//                }
-//                ft.addToBackStack(null);
-//
-//                String inputText = "asd";
-//
-//                DialogFragment newFragment = MyDialogFragment.newInstance(inputText);
-//                newFragment.show(ft, "dialog");
-//            }
-//        });
-
-
-
-
-
-
     }
     public void setPlayGroundActionBar(){
         String userLoginId,userFullName,userEmail,userPhoto;
@@ -275,8 +244,10 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
             actionBar.setDisplayShowTitleEnabled(true);
             actionBar.setDisplayShowCustomEnabled(true);
             actionBar.setDisplayUseLogoEnabled(true);
-            actionBar.setDisplayShowHomeEnabled(true);
-            ImageView img_profile = (ImageView) findViewById(R.id.img_profile_action_bar);
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            ImageView logo_image = (ImageView) findViewById(R.id.img_profile_action_bar);
+            logo_image.setBackgroundResource(R.drawable.pg_logo2);
+            ImageView img_profile = (ImageView) findViewById(R.id.profile_image);
             imageBitmap = globalVariables.GetUserPictureBitMap();
             if(imageBitmap==null){
                 Log.i(TAG,"downloading");

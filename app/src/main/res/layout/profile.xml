@@ -9,39 +9,30 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-        android:background="#00f7ff"
-
-        <ImageView
-            android:id="@+id/header_cover_image"
-            android:layout_width="wrap_content"
-            android:layout_height="65dp"
-            android:scaleType="centerCrop"
-            android:background="#00f7ff"
-            />
+        android:background="#7092BE"
 
         <ImageView
             android:id="@+id/user_profile_photo"
             android:layout_width="120dp"
             android:layout_height="120dp"
-            android:layout_below="@+id/header_cover_image"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="-60dp"
+            android:layout_marginTop="30dp"
             android:background="@drawable/profile_circular_border_imageview"
             android:elevation="5dp"
             android:padding="20dp"
             android:scaleType="fitCenter"
-            android:src="@drawable/profile" />
-
+            android:src="@drawable/profile"
+            android:layout_marginLeft="130dp" />
 
 
         <RelativeLayout
             android:id="@+id/profile_layout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/header_cover_image"
-            android:background="#00f7ff"
+            android:layout_height="200dp"
+            android:background="@drawable/pg_background_event_3"
             android:elevation="4dp"
             android:paddingBottom="1dp">
+
+
 
 
 
@@ -60,12 +51,12 @@
                 android:id="@+id/user_profile_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="65dp"
+                android:layout_marginTop="160dp"
                 android:text="Personal name"
                 android:textColor="#fff"
                 android:textSize="24sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:layout_marginLeft="120dp" />
 
 
 
@@ -91,7 +82,8 @@
             <!---->
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:background="#f0ffff">
 
                 <!--<TextView-->
                     <!--android:id="@+id/createdCount_textView"-->
@@ -128,7 +120,12 @@
                     android:id="@+id/createdCount_textView"
                     android:layout_alignParentTop="true"
                     android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true" />
+                    android:layout_alignParentStart="false"
+                    android:layout_marginTop="2dp"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginBottom="2dp"
+                    android:textColor="#104e8b"
+                    android:textStyle="bold" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -138,7 +135,33 @@
                     android:id="@+id/playedCount_textview"
                     android:layout_alignParentTop="true"
                     android:layout_alignParentRight="true"
-                    android:layout_alignParentEnd="true" />
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginTop="2dp"
+                    android:layout_marginBottom="2dp"
+                    android:layout_marginRight="50dp"
+                    android:textStyle="bold"
+                    android:textColor="#104e8b" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:id="@+id/countCreateTxt"
+                    android:layout_alignParentBottom="false"
+                    android:layout_toRightOf="@+id/createdCount_textView"
+                    android:layout_alignBottom="@+id/createdCount_textView"
+                    android:layout_marginLeft="3dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:id="@+id/countPlayedTxt"
+                    android:layout_alignParentBottom="false"
+                    android:layout_alignLeft="@+id/playedCount_textview"
+                    android:layout_marginLeft="70dp"
+                    android:layout_alignBottom="@+id/playedCount_textview" />
+
             </RelativeLayout><![CDATA[
 
             android:layout_width="match_parent"
@@ -159,6 +182,16 @@
                 <!--android:padding="20dp"-->
                 <!--android:text="My events:" />-->
 
+
+            <ProgressBar
+                style="?android:attr/progressBarStyleLarge"
+                android:layout_width="104dp"
+                android:layout_height="104dp"
+                android:id="@+id/progressBar"
+                android:progressDrawable="@drawable/circular_progress_bar"
+                android:layout_alignBottom="@+id/profile_layout"
+                android:layout_alignParentBottom="true"
+                android:layout_gravity="center_horizontal" />
 
             <ListView
                 android:id="@+id/my_events_list"

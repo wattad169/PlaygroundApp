@@ -2,33 +2,33 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginLeft="5dp"
-    android:layout_marginRight="5dp">
+    android:background="#f0ffff">
 
     <RelativeLayout
         android:id="@+id/rel_fav"
         android:layout_width="fill_parent"
-        android:layout_height="110dp"
-        android:background="@drawable/pg_cell_first">
+        android:layout_height="120dp"
+        android:background="@drawable/pg_cell_list">
 
         <RelativeLayout
             android:id="@+id/rl_img_round"
-            android:layout_width="25dp"
+            android:layout_width="30dp"
             android:layout_height="50dp"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="5dp" >
+            android:layout_marginLeft="10dp" >
 
             <ImageView
                 android:id="@+id/type_img"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
                 android:layout_centerVertical="true"
-                android:layout_marginRight="7dp"
                 android:gravity="center"
                 android:textColor="#fff"
                 android:textSize="25dp"
-                android:textStyle="bold"/>
+                android:textStyle="bold"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true" />
         </RelativeLayout>
 
         <TextView
@@ -36,13 +36,14 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
-            android:layout_marginLeft="10dp"
+            android:layout_marginLeft="35dp"
             android:textColor="@color/background_floating_material_dark"
             android:layout_toRightOf="@+id/rl_img_round"
             android:text="Event Name"
             android:textStyle="bold"
             android:layout_marginRight="5dp"
-            android:textSize="18dp" />
+            android:textSize="18dp"
+            android:layout_marginTop="10dp" />
 
         <ImageView
             android:id="@+id/img_arrow"
@@ -88,16 +89,17 @@
             android:layout_marginTop="7dp" />
 
         <ToggleButton
+            android:layout_width="65dp"
+            android:layout_height="65dp"
             android:id="@+id/join"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:layout_marginRight="7dp"
+            android:checked="false"
+            android:paddingTop="60dp"
+            android:textOn=""
+            android:textOff=""
+            android:background="@drawable/play_toggle_btn"
             android:onClick="myClickHandler"
-            android:background="@drawable/play_toggle_btn_bg"
-            android:drawableTop="@drawable/play_toggle_btn"
-            android:checked="false" />
+            android:layout_alignBottom="@+id/img_distance"
+            android:layout_alignRight="@+id/event_name" />
 
         <ImageView
             android:id="@+id/img_distance"
@@ -106,7 +108,7 @@
             android:background="@drawable/distance"
             android:layout_alignParentBottom="false"
             android:paddingBottom="0dp"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="7dp"
             android:layout_alignLeft="@+id/event_name"
             android:layout_below="@+id/img_date" />
 
@@ -155,10 +157,10 @@
             android:id="@+id/play_txt"
             android:layout_below="@+id/join"
             android:layout_alignLeft="@+id/join"
-            android:layout_marginLeft="5dp"
-            android:layout_marginTop="-8dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="-15dp"
             android:textStyle="bold"
-            android:textColor="#1874cd" />
+            android:textColor="#D0D0D0" />
     </RelativeLayout>
 
 

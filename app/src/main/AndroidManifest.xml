@@ -43,7 +43,7 @@
     <application
         android:name=".GlobalVariables"
         android:largeHeap="true"
-        android:icon="@drawable/pg_logo"
+        android:icon="@drawable/pg_logo2"
         android:label="Playground"
         android:theme="@android:style/Theme.Holo.Light.DarkActionBar">
         <meta-data
