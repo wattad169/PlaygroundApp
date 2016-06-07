@@ -88,20 +88,16 @@
             android:layout_marginTop="7dp" />
 
         <ToggleButton
-            android:layout_width="65dp"
-            android:layout_height="65dp"
             android:id="@+id/join"
-            android:checked="false"
-            android:layout_marginRight="10dp"
-            android:paddingTop="50dp"
-            android:textOn=""
-            android:textOff=""
-            android:background="@drawable/play_toggle_btn"
-            android:onClick="myClickHandler"
-            android:layout_alignParentBottom="false"
-            android:layout_marginTop="20dp"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:layout_alignParentRight="true"
-            android:layout_centerVertical="true" />
+            android:layout_centerVertical="true"
+            android:layout_marginRight="7dp"
+            android:onClick="myClickHandler"
+            android:background="@drawable/play_toggle_btn_bg"
+            android:drawableTop="@drawable/play_toggle_btn"
+            android:checked="false" />
 
         <ImageView
             android:id="@+id/img_distance"
@@ -159,10 +155,10 @@
             android:id="@+id/play_txt"
             android:layout_below="@+id/join"
             android:layout_alignLeft="@+id/join"
-            android:layout_marginLeft="15dp"
-            android:layout_marginTop="-18dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="-8dp"
             android:textStyle="bold"
-            android:textColor="#D0D0D0" />
+            android:textColor="#1874cd" />
     </RelativeLayout>
 
 

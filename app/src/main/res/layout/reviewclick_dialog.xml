@@ -69,7 +69,21 @@
                         android:textColor="#fff"
                         android:textStyle="bold" />
 
-                 
+                    <RatingBar
+                        android:id="@+id/rate1234"
+                        style="@style/foodRatingShowreview"
+                        android:layout_width="wrap_content"
+                        android:layout_height="40dp"
+                        android:layout_alignParentBottom="true"
+                        android:isIndicator="true"
+                        android:numStars="5"
+                        android:max="100"
+                        android:scaleX="0.6"
+                        android:scaleY="0.6"
+                        android:transformPivotX="0dp"
+                        android:transformPivotY="0dp"
+                        android:rating="2.0"
+                        android:stepSize="0.0" />
                 </LinearLayout>
             </LinearLayout>
 

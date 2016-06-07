@@ -65,24 +65,19 @@ public class MyProfile extends Activity {
 
     public static GlobalVariables globalVariables;
     /*my variables*/
-    private ProgressBar spinner;     //for loading
+    public ProgressBar spinner;     //for loading
     ListView listView;              //ListView listView;
     ArrayList<EventsObject> myEventsArrayList;
-
-
+    Bundle bundle;
 
     /*Yarden and lina variables:*/
     ListView events_list; //ListView listView;
     ArrayList<EventsObject> homeEvents;
-    ; //List<Movie> movieList;
-    private EventInfo.handleEventTask myEventsTask = null;
-    private EventInfo.LeaveHandleEventTask LeaveEventTask = null;
+
     public SharedPreferences prefs;
-    Boolean isOK = true;
     String userLoginId;
     User currentUser;
     Set<String> userEvents;
-    Bundle bundle;
 
 
     @Override
@@ -94,10 +89,11 @@ public class MyProfile extends Activity {
 
         currentUser = globalVariables.GetCurrentUser();
 
-        //spinner = (ProgressBar)findViewById(R.id.progressBar);
-        //spinner.setVisibility(View.VISIBLE);
-        //spinner.setVisibility(View.INVISIBLE);
+
+        //yarden, lina, i am tring to put loading spinner when we move to this screen (spinner)
         super.onCreate(savedInstanceState);
+        spinner = (ProgressBar)findViewById(R.id.progressBar);
+       // spinner.setVisibility(View.VISIBLE);
         setContentView(R.layout.profile);
 
         //set name
@@ -143,6 +139,7 @@ public class MyProfile extends Activity {
         //userLoginId = prefs.getString("userid", null);
 
         new getList().execute();
+       // spinner.setVisibility(View.INVISIBLE);
 
 
         // The activity is about to become visible.
