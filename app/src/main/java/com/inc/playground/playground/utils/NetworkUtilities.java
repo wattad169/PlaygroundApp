@@ -78,8 +78,10 @@ final public class NetworkUtilities {
     public static final String USER_ID = "user_id";
 
     public static final String PHOTO_URL = "photo_url";
-
-
+    private static double originLon;
+    private static double originLat;
+    private static double distanceLon;
+    private static double distanceLat;
 
 
     private NetworkUtilities() {
@@ -150,7 +152,28 @@ final public class NetworkUtilities {
             Log.v(TAG, "getAuthtoken completing");
         }
     }
-    public static Double calculateDistance(double originLon, double originLat, double distanceLon, double distanceLat){
+//source: http://stackoverflow.com/questions/27928/calculate-distance-between-two-latitude-longitude-points-haversine-formula
+    public static Double calculateDistance(double lon1, double lat1, double lon2, double lat2) {
+        //calculate air distance
+        double R = 6371; // Radius of the earth in km
+        double dLat = deg2rad(lat2 - lat1);  // deg2rad below
+        double dLon = deg2rad(lon2-lon1);
+        double a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                   Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
+                           Math.sin(dLon/2) * Math.sin(dLon/2)
+                ;
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        double d = R * c; // Distance in km
+        return Math.round(d * 10d) / 10d; //round 1 point after digit
+    }
+    //helper function to calculate distance
+    static double deg2rad(double deg) {
+
+        return deg * (Math.PI/180);
+    }
+
+    //This function has bug. It use google api(therefore added 2 -not to be used)
+    public static Double calculateDistance2(double originLon, double originLat, double distanceLon, double distanceLat){
         final HttpResponse resp;
 
         BigDecimal originLon_tune_bg =new BigDecimal(originLon, MathContext.DECIMAL64);
@@ -253,8 +276,8 @@ final public class NetworkUtilities {
             double  currentLat= currentLocation.get(Constants.LOCATION_LAT);
             String eventLon  = currentObject.getJSONObject("location").getString(Constants.LOCATION_LON);
             String eventLat = currentObject.getJSONObject("location").getString(Constants.LOCATION_LAT);
-            currentEvent.SetPosition( eventLat ,eventLon);
-            currentEvent.SetDistance(Double.toString(calculateDistance(currentLon ,currentLat, Double.parseDouble(eventLon), Double.parseDouble(eventLat))));//change order
+            currentEvent.SetPosition(eventLat, eventLon);
+            currentEvent.SetDistance(Double.toString(calculateDistance(currentLon, currentLat, Double.parseDouble(eventLon), Double.parseDouble(eventLat))));//change order
             // add event to Hashmap
             events.add(currentEvent);
         }
