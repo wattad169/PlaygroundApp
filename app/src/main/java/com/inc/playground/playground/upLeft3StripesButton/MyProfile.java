@@ -1,5 +1,6 @@
 package com.inc.playground.playground.upLeft3StripesButton;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -8,6 +9,7 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -69,7 +71,7 @@ public class MyProfile extends Activity {
     ListView listView;              //ListView listView;
     ArrayList<EventsObject> myEventsArrayList;
 
-
+    public static final String TAG = "MyProfileActivity";
 
     /*Yarden and lina variables:*/
     ListView events_list; //ListView listView;
@@ -91,7 +93,7 @@ public class MyProfile extends Activity {
 
         globalVariables = ((GlobalVariables) this.getApplication());//critical !
         bundle = getIntent().getExtras();
-
+        setPlayGroundActionBar();
         currentUser = globalVariables.GetCurrentUser();
 
         //spinner = (ProgressBar)findViewById(R.id.progressBar);
@@ -102,9 +104,9 @@ public class MyProfile extends Activity {
 
         //set name
         TextView user_profile_name = (TextView) findViewById(R.id.user_profile_name);
-        user_profile_name.setText(bundle.getString("name"));//name should be as facebook?
+        user_profile_name.setText(bundle.getString("name").replace("%20","  "));//name should be as facebook?
         //set createdCount
-        TextView createdCount_textView = (TextView) findViewById(R.id.createdCount_textView);
+        TextView createdCount_textView = (TextView) findViewById(R.id.countCreateTxt);
         createdCount_textView.setText(createdCount_textView.getText()+
                 String.valueOf(bundle.getInt("createdNumOfEvents")));
         //set url
@@ -379,6 +381,46 @@ public class MyProfile extends Activity {
         //Intent next = new Intent(getApplication(),MainActivity.class);
         //startActivity(next);
         finish();
+    }
+
+    public void setPlayGroundActionBar(){
+        String userLoginId,userFullName,userEmail,userPhoto;
+        Bitmap imageBitmap =null;
+
+        final ActionBar actionBar = getActionBar();
+        final String MY_PREFS_NAME = "Login";
+        SharedPreferences prefs = getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
+        globalVariables = ((GlobalVariables) this.getApplication());
+        if (prefs.getString("userid", null) != null){
+            userLoginId = prefs.getString("userid", null);
+            userFullName = prefs.getString("fullname", null);
+            userEmail = prefs.getString("emilid", null);
+            userPhoto = prefs.getString("picture", null);
+            actionBar.setCustomView(R.layout.actionbar_custom_view_home);
+            actionBar.setDisplayShowTitleEnabled(true);
+            actionBar.setDisplayShowCustomEnabled(true);
+            actionBar.setDisplayUseLogoEnabled(true);
+            actionBar.setDisplayShowHomeEnabled(true);
+            ImageView img_profile = (ImageView) findViewById(R.id.img_profile_action_bar);
+            imageBitmap = globalVariables.GetUserPictureBitMap();
+            if(imageBitmap==null){
+                Log.i(TAG,"downloading");
+                try {
+                    imageBitmap = new DownloadImageBitmapTask().execute(userPhoto).get();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                }
+
+            }
+            else {
+                Log.i(TAG,"Image found");
+            }
+            img_profile.setImageBitmap(imageBitmap);
+            globalVariables.SetUserPictureBitMap(imageBitmap); // Make the imageBitMap global to all activities to avoid downloading twice
+        }
+        actionBar.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.primaryColor)));
     }
 
 }

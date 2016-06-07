@@ -21,8 +21,8 @@ public class AlertDialogManager {
 
 		if (status != null)
 			// Setting alert dialog icon
-			alertDialog.setIcon((status) ? R.drawable.pg_logo
-					: R.drawable.pg_logo);
+			alertDialog.setIcon((status) ? R.drawable.pg_logo2
+					: R.drawable.pg_logo2);
 
 		// Setting OK Button
 		alertDialog.setButton("OK", new DialogInterface.OnClickListener() {

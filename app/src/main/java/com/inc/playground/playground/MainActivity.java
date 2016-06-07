@@ -161,8 +161,23 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
                 getActionBar().setHomeButtonEnabled(true);
 
         // all linear layout from slider menu
-        LinearLayout ll_home = (LinearLayout) findViewById(R.id.ll_login);
-        ll_home.setOnClickListener(new View.OnClickListener() {
+
+        /*Home button */
+        LinearLayout ll_Home = (LinearLayout) findViewById(R.id.ll_home);
+        ll_Home.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // TODO Auto-generated method stub
+                // new changes
+                Intent iv = new Intent(MainActivity.this,
+                                MainActivity.class);
+                startActivity(iv);
+                finish();
+            }
+        });
+        /*Login button */
+        LinearLayout ll_Login = (LinearLayout) findViewById(R.id.ll_login);
+        ll_Login.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
@@ -173,9 +188,8 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
                 finish();
             }
         });
-        // add another Linearlayout like I did for ll_login tag in the xml for other buttons in the menu bar
 
-        /*Onclick for the Setting button (idan) */
+        /*Setting button*/
         LinearLayout ll_Setting = (LinearLayout) findViewById(R.id.ll_settings);
         ll_Setting.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -189,23 +203,8 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
                 finish();
             }
         });
-        /*Onclick for the Setting button (idan)- why ll_temp? what is it here?
-         * please document!
-        LinearLayout ll_temp = (LinearLayout) findViewById(R.id.ll_my_profile);
-        ll_temp.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // TODO Auto-generated method stub
-                // new changes
-                Intent iv = new Intent(MainActivity.this,
-                        FilterActivity.class );
-                startActivity(iv);
-                finish();
-            }
-        });
-                  * */
 
-        /*Onclick for the my profile button (idan) */
+        /*My profile button*/
         LinearLayout ll_my_profile = (LinearLayout) findViewById(R.id.ll_my_profile);
         ll_my_profile.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -225,45 +224,6 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
                 finish();
             }
         });
-        /*Onclick for the Setting button (idan) */
-//        LinearLayout ll_temp = (LinearLayout) findViewById(R.id.ll_fav);
-//        ll_temp.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                // TODO Auto-generated method stub
-//                // new changes
-//                Intent iv = new Intent(MainActivity.this,
-//                        FilterActivity.class );
-//                startActivity(iv);
-//                finish();
-//            }
-//        });
-//        LinearLayout invite = (LinearLayout) findViewById(R.id.ll_fav);
-//        invite.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                // TODO Auto-generated method stub
-//                // new changes
-//                FragmentTransaction ft = getFragmentManager().beginTransaction();
-//                android.app.Fragment prev = getFragmentManager().findFragmentByTag("dialog");
-//                if (prev != null) {
-//                    ft.remove(prev);
-//                }
-//                ft.addToBackStack(null);
-//
-//                String inputText = "asd";
-//
-//                DialogFragment newFragment = MyDialogFragment.newInstance(inputText);
-//                newFragment.show(ft, "dialog");
-//            }
-//        });
-
-
-
-
-
-
-
     }
     public void setPlayGroundActionBar(){
         String userLoginId,userFullName,userEmail,userPhoto;
@@ -286,7 +246,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
             actionBar.setDisplayUseLogoEnabled(true);
             actionBar.setDisplayHomeAsUpEnabled(true);
             ImageView logo_image = (ImageView) findViewById(R.id.img_profile_action_bar);
-            logo_image.setBackgroundResource(R.drawable.pg_logo);
+            logo_image.setBackgroundResource(R.drawable.pg_logo2);
             ImageView img_profile = (ImageView) findViewById(R.id.profile_image);
             imageBitmap = globalVariables.GetUserPictureBitMap();
             if(imageBitmap==null){

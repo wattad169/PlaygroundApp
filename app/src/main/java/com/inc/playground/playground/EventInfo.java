@@ -97,7 +97,6 @@ public class EventInfo extends FragmentActivity {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LOCKED);
 
         prefs = getSharedPreferences("Login", MODE_PRIVATE);
-       
         setPlayGroundActionBar();
         Intent intent = getIntent();
         currentEvent = (EventsObject) intent.getSerializableExtra("eventObject");
@@ -749,24 +748,9 @@ public class EventInfo extends FragmentActivity {
         @Override
         protected void onPostExecute(final String responseString) {
 
-
-
         }
 
-
-
-
     }
-
-
-
-
-
-
-
-
-
-
 
     public void setPlayGroundActionBar(){
         String userLoginId,userFullName,userEmail,userPhoto;
