@@ -2,6 +2,7 @@ package com.inc.playground.playground.upLeft3StripesButton;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -82,6 +83,7 @@ public class MyProfile extends Activity {
     String userLoginId;
     User currentUser;
     Set<String> userEvents;
+    ProgressDialog progressBar;
 
 
     @Override
@@ -93,10 +95,15 @@ public class MyProfile extends Activity {
         setPlayGroundActionBar();
         currentUser = globalVariables.GetCurrentUser();
 
+        final AlertDialog alertDialog = new AlertDialog.Builder(this).create();
+
+        progressBar = ProgressDialog.show(MyProfile.this, "Playground", "Loading...");
+
+
 
         //yarden, lina, i am tring to put loading spinner when we move to this screen (spinner)
         super.onCreate(savedInstanceState);
-        spinner = (ProgressBar)findViewById(R.id.progressBar);
+//        spinner = (ProgressBar)findViewById(R.id.progressBar);
        // spinner.setVisibility(View.VISIBLE);
         setContentView(R.layout.profile);
 
@@ -129,11 +136,6 @@ public class MyProfile extends Activity {
         /*Error setting url - need fix */
         //user_profile_photo.setImageBitmap(getBitmapFromURL("https://www.facebook.com/photo.php?fbid=10153556040874658&set=a.429615654657.232270.798789657&type=3&theater"));
 
-
-
-
-
-
     }
     @Override
     protected void onStart() {
@@ -151,6 +153,9 @@ public class MyProfile extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
+        if (progressBar.isShowing()) {
+            progressBar.dismiss();
+        }
         // The activity has become visible (it is now "resumed").
     }
     @Override
@@ -168,6 +173,7 @@ public class MyProfile extends Activity {
         super.onDestroy();
         // The activity is about to be destroyed.
     }
+
 
 
 
@@ -247,7 +253,7 @@ public class MyProfile extends Activity {
                             Intent intent = new Intent(getApplicationContext(), EventInfo.class);
                             intent.putExtra("eventObject", homeEvents.get(position));
                             startActivity(intent);
-                            finish();
+//                            finish();
 
                         }
                     });
@@ -377,9 +383,9 @@ public class MyProfile extends Activity {
     public void onBackPressed()
     {
         super.onBackPressed();
-        //Intent next = new Intent(getApplication(),MainActivity.class);
-        //startActivity(next);
-        finish();
+//        Intent next = new Intent(getApplication(),MainActivity.class);
+//        startActivity(next);
+//        finish();
     }
 
     public void setPlayGroundActionBar(){

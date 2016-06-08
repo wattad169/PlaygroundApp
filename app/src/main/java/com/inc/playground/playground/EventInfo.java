@@ -116,7 +116,7 @@ public class EventInfo extends FragmentActivity {
 
         prefs = getSharedPreferences("Login", MODE_PRIVATE);
 
-       
+
         setPlayGroundActionBar();
         Intent intent = getIntent();
         currentEvent = (EventsObject) intent.getSerializableExtra("eventObject");
@@ -376,7 +376,7 @@ public class EventInfo extends FragmentActivity {
 //
 //            @Override
 //            public void onClick(View arg0) {
-                // TODO YD Implement
+        // TODO YD Implement
 //				btn_fvrt1.setVisibility(View.VISIBLE);
 //				btn_fvrt.setVisibility(View.INVISIBLE);
 //				myDbHelpel = new DBAdapter(Detailpage.this);
@@ -409,8 +409,8 @@ public class EventInfo extends FragmentActivity {
 //
 //            @Override
 //            public void onClick(View v) {
-                // TODO YD Implement
-                // btn_fvrt.setVisibility(View.VISIBLE);
+        // TODO YD Implement
+        // btn_fvrt.setVisibility(View.VISIBLE);
 //				btn_fvrt1.setVisibility(View.INVISIBLE);
 //
 //				DBAdapter myDbHelper = new DBAdapter(Detailpage.this);
@@ -605,25 +605,25 @@ public class EventInfo extends FragmentActivity {
 //        viewPlay.setTextColor(Color.parseColor("#1874cd"));
 //        }
 //        else {//join
-            JoinEventsTask = new handleEventTask(currentEvent);
-            JoinEventsTask.execute((Void) null);
+        JoinEventsTask = new handleEventTask(currentEvent);
+        JoinEventsTask.execute((Void) null);
 
-            ImageView member = new ImageView(this);
-            member.setImageResource(R.drawable.pg_time);
-            viewPlay.setText("Playing");
-            viewPlay.setTextColor(Color.parseColor("#104E8B"));
-        
-            member.setImageBitmap(globalVariables.GetUserPictureBitMap());
-            membersList.addView(member);
-            x.setClickable(false);
-            viewCurrentSize.setText(Integer.toString(membersImagesUrls.length() + 1));
+        ImageView member = new ImageView(this);
+        member.setImageResource(R.drawable.pg_time);
+        viewPlay.setText("Playing");
+        viewPlay.setTextColor(Color.parseColor("#104E8B"));
 
-            if (userEvents == null)
-                userEvents = new HashSet<>();
-            userEvents.add(currentEvent.GetId());
-            currentUser.SetUserEvents(userEvents);
-            globalVariables.SetCurrentUser(currentUser);
-//        }
+        member.setImageBitmap(globalVariables.GetUserPictureBitMap());
+        membersList.addView(member);
+        x.setClickable(false);
+        viewCurrentSize.setText(Integer.toString(membersImagesUrls.length() + 1));
+
+        if (userEvents == null)
+            userEvents = new HashSet<>();
+        userEvents.add(currentEvent.GetId());
+        currentUser.SetUserEvents(userEvents);
+        globalVariables.SetCurrentUser(currentUser);
+
     }
 
     public class LeaveHandleEventTask extends AsyncTask<Void, Void, String> {
@@ -696,13 +696,7 @@ public class EventInfo extends FragmentActivity {
 
         @Override
         protected void onPostExecute(final String responseString) {
-
-
-
         }
-
-
-
 
     }
 
@@ -776,23 +770,9 @@ public class EventInfo extends FragmentActivity {
         @Override
         protected void onPostExecute(final String responseString) {
 
-
-
         }
 
-
-
-
     }
-
-
-
-
-
-
-
-
-
 
 
     public void setPlayGroundActionBar(){
@@ -834,14 +814,7 @@ public class EventInfo extends FragmentActivity {
         actionBar.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.primaryColor)));
     }
 
-    @Override
-    public void onBackPressed()
-    {
-        super.onBackPressed();
-        Intent next = new Intent(getApplication(),MainActivity.class);
-        startActivity(next);
-        finish();
-    }
+
 
     public class GetMembersImages extends AsyncTask<String, String, String> {
         int i;
@@ -920,12 +893,12 @@ public class EventInfo extends FragmentActivity {
 
                 //added for listener
                 member.setOnClickListener(new View.OnClickListener(){
-                      @Override
-                      public void onClick(View v) {
-                          // new changes
-                          new EventPhotoUserListener(photoURL).execute();
-                      }
-                  }
+                                              @Override
+                                              public void onClick(View v) {
+                                                  // new changes
+                                                  new EventPhotoUserListener(photoURL).execute();
+                                              }
+                                          }
 
                 );
 
@@ -936,8 +909,6 @@ public class EventInfo extends FragmentActivity {
             Log.d(TAG, "getMembersUrls.successful" + membersImagesUrls.toString());
         }
     }
-
-
 
 
     public class EventPhotoUserListener extends AsyncTask<String, String, String> {
@@ -995,8 +966,7 @@ public class EventInfo extends FragmentActivity {
                 iv.putExtra("photoUrl", photoUrl);
                 iv.putExtra("userEventsObjects", memeberEvents);//
                 startActivity(iv);
-
-                finish();
+//                finish();
 
 
             } catch (JSONException e) {
@@ -1004,10 +974,8 @@ public class EventInfo extends FragmentActivity {
             }
             return null;
         }
-
-
-            //Log.d("EVent info", "getMembersUrls.successful" + membersImagesUrls);
-        }
+        //Log.d("EVent info", "getMembersUrls.successful" + membersImagesUrls);
     }
+}
 
 

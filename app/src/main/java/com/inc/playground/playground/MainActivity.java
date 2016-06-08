@@ -226,7 +226,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
                 iv.putExtra("userEventsObjects", currentUser.getUserEventsObjects());//ArrayList<EventsObject>
                 iv.putExtra("photoUrl", currentUser.getPhotoUrl());
                 startActivity(iv);
-                finish();
+
             }
         });
 

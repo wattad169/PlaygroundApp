@@ -127,6 +127,16 @@
             android:layout_marginRight="20dp"
             android:layout_marginTop="2dp" />
 
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_below="@+id/participantsTxt"
+            android:layout_toRightOf="@+id/participantsTxt"
+            android:layout_toEndOf="@+id/participantsTxt">
+
+        </LinearLayout>
+
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="100dp">
