@@ -29,6 +29,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.IdRes;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.app.DialogFragment;
 import android.support.v4.app.Fragment;
@@ -51,9 +52,12 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.aurelhubert.ahbottomnavigation.AHBottomNavigation;
+import com.aurelhubert.ahbottomnavigation.AHBottomNavigationItem;
 import com.inc.playground.playground.upLeft3StripesButton.MyProfile;
 import com.inc.playground.playground.utils.DownloadImageBitmapTask;
 import com.inc.playground.playground.utils.User;
+
 
 import java.io.InputStream;
 import java.util.concurrent.ExecutionException;
@@ -80,6 +84,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
      * The {@link ViewPager} that will display the three primary sections of the app, one at a
      * time.
      */
+
     ViewPager mViewPager;
     Toolbar toolbar = null;
     public void onCreate(Bundle savedInstanceState) {
@@ -219,11 +224,12 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
                 iv.putExtra("name", currentUser.getName());
                 iv.putExtra("createdNumOfEvents", currentUser.getCreatedNumOfEvents());
                 iv.putExtra("userEventsObjects", currentUser.getUserEventsObjects());//ArrayList<EventsObject>
-                iv.putExtra("photoUrl",currentUser.getPhotoUrl());
+                iv.putExtra("photoUrl", currentUser.getPhotoUrl());
                 startActivity(iv);
                 finish();
             }
         });
+
     }
     public void setPlayGroundActionBar(){
         String userLoginId,userFullName,userEmail,userPhoto;
@@ -415,4 +421,6 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
     {
         finish();
     }
+
+
 }

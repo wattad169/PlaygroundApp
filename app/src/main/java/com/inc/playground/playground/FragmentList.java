@@ -3,6 +3,9 @@ package com.inc.playground.playground;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.ActivityOptions;
+import android.app.DialogFragment;
+import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -15,11 +18,13 @@ import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.IdRes;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.Html;
 import android.text.Spanned;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.support.v4.app.Fragment;
@@ -30,12 +35,16 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import com.aurelhubert.ahbottomnavigation.AHBottomNavigation;
+import com.aurelhubert.ahbottomnavigation.AHBottomNavigationItem;
 import com.inc.playground.playground.utils.Constants;
 import com.inc.playground.playground.utils.NetworkUtilities;
 import com.inc.playground.playground.utils.User;
@@ -47,11 +56,13 @@ import com.inc.playground.playground.utils.AlertDialogManager;
 import com.inc.playground.playground.utils.ConnectionDetector;
 import com.melnykov.fab.ScrollDirectionListener;
 
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Set;
 
 /**
@@ -71,6 +82,7 @@ public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefre
     private handleEventTask myEventsTask = null;
     private LeaveHandleEventTask LeaveEventTask = null;
     public SharedPreferences prefs ;
+    ImageButton filterButton;
     Boolean isOK = true;
     String userLoginId;
     User currentUser;
@@ -92,8 +104,23 @@ public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefre
         if(currentUser != null ) { // the user is login
             userEvents = currentUser.GetUserEvents();
         }
+        filterButton = (ImageButton) rootView.findViewById(R.id.filter_button);
+        filterButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                Intent iv = new Intent(getActivity().getApplicationContext(),
+                    FilterActivity.class );
+                Bundle bndlanimation =
+                        ActivityOptions.makeCustomAnimation(getActivity(), R.anim.slide_down, R.anim.slide_up).toBundle();
+                startActivity(iv,bndlanimation);
+
+                }});
+
+
         new getList().execute();
         return rootView;
+
     }
 
     private class getList extends AsyncTask<String, Integer, Integer> {
@@ -505,6 +532,7 @@ public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefre
         swipeRefreshLayout.setRefreshing(false);
 
     }
+
 
 
 
