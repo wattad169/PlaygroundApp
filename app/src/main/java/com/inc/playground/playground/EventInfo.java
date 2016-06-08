@@ -1,7 +1,6 @@
 package com.inc.playground.playground;
 
 import android.app.ActionBar;
-import android.app.ActivityOptions;
 import android.app.DialogFragment;
 import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
@@ -12,6 +11,7 @@ import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.media.Image;
@@ -46,7 +46,9 @@ import com.inc.playground.playground.utils.Constants;
 import com.inc.playground.playground.utils.CustomMarker;
 import com.inc.playground.playground.utils.DownloadImageBitmapTask;
 import com.inc.playground.playground.utils.GPSTracker;
+import com.inc.playground.playground.utils.LatLngInterpolator;
 import com.inc.playground.playground.utils.NetworkUtilities;
+import com.inc.playground.playground.utils.RoundedImageView;
 import com.inc.playground.playground.utils.User;
 
 import org.json.JSONArray;
@@ -65,13 +67,14 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
+import static com.inc.playground.playground.utils.NetworkUtilities.eventListToArrayList;
+
 /**
  * Created by lina on 5/13/2016.
  */
 
 
 public class EventInfo extends FragmentActivity {
-
     ProgressDialog progressDialog;
     ArrayList<EventsObject> rest;
     View layout12;
@@ -79,8 +82,6 @@ public class EventInfo extends FragmentActivity {
     String Error;
 
     Button btn_fvrt, btn_fvrt1;
-
-
     CustomMarker customMarkerOne;
     private HashMap<CustomMarker, Marker> markersHashMap;
     private Iterator<Map.Entry<CustomMarker, Marker>> iter;
@@ -96,14 +97,13 @@ public class EventInfo extends FragmentActivity {
     //DahanLina
 
     EventsObject currentEvent;
-    HashMap<String, String> currentLocation;
-    TextView viewName, viewDateEvent, viewStartTime, viewEndTime, viewLocation, viewSize, viewCurrentSize, viewEventDescription , viewPlay;
+    TextView viewName, viewDateEvent, viewStartTime, viewEndTime, viewCurMembers, viewLocation, viewSize, viewCurrentSize, viewEventDescription , viewPlay;
     ImageView typeImg;
     JSONArray membersImagesUrls;
     private handleEventTask JoinEventsTask = null;
     public LeaveHandleEventTask LeaveEventTask = null;
     public SharedPreferences prefs ;
-    LinearLayout membersList;
+    LinearLayout  membersList;
     User currentUser;
     ToggleButton playButton;
     Bitmap imageBitmap;
@@ -111,12 +111,12 @@ public class EventInfo extends FragmentActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_event_info);
+        setContentView(R.layout.activity_event_info2);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LOCKED);
 
         prefs = getSharedPreferences("Login", MODE_PRIVATE);
 
-       
+
         setPlayGroundActionBar();
         Intent intent = getIntent();
         currentEvent = (EventsObject) intent.getSerializableExtra("eventObject");
@@ -125,6 +125,7 @@ public class EventInfo extends FragmentActivity {
         viewDateEvent = (TextView) findViewById(R.id.event_date);
         viewStartTime = (TextView) findViewById(R.id.event_start_time);
         viewEndTime = (TextView) findViewById(R.id.event_end_time);
+        viewCurMembers = (TextView) findViewById(R.id.cur_membersTxt);
         viewLocation = (TextView) findViewById(R.id.event_formatted_location);
         viewSize = (TextView) findViewById(R.id.event_max_size);
         viewCurrentSize = (TextView) findViewById(R.id.current_size);
@@ -134,7 +135,7 @@ public class EventInfo extends FragmentActivity {
         viewPlay = (TextView) findViewById(R.id.Play_txt);
         shareButton = (ImageButton) findViewById(R.id.share_btn);
 
-        membersList = (LinearLayout)findViewById(R.id.members_list);
+        membersList = (LinearLayout) findViewById(R.id.members_list);
         new GetMembersImages(this).execute();
         gps = new GPSTracker(EventInfo.this);
         // check if GPS enabled
@@ -164,7 +165,7 @@ public class EventInfo extends FragmentActivity {
 
 
     private void setdata() {
-        double latitude = 0,longitude = 0;
+        double latitude = 0, longitude = 0;
         try {
             HashMap<String, String> location = this.currentEvent.GetLocation();
             latitude = Double.parseDouble(location.get("lat"));
@@ -191,6 +192,9 @@ public class EventInfo extends FragmentActivity {
         addMarkerToHashMap(customMarkerOne, newMark);
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(position, 15));
 
+        Typeface fontText = Typeface.createFromAsset(getAssets(), "kimberly.ttf");
+        viewName.setTypeface(fontText);
+
         // Set event view values
         viewName.setText(currentEvent.GetName());
         viewDateEvent.setText(currentEvent.GetDate());
@@ -201,12 +205,10 @@ public class EventInfo extends FragmentActivity {
         viewEventDescription.setText(currentEvent.GetDescription());
 
 
-        if(currentUser != null ) { // the user is login
+        if (currentUser != null) { // the user is login
             userEvents = currentUser.GetUserEvents();
-            if(! userEvents.isEmpty())
-            {
-                if(userEvents.contains(currentEvent.GetId()))
-                {
+            if (!userEvents.isEmpty()) {
+                if (userEvents.contains(currentEvent.GetId())) {
                     playButton.setChecked(true);
                     playButton.setClickable(false);
                     viewPlay.setText("Playing");
@@ -215,7 +217,7 @@ public class EventInfo extends FragmentActivity {
             }
         }
 
-        String uri = "@drawable/pg_" + currentEvent.GetType();
+        String uri = "@drawable/pg_" + currentEvent.GetType() + "_icon";
         int imageResource = getResources().getIdentifier(uri,null,getPackageName());
         Drawable typeDrawable = getResources().getDrawable(imageResource);
         typeImg.setImageDrawable(typeDrawable);
@@ -235,7 +237,7 @@ public class EventInfo extends FragmentActivity {
                 popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     public boolean onMenuItemClick(MenuItem item) {
 
-                        switch (item.getItemId()){
+                        switch (item.getItemId()) {
                             case R.id.share_invite:
                                 FragmentTransaction ft = getFragmentManager().beginTransaction();
                                 android.app.Fragment prev = getFragmentManager().findFragmentByTag("dialog");
@@ -246,7 +248,7 @@ public class EventInfo extends FragmentActivity {
 
                                 String inputText = "asd";
 
-                                DialogFragment newFragment =  new MyDialogFragment(currentEvent.GetId(),currentUser.GetUserId());
+                                DialogFragment newFragment = new MyDialogFragment(currentEvent.GetId(), currentUser.GetUserId());
                                 newFragment.show(ft, "dialog");
                                 break;
                             case R.id.share_calendar:
@@ -256,19 +258,10 @@ public class EventInfo extends FragmentActivity {
                                 intent.putExtra("beginTime", cal.getTimeInMillis());
                                 intent.putExtra("allDay", true);
                                 intent.putExtra("rrule", "FREQ=YEARLY");
-                                intent.putExtra("endTime", cal.getTimeInMillis()+60*60*1000);
+                                intent.putExtra("endTime", cal.getTimeInMillis() + 60 * 60 * 1000);
                                 intent.putExtra("title", "A Test Event from android app");
                                 startActivity(intent);
                                 break;
-                            case R.id.share_whatsapp:
-                                Intent iv = new Intent(EventInfo.this,
-                                        FilterActivity.class );
-                                Bundle bndlanimation =
-                                ActivityOptions.makeCustomAnimation(getApplicationContext(), R.anim.slide_down, R.anim.slide_up).toBundle();
-                                startActivity(iv,bndlanimation);
-//                            finish();
-                                break;
-
                         }
 //
 
@@ -383,7 +376,7 @@ public class EventInfo extends FragmentActivity {
 //
 //            @Override
 //            public void onClick(View arg0) {
-                // TODO YD Implement
+        // TODO YD Implement
 //				btn_fvrt1.setVisibility(View.VISIBLE);
 //				btn_fvrt.setVisibility(View.INVISIBLE);
 //				myDbHelpel = new DBAdapter(Detailpage.this);
@@ -416,8 +409,8 @@ public class EventInfo extends FragmentActivity {
 //
 //            @Override
 //            public void onClick(View v) {
-                // TODO YD Implement
-                // btn_fvrt.setVisibility(View.VISIBLE);
+        // TODO YD Implement
+        // btn_fvrt.setVisibility(View.VISIBLE);
 //				btn_fvrt1.setVisibility(View.INVISIBLE);
 //
 //				DBAdapter myDbHelper = new DBAdapter(Detailpage.this);
@@ -468,6 +461,7 @@ public class EventInfo extends FragmentActivity {
 //            }
 //        });
     }
+
     public static void setForceShowIcon(PopupMenu popupMenu) {
         try {
             Field[] fields = popupMenu.getClass().getDeclaredFields();
@@ -600,11 +594,10 @@ public class EventInfo extends FragmentActivity {
         googleMap.animateCamera(cu);
 
     }
-    
-    
-    
-    public void onPlayClick(View v){
-        ToggleButton x = (ToggleButton)v;
+
+
+    public void onPlayClick(View v) {
+        ToggleButton x = (ToggleButton) v;
 //        if(!x.isChecked()) {
 //            LeaveEventTask = new LeaveHandleEventTask(currentEvent);
 //            LeaveEventTask.execute((Void)null);
@@ -612,36 +605,39 @@ public class EventInfo extends FragmentActivity {
 //        viewPlay.setTextColor(Color.parseColor("#1874cd"));
 //        }
 //        else {//join
-            JoinEventsTask = new handleEventTask(currentEvent);
-            JoinEventsTask.execute((Void) null);
+        JoinEventsTask = new handleEventTask(currentEvent);
+        JoinEventsTask.execute((Void) null);
 
-            ImageView member = new ImageView(this);
-            member.setImageResource(R.drawable.pg_time);
-            viewPlay.setText("Playing");
-            viewPlay.setTextColor(Color.parseColor("#00ced1"));
-        
-            member.setImageBitmap(globalVariables.GetUserPictureBitMap());
-            membersList.addView(member);
-            x.setClickable(false);
-            viewCurrentSize.setText(Integer.toString(membersImagesUrls.length() + 1));
+        ImageView member = new ImageView(this);
+        member.setImageResource(R.drawable.pg_time);
+        viewPlay.setText("Playing");
+        viewPlay.setTextColor(Color.parseColor("#104E8B"));
 
-            if (userEvents == null)
-                userEvents = new HashSet<>();
-            userEvents.add(currentEvent.GetId());
-            currentUser.SetUserEvents(userEvents);
-            globalVariables.SetCurrentUser(currentUser);
-//        }
+        member.setImageBitmap(globalVariables.GetUserPictureBitMap());
+        membersList.addView(member);
+        x.setClickable(false);
+        viewCurrentSize.setText(Integer.toString(membersImagesUrls.length() + 1));
+
+        if (userEvents == null)
+            userEvents = new HashSet<>();
+        userEvents.add(currentEvent.GetId());
+        currentUser.SetUserEvents(userEvents);
+        globalVariables.SetCurrentUser(currentUser);
+
     }
+
     public class LeaveHandleEventTask extends AsyncTask<Void, Void, String> {
 
         //        private Context context;
         private EventsObject currentEvent;
+
         public LeaveHandleEventTask(EventsObject currentEvent) {
             this.currentEvent = currentEvent;
 
         }
 
         private String responseString;
+
         protected void onPreExecute() {
         }
 
@@ -700,13 +696,7 @@ public class EventInfo extends FragmentActivity {
 
         @Override
         protected void onPostExecute(final String responseString) {
-
-
-
         }
-
-
-
 
     }
 
@@ -780,23 +770,9 @@ public class EventInfo extends FragmentActivity {
         @Override
         protected void onPostExecute(final String responseString) {
 
-
-
         }
 
-
-
-
     }
-
-
-
-
-
-
-
-
-
 
 
     public void setPlayGroundActionBar(){
@@ -829,9 +805,8 @@ public class EventInfo extends FragmentActivity {
                     e.printStackTrace();
                 }
 
-            }
-            else {
-                Log.i(TAG,"Image found");
+            } else {
+                Log.i(TAG, "Image found");
             }
             img_profile.setImageBitmap(imageBitmap);
             globalVariables.SetUserPictureBitMap(imageBitmap); // Make the imageBitMap global to all activities to avoid downloading twice
@@ -839,23 +814,19 @@ public class EventInfo extends FragmentActivity {
         actionBar.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.primaryColor)));
     }
 
-    @Override
-    public void onBackPressed()
-    {
-        super.onBackPressed();
-        Intent next = new Intent(getApplication(),MainActivity.class);
-        startActivity(next);
-        finish();
-    }
+
 
     public class GetMembersImages extends AsyncTask<String, String, String> {
+        int i;
+        String photoURL;
 
         Context thisContext;
 
-        GetMembersImages(Context thisCon){
+        GetMembersImages(Context thisCon) {
             thisContext = thisCon;
 
         }
+
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -869,7 +840,7 @@ public class EventInfo extends FragmentActivity {
                 String userToken = "StubToken";//TODO Replace with real token
                 try {
                     cred.put(NetworkUtilities.TOKEN, userToken);
-                    cred.put("event_id",currentEvent.GetId());
+                    cred.put("event_id", currentEvent.GetId());
                 } catch (JSONException e) {
                     Log.i(TAG, e.toString());
                 }
@@ -882,7 +853,7 @@ public class EventInfo extends FragmentActivity {
             }
             // Convert string received from server to JSON array
             JSONArray eventsFromServerJSON = null;
-            JSONObject responseJSON= null;
+            JSONObject responseJSON = null;
             try {
                 responseJSON = new JSONObject(responseString);
                 eventsFromServerJSON = responseJSON.getJSONArray(Constants.RESPONSE_MESSAGE);
@@ -897,10 +868,12 @@ public class EventInfo extends FragmentActivity {
         protected void onPostExecute(String lenghtOfFile) {
             // do stuff after posting data
             viewCurrentSize.setText(Integer.toString(membersImagesUrls.length()));
+            viewCurMembers.setText(Integer.toString(membersImagesUrls.length()));
             for(int i=0;i<membersImagesUrls.length();i++)
             {
                 try {
-                    imageBitmap = new DownloadImageBitmapTask().execute(membersImagesUrls.getString(i)).get();
+                    photoURL = membersImagesUrls.getString(i);
+                    imageBitmap = new DownloadImageBitmapTask().execute(photoURL).get();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 } catch (ExecutionException e) {
@@ -915,12 +888,94 @@ public class EventInfo extends FragmentActivity {
                 member.setId(i);
                 LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(150, 150);
                 member.setLayoutParams(layoutParams);
+                member.setPadding(7,1,7,1);
+
+
+                //added for listener
+                member.setOnClickListener(new View.OnClickListener(){
+                                              @Override
+                                              public void onClick(View v) {
+                                                  // new changes
+                                                  new EventPhotoUserListener(photoURL).execute();
+                                              }
+                                          }
+
+                );
+
                 membersList.addView(member);
+
             }
 
             Log.d(TAG, "getMembersUrls.successful" + membersImagesUrls.toString());
         }
     }
 
+
+    public class EventPhotoUserListener extends AsyncTask<String, String, String> {
+        int i;
+        String photoUrl;
+
+        EventPhotoUserListener(String photoUrl) {
+            this.photoUrl = photoUrl;
+
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected String doInBackground(String... strings) {
+           /*server call   */
+            String userProfileResponseStr = "";
+            try {
+                JSONObject cred = new JSONObject();
+                try {
+                    cred.put(NetworkUtilities.TOKEN, "StubToken");
+                    cred.put(NetworkUtilities.PHOTO_URL, photoUrl);
+                    userProfileResponseStr = NetworkUtilities.doPost(cred, NetworkUtilities.BASE_URL + "/get_user_by_photo/");
+
+                } catch (JSONException e) {
+                    Log.i(TAG, e.toString());
+                } catch (UnsupportedEncodingException e) {
+                    Log.i(TAG, e.toString());
+                }
+            } catch (Exception ex) {
+                Log.e(TAG, "getUserEvents.doInBackground: failed to doPost");
+                Log.i(TAG, ex.toString());
+                userProfileResponseStr = "";
+            }
+            // Convert string received from server to JSON
+            JSONObject userInfoFroServer = null;
+            JSONObject responseJSON = null;
+            try {
+
+                responseJSON = new JSONObject(userProfileResponseStr);
+                userInfoFroServer = responseJSON.getJSONObject(Constants.RESPONSE_MESSAGE);
+
+                Intent iv = new Intent(EventInfo.this,
+                        com.inc.playground.playground.upLeft3StripesButton.
+                                MyProfile.class);
+
+                JSONArray eventEntries = userInfoFroServer.getJSONArray("eventsEntries");
+                ArrayList<EventsObject> memeberEvents = NetworkUtilities.eventListToArrayList(eventEntries , globalVariables.GetCurrentLocation());
+
+                iv.putExtra("name", userInfoFroServer.getString("fullname"));
+                iv.putExtra("createdNumOfEvents",0);//Todo:replace 0 with Integer.parseInt( userInfoFroServer.getString("createdCount")))  ;//MIGHT BE STRING !!!
+                iv.putExtra("photoUrl", photoUrl);
+                iv.putExtra("userEventsObjects", memeberEvents);//
+                startActivity(iv);
+//                finish();
+
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+        //Log.d("EVent info", "getMembersUrls.successful" + membersImagesUrls);
+    }
 }
+
 

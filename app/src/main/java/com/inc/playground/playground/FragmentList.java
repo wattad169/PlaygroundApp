@@ -276,7 +276,7 @@ public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefre
                     Intent intent = new Intent(getActivity().getApplicationContext(), EventInfo.class);
                     intent.putExtra("eventObject", data.get(position));
                     startActivity(intent);
-                    getActivity().finish();
+//                    getActivity().finish();
                 }
             });
 

@@ -183,15 +183,7 @@
                 <!--android:text="My events:" />-->
 
 
-            <ProgressBar
-                style="?android:attr/progressBarStyleLarge"
-                android:layout_width="104dp"
-                android:layout_height="104dp"
-                android:id="@+id/progressBar"
-                android:progressDrawable="@drawable/circular_progress_bar"
-                android:layout_alignBottom="@+id/profile_layout"
-                android:layout_alignParentBottom="true"
-                android:layout_gravity="center_horizontal" />
+
 
             <ListView
                 android:id="@+id/my_events_list"
