@@ -8,12 +8,11 @@
         android:id="@+id/btn_register"
         android:layout_width="fill_parent"
         android:layout_height="50dp"
-        android:layout_below="@+id/txt_or1"
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp"
         android:layout_marginTop="10dp"
         android:background="@drawable/login_btn"
-        android:text="@string/btn_register1"
+        android:text="Filter"
         android:textColor="#fff"
         android:textSize="20dp" />
 </RelativeLayout>

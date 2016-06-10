@@ -32,10 +32,6 @@
             android:elevation="4dp"
             android:paddingBottom="1dp">
 
-
-
-
-
             <!--<ImageView-->
                 <!--android:id="@+id/add_friend"-->
                 <!--android:layout_width="30dp"-->
@@ -160,6 +156,7 @@
                     android:layout_alignParentBottom="false"
                     android:layout_alignLeft="@+id/playedCount_textview"
                     android:layout_marginLeft="70dp"
+                    android:text="3"
                     android:layout_alignBottom="@+id/playedCount_textview" />
 
             </RelativeLayout><![CDATA[
@@ -181,9 +178,6 @@
                 <!--android:elevation="4dp"-->
                 <!--android:padding="20dp"-->
                 <!--android:text="My events:" />-->
-
-
-
 
             <ListView
                 android:id="@+id/my_events_list"

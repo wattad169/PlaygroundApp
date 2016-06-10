@@ -325,7 +325,7 @@ public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefre
                         myEventsTask.execute((Void) null);
                     curplayButton.setClickable(false);
                     playTxt.setText("Playing");
-                    playTxt.setTextColor(Color.parseColor("#00ced1"));
+                    playTxt.setTextColor(Color.parseColor("#104E8B"));
 //                    }
                 }});
 
@@ -337,7 +337,7 @@ public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefre
                         playButton.setClickable(false);
                         playButton.setChecked(true);
                         playTxt.setText("Playing");
-                        playTxt.setTextColor(Color.parseColor("#00ced1"));
+                        playTxt.setTextColor(Color.parseColor("#104E8B"));
                     }
                 }
             }

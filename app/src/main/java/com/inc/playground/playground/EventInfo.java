@@ -19,6 +19,7 @@ import android.os.AsyncTask;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.CalendarContract;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.MenuItem;
@@ -28,6 +29,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
@@ -97,17 +99,18 @@ public class EventInfo extends FragmentActivity {
     //DahanLina
 
     EventsObject currentEvent;
-    TextView viewName, viewDateEvent, viewStartTime, viewEndTime, viewCurMembers, viewLocation, viewSize, viewCurrentSize, viewEventDescription , viewPlay;
-    ImageView typeImg;
+    TextView viewName, viewDateEvent, viewStartTime, viewEndTime, viewCurMembers, viewLocation, viewSize, viewCurrentSize, viewEventDescription , viewPlay, viewStatus;
+    ImageView typeImg, statusImg;
     JSONArray membersImagesUrls;
     private handleEventTask JoinEventsTask = null;
     public LeaveHandleEventTask LeaveEventTask = null;
     public SharedPreferences prefs ;
-    LinearLayout  membersList;
+    LinearLayout  membersList ;
     User currentUser;
     ToggleButton playButton;
     Bitmap imageBitmap;
     Set<String> userEvents;
+    ScrollView mainLayout;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -134,8 +137,12 @@ public class EventInfo extends FragmentActivity {
         playButton = (ToggleButton) findViewById(R.id.playing_btn);
         viewPlay = (TextView) findViewById(R.id.Play_txt);
         shareButton = (ImageButton) findViewById(R.id.share_btn);
-
+        viewStatus = (TextView) findViewById(R.id.statusTxt);
+        statusImg = (ImageView) findViewById(R.id.statusImg);
         membersList = (LinearLayout) findViewById(R.id.members_list);
+        mainLayout = (ScrollView) findViewById(R.id.mainLayout);
+
+
         new GetMembersImages(this).execute();
         gps = new GPSTracker(EventInfo.this);
         // check if GPS enabled
@@ -203,8 +210,8 @@ public class EventInfo extends FragmentActivity {
         viewLocation.setText(currentEvent.GetFormattedLocation());
         viewSize.setText(currentEvent.GetSize());
         viewEventDescription.setText(currentEvent.GetDescription());
-
-
+        viewStatus.setVisibility(View.INVISIBLE);
+        statusImg.setVisibility(View.INVISIBLE);
         if (currentUser != null) { // the user is login
             userEvents = currentUser.GetUserEvents();
             if (!userEvents.isEmpty()) {
@@ -212,7 +219,7 @@ public class EventInfo extends FragmentActivity {
                     playButton.setChecked(true);
                     playButton.setClickable(false);
                     viewPlay.setText("Playing");
-                    viewPlay.setTextColor(Color.parseColor("#00ced1"));
+                    viewPlay.setTextColor(Color.parseColor("#104E8B"));
                 }
             }
         }
@@ -221,6 +228,7 @@ public class EventInfo extends FragmentActivity {
         int imageResource = getResources().getIdentifier(uri,null,getPackageName());
         Drawable typeDrawable = getResources().getDrawable(imageResource);
         typeImg.setImageDrawable(typeDrawable);
+
 
 
         shareButton.setOnClickListener(new View.OnClickListener() {
@@ -618,6 +626,13 @@ public class EventInfo extends FragmentActivity {
         x.setClickable(false);
         viewCurrentSize.setText(Integer.toString(membersImagesUrls.length() + 1));
 
+        //set status
+        if(Integer.valueOf((String)viewCurrentSize.getText()) == Integer.valueOf((String)viewSize.getText())) {
+            viewStatus.setVisibility(View.VISIBLE);
+            statusImg.setVisibility(View.VISIBLE);
+//            mainLayout.setBackgroundColor(Color.parseColor("#98fb98"));
+        }
+
         if (userEvents == null)
             userEvents = new HashSet<>();
         userEvents.add(currentEvent.GetId());
@@ -869,6 +884,11 @@ public class EventInfo extends FragmentActivity {
             // do stuff after posting data
             viewCurrentSize.setText(Integer.toString(membersImagesUrls.length()));
             viewCurMembers.setText(Integer.toString(membersImagesUrls.length()));
+            if(Integer.valueOf((String)viewCurrentSize.getText()) == Integer.valueOf((String)viewSize.getText())) {
+                viewStatus.setVisibility(View.VISIBLE);
+                statusImg.setVisibility(View.VISIBLE);
+//                mainLayout.setBackgroundColor(Color.parseColor("#98fb98"));
+            }
             for(int i=0;i<membersImagesUrls.length();i++)
             {
                 try {

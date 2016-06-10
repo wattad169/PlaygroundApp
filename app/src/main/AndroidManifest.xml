@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     android:screenOrientation="landscape"
-    package="com.inc.playground.playground">
+    package="com.inc.playground.playground"
+    android:versionCode="1"
+    android:versionName="1.0">
 
     <uses-sdk
         android:minSdkVersion="16"
@@ -125,7 +127,7 @@
 
         <activity
             android:name=".FilterActivity"
-            android:label="@string/title_activity_fragment"></activity>
+            android:label="@string/app_name"></activity>
 
 
     </application>

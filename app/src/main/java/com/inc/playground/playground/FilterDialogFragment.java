@@ -1,5 +1,6 @@
 package com.inc.playground.playground;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
@@ -31,19 +32,17 @@ public class FilterDialogFragment extends DialogFragment {
     String inviteeId;
     String inviteeName;
     View thisview;
+
+    @SuppressLint("FilterDialogFragment")
     public FilterDialogFragment(String eventIdIn, String userIdIn) {
         this.eventId = eventIdIn;
         this.userId = userIdIn;
-
     }
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-
-
         LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         final RelativeLayout outerLayout = (RelativeLayout) inflater.inflate(R.layout.simple_dropdown_item_2line,null);
-
 
         class MyListener implements DialogInterface.OnClickListener {
             MyListener() {
@@ -52,7 +51,6 @@ public class FilterDialogFragment extends DialogFragment {
                 new SendInvite(getActivity(),inviteeId).execute();
                 Toast.makeText(getActivity(),"Invitaion sent to " +inviteeName,Toast.LENGTH_SHORT).show();
             }
-
         }
         MyListener listener = new MyListener();
 
@@ -62,10 +60,8 @@ public class FilterDialogFragment extends DialogFragment {
                 .setNegativeButton("Invite", listener)
                 .setView(outerLayout)
                 .create();
-
-
-
     }
+
     public class SendInvite extends AsyncTask<String, String, String> {
         public static final String TAG = "GetUsersImages";
 

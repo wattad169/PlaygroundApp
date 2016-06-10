@@ -48,6 +48,7 @@ import com.melnykov.fab.ScrollDirectionListener;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -85,7 +86,6 @@ public class MyProfile extends Activity {
     Set<String> userEvents;
     ProgressDialog progressBar;
 
-
     @Override
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,7 +98,6 @@ public class MyProfile extends Activity {
         final AlertDialog alertDialog = new AlertDialog.Builder(this).create();
 
         progressBar = ProgressDialog.show(MyProfile.this, "Playground", "Loading...");
-
 
 
         //yarden, lina, i am tring to put loading spinner when we move to this screen (spinner)
@@ -340,6 +339,7 @@ public class MyProfile extends Activity {
 
             final TextView playTxt = (TextView) view.findViewById(R.id.play_txt);
             playTxt.setVisibility(View.INVISIBLE);
+
 
             /*view.setOnClickListener(new View.OnClickListener() {
                 @Override

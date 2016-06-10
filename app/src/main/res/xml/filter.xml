@@ -62,10 +62,5 @@
         android:summary="Looking for somebody's events?"
         android:title="Event Member" />
 
-     <!--<Preference android:layout="@layout/buttons_layout" android:key="loginButtons"></Preference>-->
-     <Preference
-         android:title="Click to exit"
-         android:key="exitlink"
-         android:descendantFocusability="blocksDescendants"
-         android:layout="@layout/buttons_layout"/>
+
  </PreferenceScreen>
