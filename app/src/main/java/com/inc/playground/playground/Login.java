@@ -88,7 +88,7 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
 	View v;
 	public static GlobalVariables globalVariables;
 	public User currentUser;
-	public int createdCount;
+	public String createdCount;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -196,6 +196,7 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
 				String urlQuery = "/login/";
 				if (method.equals("login")) {
 					try {
+						//whats is it mostafa? can you comment here?
                         cred.put(Constants.MODE, Constants.LOGIN_MODE);
                         cred.put(Constants.EMAIL, "mostafa");
 						cred.put(Constants.EMAIL, "mostafa");
@@ -236,13 +237,11 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
 				}
 
 				if (!responseStatus.equals(Constants.RESPONSE_OK)) {
-
 						Logingetset temp = new Logingetset();
 						temp.setId("Login Failed");
 						login.add(temp);
-
-
-				} else{ //
+				}
+				else{ //
 					key = "user";
 
 					JSONObject resonseMessage = myObject.getJSONObject(Constants.RESPONSE_MESSAGE);
@@ -258,7 +257,7 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
                         user2 = email_id;
                         fullimage = "https://storage.googleapis.com/sports-bucket/Source/1965583_10204825358656748_4079077085336938408_o.jpg";
                         //TODO:Upload user image instead
-						createdCount = Integer.parseInt(resonseMessage.getString(Constants.CREATED_COUNT));
+						createdCount = resonseMessage.getString(Constants.CREATED_COUNT);
 
                     }
                     else if(method.equals("facebook")){
@@ -344,7 +343,7 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
 					editor.putString("fullname", "" + fullname);
 					editor.putString("picture", "" + fullimage);
 					editor.commit();
-                    Log.i("UserLogin",user_token);
+                    Log.i("UserLogin", user_token);
 
 					// create userObject
 					createUserObject();
@@ -409,7 +408,7 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
                 Log.d("Profile", response);
                 String json = response;
                 try {
-                    JSONObject profile = new JSONObject(json);
+                    JSONObject profile = new JSONObject(json); //facebook profile
 
                     // getting name of the user
                     name = profile.getString("name");
@@ -741,7 +740,8 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
 
 		@Override
 		protected String doInBackground(String... strings) {
-			String responseString;
+//			String responseString;
+			String responseStringUserInfo;
 			try {
 				JSONObject cred = new JSONObject();
 				try {
@@ -750,26 +750,30 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
 				} catch (JSONException e) {
 					Log.i(TAG, e.toString());
 				}
-				responseString = NetworkUtilities.doPost(cred, NetworkUtilities.BASE_URL + "/get_events_by_user/");
-
+//				responseString = NetworkUtilities.doPost(cred, NetworkUtilities.BASE_URL + "/get_events_by_user/");
+				responseStringUserInfo = NetworkUtilities.doPost(cred, NetworkUtilities.BASE_URL + "/get_user_info/");
 			} catch (Exception ex) {
-				Log.e(TAG, "getUserEvents.doInBackground: failed to doPost");
+				Log.e(TAG, "getUserEvents.doInBackground or responseStringCreatedCount.doInBackground: failed to doPost");
 				Log.i(TAG, ex.toString());
-				responseString = "";
+//				responseString ="";
+				responseStringUserInfo = "";
 			}
 			// Convert string received from server to JSON array
-			JSONArray eventsFromServerJSON = null;
-			JSONObject responseJSON= null;
+			JSONArray eventsFromServerJSON;
+//			JSONObject responseJSON=null;
+			JSONObject ServerJSONUserInfo;
+			JSONObject responseJSONUserInfo;
 			try {
-				responseJSON = new JSONObject(responseString);
-				eventsFromServerJSON = responseJSON.getJSONArray(Constants.RESPONSE_MESSAGE);
+//				responseJSON = new JSONObject(responseString);
+//				eventsFromServerJSON = responseJSON.getJSONArray(Constants.RESPONSE_MESSAGE);
 				Set<String> userEvents = new HashSet<>();
 
-
-
+				responseJSONUserInfo = new JSONObject(responseStringUserInfo);
+				ServerJSONUserInfo = responseJSONUserInfo.getJSONObject(Constants.RESPONSE_MESSAGE);//.getJSONObject(Constants.EVENT_ENTRIES);//problem
+				createdCount = ServerJSONUserInfo.getString("createdCount");
+				eventsFromServerJSON = ServerJSONUserInfo.getJSONArray(Constants.EVENT_ENTRIES);
 
 				ArrayList<EventsObject> userEventsObjects =  eventListToArrayList(eventsFromServerJSON, globalVariables.GetCurrentLocation());
-
 				for(int i=0 ; i<eventsFromServerJSON.length();i++){
 					JSONObject currentObject = (JSONObject) eventsFromServerJSON.get(i);
 					String eventId = currentObject.getString(Constants.EVENT_ID);
@@ -777,6 +781,7 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
 				}
 				currentUser.SetUserEvents(userEvents);
 				currentUser.setUserEventsObjects(userEventsObjects);
+				currentUser.setCreatedNumOfEvents(createdCount);
 				globalVariables.SetCurrentUser(currentUser);
 			} catch (JSONException e) {
 				e.printStackTrace();

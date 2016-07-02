@@ -93,19 +93,19 @@ public class EventInfo extends FragmentActivity {
     double longitudecur;
     GoogleMap googleMap;
     GlobalVariables globalVariables;
-    ImageButton shareButton ;
+    ImageButton shareButton;
 
     public static final String TAG = "EventInfoActivity";
     //DahanLina
 
     EventsObject currentEvent;
-    TextView viewName, viewDateEvent, viewStartTime, viewEndTime, viewCurMembers, viewLocation, viewSize, viewCurrentSize, viewEventDescription , viewPlay, viewStatus;
+    TextView viewName, viewDateEvent, viewStartTime, viewEndTime, viewCurMembers, viewLocation, viewSize, viewCurrentSize, viewEventDescription, viewPlay, viewStatus;
     ImageView typeImg, statusImg;
     JSONArray membersImagesUrls;
     private handleEventTask JoinEventsTask = null;
     public LeaveHandleEventTask LeaveEventTask = null;
-    public SharedPreferences prefs ;
-    LinearLayout  membersList ;
+    public SharedPreferences prefs;
+    LinearLayout membersList;
     User currentUser;
     ToggleButton playButton;
     Bitmap imageBitmap;
@@ -225,7 +225,7 @@ public class EventInfo extends FragmentActivity {
         }
 
         String uri = "@drawable/pg_" + currentEvent.GetType() + "_icon";
-        int imageResource = getResources().getIdentifier(uri,null,getPackageName());
+        int imageResource = getResources().getIdentifier(uri, null, getPackageName());
         Drawable typeDrawable = getResources().getDrawable(imageResource);
         typeImg.setImageDrawable(typeDrawable);
 
@@ -566,7 +566,6 @@ public class EventInfo extends FragmentActivity {
 //	}
 
 
-
     public void addMarkerToHashMap(CustomMarker customMarker, Marker marker) {
         setUpMarkersHashMap();
         markersHashMap.put(customMarker, marker);
@@ -605,7 +604,7 @@ public class EventInfo extends FragmentActivity {
 
 
     public void onPlayClick(View v) {
-        ToggleButton x = (ToggleButton) v;
+        ToggleButton x = (ToggleButton) v;//LEAVE EVENT
 //        if(!x.isChecked()) {
 //            LeaveEventTask = new LeaveHandleEventTask(currentEvent);
 //            LeaveEventTask.execute((Void)null);
@@ -627,7 +626,7 @@ public class EventInfo extends FragmentActivity {
         viewCurrentSize.setText(Integer.toString(membersImagesUrls.length() + 1));
 
         //set status
-        if(Integer.valueOf((String)viewCurrentSize.getText()) == Integer.valueOf((String)viewSize.getText())) {
+        if (Integer.valueOf((String) viewCurrentSize.getText()) == Integer.valueOf((String) viewSize.getText())) {
             viewStatus.setVisibility(View.VISIBLE);
             statusImg.setVisibility(View.VISIBLE);
 //            mainLayout.setBackgroundColor(Color.parseColor("#98fb98"));
@@ -648,7 +647,6 @@ public class EventInfo extends FragmentActivity {
 
         public LeaveHandleEventTask(EventsObject currentEvent) {
             this.currentEvent = currentEvent;
-
         }
 
         private String responseString;
@@ -673,9 +671,9 @@ public class EventInfo extends FragmentActivity {
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
                 }
-                if(responseString == null) {
+                if (responseString == null) {
 
-                    Log.i("TESTID",currentEvent.GetId());
+                    Log.i("TESTID", currentEvent.GetId());
                 }
 
                 //Check response
@@ -697,9 +695,7 @@ public class EventInfo extends FragmentActivity {
                     }
                 }
 
-            }
-            else
-            {
+            } else {
                 // If user is not logged -> in send to login activity
                 Intent intent = new Intent(getApplicationContext(), Login.class);
                 startActivity(intent);
@@ -746,9 +742,9 @@ public class EventInfo extends FragmentActivity {
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
                 }
-                if(responseString == null) {
+                if (responseString == null) {
 
-                    Log.i("TESTID",currentEvent.GetId());
+                    Log.i("TESTID", currentEvent.GetId());
                 }
 
                 //Check response
@@ -771,8 +767,7 @@ public class EventInfo extends FragmentActivity {
                 }
 
             }
-            else
-            {
+            else {
                 // If user is not logged -> in send to login activity
                 Intent intent = new Intent(getApplicationContext(), Login.class);
                 startActivity(intent);
@@ -790,15 +785,15 @@ public class EventInfo extends FragmentActivity {
     }
 
 
-    public void setPlayGroundActionBar(){
-        String userLoginId,userFullName,userEmail,userPhoto;
-        Bitmap imageBitmap =null;
+    public void setPlayGroundActionBar() {
+        String userLoginId, userFullName, userEmail, userPhoto;
+        Bitmap imageBitmap = null;
 
         final ActionBar actionBar = getActionBar();
         final String MY_PREFS_NAME = "Login";
         SharedPreferences prefs = getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
         globalVariables = ((GlobalVariables) this.getApplication());
-        if (prefs.getString("userid", null) != null){
+        if (prefs.getString("userid", null) != null) {
             userLoginId = prefs.getString("userid", null);
             userFullName = prefs.getString("fullname", null);
             userEmail = prefs.getString("emilid", null);
@@ -810,8 +805,8 @@ public class EventInfo extends FragmentActivity {
             actionBar.setDisplayShowHomeEnabled(true);
             ImageView img_profile = (ImageView) findViewById(R.id.img_profile_action_bar);
             imageBitmap = globalVariables.GetUserPictureBitMap();
-            if(imageBitmap==null){
-                Log.i(TAG,"downloading");
+            if (imageBitmap == null) {
+                Log.i(TAG, "downloading");
                 try {
                     imageBitmap = new DownloadImageBitmapTask().execute(userPhoto).get();
                 } catch (InterruptedException e) {
@@ -828,7 +823,6 @@ public class EventInfo extends FragmentActivity {
         }
         actionBar.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.primaryColor)));
     }
-
 
 
     public class GetMembersImages extends AsyncTask<String, String, String> {
@@ -884,13 +878,12 @@ public class EventInfo extends FragmentActivity {
             // do stuff after posting data
             viewCurrentSize.setText(Integer.toString(membersImagesUrls.length()));
             viewCurMembers.setText(Integer.toString(membersImagesUrls.length()));
-            if(Integer.valueOf((String)viewCurrentSize.getText()) == Integer.valueOf((String)viewSize.getText())) {
+            if (Integer.valueOf((String) viewCurrentSize.getText()) == Integer.valueOf((String) viewSize.getText())) {
                 viewStatus.setVisibility(View.VISIBLE);
                 statusImg.setVisibility(View.VISIBLE);
 //                mainLayout.setBackgroundColor(Color.parseColor("#98fb98"));
             }
-            for(int i=0;i<membersImagesUrls.length();i++)
-            {
+            for (int i = 0; i < membersImagesUrls.length(); i++) {
                 try {
                     photoURL = membersImagesUrls.getString(i);
                     imageBitmap = new DownloadImageBitmapTask().execute(photoURL).get();
@@ -908,11 +901,11 @@ public class EventInfo extends FragmentActivity {
                 member.setId(i);
                 LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(150, 150);
                 member.setLayoutParams(layoutParams);
-                member.setPadding(7,1,7,1);
+                member.setPadding(7, 1, 7, 1);
 
 
                 //added for listener
-                member.setOnClickListener(new View.OnClickListener(){
+                member.setOnClickListener(new View.OnClickListener() {
                                               @Override
                                               public void onClick(View v) {
                                                   // new changes
@@ -979,10 +972,10 @@ public class EventInfo extends FragmentActivity {
                                 MyProfile.class);
 
                 JSONArray eventEntries = userInfoFroServer.getJSONArray("eventsEntries");
-                ArrayList<EventsObject> memeberEvents = NetworkUtilities.eventListToArrayList(eventEntries , globalVariables.GetCurrentLocation());
+                ArrayList<EventsObject> memeberEvents = NetworkUtilities.eventListToArrayList(eventEntries, globalVariables.GetCurrentLocation());
 
                 iv.putExtra("name", userInfoFroServer.getString("fullname"));
-                iv.putExtra("createdNumOfEvents",0);//Todo:replace 0 with Integer.parseInt( userInfoFroServer.getString("createdCount")))  ;//MIGHT BE STRING !!!
+                iv.putExtra("createdNumOfEvents",userInfoFroServer.getString("createdCount"));
                 iv.putExtra("photoUrl", photoUrl);
                 iv.putExtra("userEventsObjects", memeberEvents);//
                 startActivity(iv);

@@ -64,7 +64,7 @@ import java.util.concurrent.ExecutionException;
  * Created by idanaroz on 03-Jun-16.
  */
 public class MyProfile extends Activity {
-/* must send to this class data e.g :                 iv.putExtra("name",currentUser.getName());*/
+/* must send to this class data e.g :       iv.putExtra("name",currentUser.getName());*/
 //Todo change name to userprofile
 
     public static GlobalVariables globalVariables;
@@ -112,7 +112,7 @@ public class MyProfile extends Activity {
         //set createdCount
         TextView createdCount_textView = (TextView) findViewById(R.id.countCreateTxt);
         createdCount_textView.setText(createdCount_textView.getText()+
-                String.valueOf(bundle.getInt("createdNumOfEvents")));
+                (bundle.getString("createdNumOfEvents")));
         //set url
         ImageView user_profile_photo = (ImageView) findViewById(R.id.user_profile_photo);
         Bitmap imageBitmap=null;

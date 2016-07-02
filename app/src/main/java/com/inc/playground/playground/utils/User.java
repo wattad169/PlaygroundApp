@@ -12,7 +12,7 @@ public class User {
 	String photoUrl;
 	String name;
 	String email; //Unusable
-	int createdNumOfEvents;
+	String createdNumOfEvents;
 	int joinNumOfEvents;
 	String userId , Status;
 	Set <String> userEvents;
@@ -51,11 +51,11 @@ public class User {
 		this.photoUrl = photoUrl;
 	}
 
-	public int getCreatedNumOfEvents() {
+	public String getCreatedNumOfEvents() {
 		return createdNumOfEvents;
 	}
-
-	public void setCreatedNumOfEvents(int createdNumOfEvents) {
+	//mostafa i think you should use in create
+	public void setCreatedNumOfEvents(String createdNumOfEvents) {
 		this.createdNumOfEvents = createdNumOfEvents;
 	}
 
@@ -84,6 +84,7 @@ public class User {
 	}
 
 	public void SetUserEvents(Set <String> userEvents) {
+		//can someone add detail here? what the string include? the name of the event?
 		this.userEvents = userEvents;
 
 	}

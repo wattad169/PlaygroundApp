@@ -65,6 +65,10 @@ public class Constants {
 
     public final static String EVENTINFORM = "eventInform";
 
+    public final static String EVENT_ENTRIES = "eventsEntries";
+
+
+
 
 
 //    static final Map<String , Integer> sportTypeToLogo = new HashMap<String , Integer>() {{

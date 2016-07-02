@@ -168,7 +168,7 @@ public class Splash extends Activity {
                 } catch (JSONException e) {
                     Log.i(TAG, e.toString());
                 }
-                responseString = NetworkUtilities.doPost(cred, NetworkUtilities.BASE_URL + "/get_events_by_user/");
+                responseString = NetworkUtilities.doPost(cred, NetworkUtilities.BASE_URL + "/get_user_info/");
 
             } catch (Exception ex) {
                 Log.e(TAG, "getUserEvents.doInBackground: failed to doPost");
@@ -176,12 +176,16 @@ public class Splash extends Activity {
                 responseString = "";
             }
             // Convert string received from server to JSON array
-            JSONArray eventsFromServerJSON = null;
-            JSONObject responseJSON= null;
+            JSONArray eventsFromServerJSON;
+            JSONObject responseJSON , JSONUserInfo;
             try {
 
                 responseJSON = new JSONObject(responseString);
-                eventsFromServerJSON = responseJSON.getJSONArray(Constants.RESPONSE_MESSAGE);
+                JSONUserInfo = responseJSON.getJSONObject(Constants.RESPONSE_MESSAGE);
+                String createdCount = JSONUserInfo.getString("createdCount");
+                eventsFromServerJSON = JSONUserInfo.getJSONArray(Constants.EVENT_ENTRIES);
+
+
                 userEventsObjects =  eventListToArrayList(eventsFromServerJSON, globalVariables.GetCurrentLocation());
                 Set<String> userEvents = new HashSet<>();
                 for(int i=0 ; i<eventsFromServerJSON.length();i++){
@@ -194,6 +198,7 @@ public class Splash extends Activity {
                 }
                 currentUser.setUserEventsObjects(userEventsObjects);
                 currentUser.SetUserEvents(userEvents);
+                currentUser.setCreatedNumOfEvents(createdCount);
                 globalVariables.SetCurrentUser(currentUser);
             } catch (JSONException e) {
                 e.printStackTrace();

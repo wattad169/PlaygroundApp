@@ -79,6 +79,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
     public static final String MY_PREFS_NAME = "Login";
     public static final String TAG = "MainActivity";
     EditText inputTextField;
+    //Integer CreatedNumOfEvents; //CreatedNumOfEvents of the accout
 
     /**
      * The {@link ViewPager} that will display the three primary sections of the app, one at a
@@ -222,7 +223,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
                 User currentUser = globalVariables.GetCurrentUser();
                 //for my profile
                 iv.putExtra("name", currentUser.getName());
-                iv.putExtra("createdNumOfEvents", currentUser.getCreatedNumOfEvents());
+                iv.putExtra("createdNumOfEvents",currentUser.getCreatedNumOfEvents());
                 iv.putExtra("userEventsObjects", currentUser.getUserEventsObjects());//ArrayList<EventsObject>
                 iv.putExtra("photoUrl", currentUser.getPhotoUrl());
                 startActivity(iv);
