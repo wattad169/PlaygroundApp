@@ -14,7 +14,7 @@ public class EventsObject implements Serializable{
     String id, name, formattedLocation, type, size, date, startTime, endTime, description, status, distance;
     ArrayList<String> members;
     // TODO ADD EVENT MEMBERS (A LIST CONTAINING USERS)
-    User creator;
+    String creatorId;
 
 
     HashMap<String, String> location= new HashMap<String, String>();
@@ -27,9 +27,9 @@ public class EventsObject implements Serializable{
 
     public void SetName(String name) { this.name = name; }
 
-    public User GetCreator() { return creator; }
+    public String GetCreatorId() { return creatorId; }
 
-    public void SetCreator(User creator) { this.creator = creator; }
+    public void SetCreatorId(String creatorId) { this.creatorId = creatorId; }
 
     public String GetFormattedLocation() { return formattedLocation; }
 

@@ -222,7 +222,7 @@ public class EventInfo extends FragmentActivity {
             if (!userEvents.isEmpty()) {
                 if (userEvents.contains(currentEvent.GetId())) {
                     playButton.setChecked(true);
-                    playButton.setClickable(false);
+                    //playButton.setClickable(false); -avoid it: make it impossbile to click on the button
                     viewPlay.setText("Playing");
                     viewPlay.setTextColor(Color.parseColor("#104E8B"));
                 }
@@ -606,41 +606,53 @@ public class EventInfo extends FragmentActivity {
 
     }
 
-
     public void onPlayClick(View v) {
         ToggleButton x = (ToggleButton) v;
-        String eventTask = "join_event";
-        if (!x.isChecked()) { // leave event
-            eventTask = "leave_event";
-            //Todo check if the creator is leaving
-            x.setChecked(false);
-            viewPlay.setText("Play");
-            viewPlay.setTextColor(Color.parseColor("#D0D0D0"));
+        /*user photo */
+        ImageView member = new ImageView(this);
+        member.setImageResource(R.drawable.pg_time);
+        member.setImageBitmap(globalVariables.GetUserPictureBitMap());
+
+
+        String eventTask = null;
+        if (!x.isChecked()) {
+            assert (currentUser!=null);
+            if(currentUser.GetUserId().equals(currentEvent.GetCreatorId())) {//cancel event
+                eventTask = "cancel_event";
+                viewPlay.setText("cancel");
+                viewPlay.setTextColor(Color.parseColor("#D0D0D0"));
+            }
+            else{ //leave_event
+                eventTask = "leave_event";
+                x.setChecked(false);
+                viewPlay.setText("Play");
+                viewPlay.setTextColor(Color.parseColor("#D0D0D0"));
+                //remove member picture
+                membersList.removeView(member);//todo: fix
+                userEvents.remove(currentEvent.GetId());//remove current event from userEvents
+            }
         }
-        else {//join event  - work properly
-            ImageView member = new ImageView(this);
-            member.setImageResource(R.drawable.pg_time);
+        else {//join event
+            eventTask = "join_event";
             x.setChecked(true);
             viewPlay.setText("Playing");
             viewPlay.setTextColor(Color.parseColor("#104E8B"));
-
-            member.setImageBitmap(globalVariables.GetUserPictureBitMap());
+            //add member picture
             membersList.addView(member);
-            //x.setClickable(false);
             viewCurrentSize.setText(Integer.toString(membersImagesUrls.length() + 1));
 
-            //set status
+            //set status -Todo : ask lina what is it?
             if (Integer.valueOf((String) viewCurrentSize.getText()) == Integer.valueOf((String) viewSize.getText())) {
                 viewStatus.setVisibility(View.VISIBLE);
                 statusImg.setVisibility(View.VISIBLE);
                 //            mainLayout.setBackgroundColor(Color.parseColor("#98fb98"));
             }
-            if (userEvents == null)
-                userEvents = new HashSet<>();
+            if (userEvents == null) userEvents = new HashSet<>();
             userEvents.add(currentEvent.GetId());
-            currentUser.SetUserEvents(userEvents);
-            globalVariables.SetCurrentUser(currentUser);
         }
+
+        currentUser.SetUserEvents(userEvents);
+        globalVariables.SetCurrentUser(currentUser);
         /*Server side update */
         handleEventTask = new HandleEventTask(currentEvent, eventTask);
         handleEventTask.execute((Void) null);

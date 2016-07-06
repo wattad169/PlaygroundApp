@@ -61,9 +61,11 @@ public class Constants {
 
     public static final String EVENT_DESCRIPTION = "description";
 
-    public static final String EVENT_STATUS = "status";
+    public static final String EVENT_STATUS = "status";//what is it?
 
-    public final static String EVENTINFORM = "eventInform";
+    public final static String EVENTINFORM = "eventInform";// what is it?
+
+    public final static String CREATED_BY = "created_by";
 
     public final static String EVENT_ENTRIES = "eventsEntries";
 

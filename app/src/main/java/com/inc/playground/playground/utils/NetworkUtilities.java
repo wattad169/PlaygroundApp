@@ -261,6 +261,7 @@ final public class NetworkUtilities {
             currentEvent.SetStartTime(currentObject.getString(Constants.START_TIME));
             currentEvent.SetEndTime(currentObject.getString(Constants.END_TIME));
             currentEvent.SetDescription(currentObject.getString(Constants.EVENT_DESCRIPTION));
+            currentEvent.SetCreatorId(currentObject.getString(Constants.CREATED_BY));
 
             /*extract created fields + played field */
 

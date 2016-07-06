@@ -75,7 +75,7 @@ public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefre
         userLoginId = prefs.getString("userid", null);
         currentUser = globalVariables.GetCurrentUser();
         GlobalVariables globalVariables;
-        final String MY_PREFS_NAME = "Login";
+        final String MY_PREFS_NAME = "Login"; //idan question why we chose that name??
         SharedPreferences prefs = this.getActivity().getSharedPreferences(MY_PREFS_NAME, 0);
 
         if(currentUser != null ) { // the user is login
@@ -228,7 +228,6 @@ public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefre
         public View getView(final int position, View convertView, ViewGroup parent) {
             View view = convertView;
 
-
             if (convertView == null) {
                 view = inflater.inflate(R.layout.fragment_list_item, null);
                 if(position%2==0)
@@ -288,16 +287,23 @@ public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefre
                 @Override
                 public void onClick(View v) {
                     ToggleButton curplayButton = (ToggleButton) v;
-                    String eventTask = "join_event";
-                    if (!curplayButton.isChecked()) {//leave event
-                        eventTask = "leave_event";
-                        //todo : take care of cancel event
-                        playTxt.setText("Play");//Todo  update eventInfo
-                        curplayButton.setTextColor(Color.parseColor("#D0D0D0"));//how to set triangle gray?
-                        playTxt.setTextColor(Color.parseColor("#D0D0D0"));
+                    String eventTask = null;
+                    if (!curplayButton.isChecked()) {
+                        assert (currentUser!=null);
+                        if(currentUser.GetUserId().equals(data.get(position).GetCreatorId())){//cancel event
+                            eventTask = "cancel_event";
+                            playTxt.setText("cancel");
+                        }
+                        else { //leave event
+                            eventTask = "leave_event";
+                            playTxt.setText("Play");//Todo  update eventInfo
+                            curplayButton.setTextColor(Color.parseColor("#D0D0D0"));//how to set triangle gray?
+                            playTxt.setTextColor(Color.parseColor("#D0D0D0"));
+                        }
                     }
                     else { //join event
                         //curplayButton.setClickable(true);
+                        eventTask = "join_event";
                         playTxt.setText("Playing");
                         curplayButton.setTextColor  (Color.parseColor("#104E8B"));//how to set triangle blue?
                         playTxt.setTextColor(Color.parseColor("#104E8B"));
@@ -375,7 +381,9 @@ public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefre
                     if (responseStatus.equals(Constants.RESPONSE_OK.toString())) {
                         myEventsTask = null;
                         isOK = true;
-                        userEvents.add(currentEvent.GetId());
+                        if(eventTask.equals("join_event")) userEvents.add(currentEvent.GetId());
+                        else if (eventTask.equals("leave_event")) userEvents.remove(currentEvent.GetId());
+                        //userEvents include events if the user is the creator?
                         currentUser.SetUserEvents(userEvents);
                         //TODO YD Switch toggle button text to "playing"
                     } else {
