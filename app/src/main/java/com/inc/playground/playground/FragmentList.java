@@ -1,59 +1,37 @@
 package com.inc.playground.playground;
 
 
-import android.app.ActionBar;
 import android.app.Activity;
 import android.app.ActivityOptions;
-import android.app.DialogFragment;
-import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
-import android.database.SQLException;
-import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.annotation.IdRes;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.text.Html;
-import android.text.Spanned;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.support.v4.app.Fragment;
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
-import com.aurelhubert.ahbottomnavigation.AHBottomNavigation;
-import com.aurelhubert.ahbottomnavigation.AHBottomNavigationItem;
 import com.inc.playground.playground.utils.Constants;
 import com.inc.playground.playground.utils.NetworkUtilities;
 import com.inc.playground.playground.utils.User;
 import com.melnykov.fab.FloatingActionButton;
-import com.melnykov.fab.ObservableScrollView;
-import com.melnykov.fab.ScrollDirectionListener;
-import com.google.android.gms.ads.InterstitialAd;
-import com.inc.playground.playground.utils.AlertDialogManager;
-import com.inc.playground.playground.utils.ConnectionDetector;
 import com.melnykov.fab.ScrollDirectionListener;
 
 
@@ -62,7 +40,6 @@ import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Set;
 
 /**
@@ -79,8 +56,8 @@ public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefre
 
     ProgressDialog progressDialog;
     GlobalVariables globalVariables;
-    private handleEventTask myEventsTask = null;
-    private LeaveHandleEventTask LeaveEventTask = null;
+    private HandleEventTask myEventsTask = null;
+    //private LeaveHandleEventTask LeaveEventTask = null; //not needed
     public SharedPreferences prefs ;
     ImageButton filterButton;
     Boolean isOK = true;
@@ -130,7 +107,6 @@ public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefre
             // TODO ?
             super.onPreExecute();
         }
-
         @Override
         protected Integer doInBackground(String... params) {
             // TODO Auto-generated method stub
@@ -312,53 +288,57 @@ public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefre
                 @Override
                 public void onClick(View v) {
                     ToggleButton curplayButton = (ToggleButton) v;
-//                    if(curplayButton.isChecked())//leave event
-//                    {
-//                        LeaveEventTask = new LeaveHandleEventTask(data.get(position));
-//                        LeaveEventTask.execute((Void) null);
-//                    playTxt.setText("Play");
-//                    playTxt.setTextColor(Color.parseColor("#1874cd"));
-//                    }
-//                    else
-//                    {
-                        myEventsTask = new handleEventTask(data.get(position));
-                        myEventsTask.execute((Void) null);
-                    curplayButton.setClickable(false);
-                    playTxt.setText("Playing");
-                    playTxt.setTextColor(Color.parseColor("#104E8B"));
-//                    }
+                    String eventTask = "join_event";
+                    if (!curplayButton.isChecked()) {//leave event
+                        eventTask = "leave_event";
+                        //todo : take care of cancel event
+                        playTxt.setText("Play");//Todo  update eventInfo
+                        curplayButton.setTextColor(Color.parseColor("#D0D0D0"));//how to set triangle gray?
+                        playTxt.setTextColor(Color.parseColor("#D0D0D0"));
+                    }
+                    else { //join event
+                        //curplayButton.setClickable(true);
+                        playTxt.setText("Playing");
+                        curplayButton.setTextColor  (Color.parseColor("#104E8B"));//how to set triangle blue?
+                        playTxt.setTextColor(Color.parseColor("#104E8B"));
+                    }
+                    /*Server side update */
+                    myEventsTask = new HandleEventTask(data.get(position), eventTask);
+                    myEventsTask.execute((Void) null);
+                    //curplayButton.setChecked(!curplayButton.isChecked());
                 }});
 
             //TODO check if userLoginId is on members event
-
             if(currentUser != null ) {
                 if (!userEvents.isEmpty()) {
                     if (userEvents.contains(data.get(position).GetId())) {
-                        playButton.setClickable(false);
+                        //playButton.setClickable(false);
                         playButton.setChecked(true);
                         playTxt.setText("Playing");
                         playTxt.setTextColor(Color.parseColor("#104E8B"));
                     }
+                    else{// if user dont play
+                        playButton.setChecked(false);
+                        playTxt.setText("Play");
+                        playTxt.setTextColor(Color.parseColor("#D0D0D0"));
+                    }
                 }
             }
-
             return view;
-
         }
     }
 
-    public class handleEventTask extends AsyncTask<Void, Void, String> {
-
-        //        private Context context;
+    public class HandleEventTask extends AsyncTask<Void, Void, String> {
+        //        private Context context; //Todo : can we delete it ?
         private EventsObject currentEvent;
-        public handleEventTask(EventsObject currentEvent) {
+        String eventTask;
+        public HandleEventTask(EventsObject currentEvent, String eventTask) {
             this.currentEvent = currentEvent;
-
+            this.eventTask = eventTask;
         }
-
         private String responseString;
-        protected void onPreExecute() {
-        }
+
+        protected void onPreExecute() {}
 
         @Override
         protected String doInBackground(Void... params) {
@@ -371,7 +351,7 @@ public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefre
                 try {//Send request to server for joining event
                     cred.put(NetworkUtilities.TOKEN, userId);
                     cred.put("event_id", currentEvent.GetId());
-                    responseString = NetworkUtilities.doPost(cred, NetworkUtilities.BASE_URL + "/join_event/");
+                    responseString = NetworkUtilities.doPost(cred, NetworkUtilities.BASE_URL + "/" + eventTask + "/");
                 } catch (JSONException e) {
                     e.printStackTrace();
                 } catch (UnsupportedEncodingException e) {
@@ -414,100 +394,10 @@ public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefre
             }
 
             return null;
-
         }
-
         @Override
-        protected void onPostExecute(final String responseString) {
-
-
-
-        }
-
-
-
-
+        protected void onPostExecute(final String responseString) {}
     }
-
-    public class LeaveHandleEventTask extends AsyncTask<Void, Void, String> {
-
-        //        private Context context;
-        private EventsObject currentEvent;
-        public LeaveHandleEventTask(EventsObject currentEvent) {
-            this.currentEvent = currentEvent;
-
-        }
-
-        private String responseString;
-        protected void onPreExecute() {
-        }
-
-        @Override
-        protected String doInBackground(Void... params) {
-            // TODO: attempt authentication against a network service.
-            JSONObject cred = new JSONObject();
-            if (prefs.getString("userid", null) != null) {
-                //If the user is logged in
-                String userId = prefs.getString("userid", null);
-
-                try {//Send request to server for joining event
-                    cred.put(NetworkUtilities.TOKEN, userId);
-                    cred.put("event_id", currentEvent.GetId());
-                    responseString = NetworkUtilities.doPost(cred, NetworkUtilities.BASE_URL + "/leave_event/");
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                }
-                if(responseString == null) {
-
-                    Log.i("TESTID",currentEvent.GetId());
-                }
-
-                //Check response
-                JSONObject myObject = null;
-                String responseStatus = null;
-                try {
-                    myObject = new JSONObject(responseString);
-                    responseStatus = myObject.getString(Constants.RESPONSE_STATUS);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                if (myObject != null && responseStatus != null) {
-                    if (responseStatus.equals(Constants.RESPONSE_OK.toString())) {
-                        LeaveEventTask = null;
-                        //TODO YD Switch toggle button text to "playing"
-                    } else {
-                        LeaveEventTask = null;
-                        //TODO YD override toggle method -> not to switch text to "playing"
-                    }
-                }
-
-            }
-            else
-            {
-                // If user is not logged -> in send to login activity
-                Intent intent = new Intent(getActivity().getApplicationContext(), Login.class);
-                startActivity(intent);
-            }
-
-            return null;
-
-        }
-
-        @Override
-        protected void onPostExecute(final String responseString) {
-
-
-
-        }
-
-
-
-
-    }
-
-
 
     @Override
     public void onRefresh() {
@@ -524,16 +414,10 @@ public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefre
 
         //userEventsAdapter userEventsAdapter = new userEventsAdapter(  getActivity(),globalVariables.GetHomeEvents() );
 
-
         homeEventsAdapter.notifyDataSetChanged();
         events_list.setAdapter(homeEventsAdapter);
 
-
         swipeRefreshLayout.setRefreshing(false);
-
     }
-
-
-
 
 }

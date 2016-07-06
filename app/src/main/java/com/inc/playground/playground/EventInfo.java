@@ -35,6 +35,7 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 import android.widget.ToggleButton;
 
+import com.facebook.android.Util;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -52,6 +53,9 @@ import com.inc.playground.playground.utils.LatLngInterpolator;
 import com.inc.playground.playground.utils.NetworkUtilities;
 import com.inc.playground.playground.utils.RoundedImageView;
 import com.inc.playground.playground.utils.User;
+import com.inc.playground.playground.utils.Utils;
+
+import junit.framework.Assert;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -102,8 +106,8 @@ public class EventInfo extends FragmentActivity {
     TextView viewName, viewDateEvent, viewStartTime, viewEndTime, viewCurMembers, viewLocation, viewSize, viewCurrentSize, viewEventDescription, viewPlay, viewStatus;
     ImageView typeImg, statusImg;
     JSONArray membersImagesUrls;
-    private handleEventTask JoinEventsTask = null;
-    public LeaveHandleEventTask LeaveEventTask = null;
+    private HandleEventTask handleEventTask = null;
+    //private HandleEventTask LeaveEventTask = null;
     public SharedPreferences prefs;
     LinearLayout membersList;
     User currentUser;
@@ -111,6 +115,7 @@ public class EventInfo extends FragmentActivity {
     Bitmap imageBitmap;
     Set<String> userEvents;
     ScrollView mainLayout;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -228,7 +233,6 @@ public class EventInfo extends FragmentActivity {
         int imageResource = getResources().getIdentifier(uri, null, getPackageName());
         Drawable typeDrawable = getResources().getDrawable(imageResource);
         typeImg.setImageDrawable(typeDrawable);
-
 
 
         shareButton.setOnClickListener(new View.OnClickListener() {
@@ -604,126 +608,58 @@ public class EventInfo extends FragmentActivity {
 
 
     public void onPlayClick(View v) {
-        ToggleButton x = (ToggleButton) v;//LEAVE EVENT
-//        if(!x.isChecked()) {
-//            LeaveEventTask = new LeaveHandleEventTask(currentEvent);
-//            LeaveEventTask.execute((Void)null);
-//        viewPlay.setText("Play");
-//        viewPlay.setTextColor(Color.parseColor("#1874cd"));
-//        }
-//        else {//join
-        JoinEventsTask = new handleEventTask(currentEvent);
-        JoinEventsTask.execute((Void) null);
-
-        ImageView member = new ImageView(this);
-        member.setImageResource(R.drawable.pg_time);
-        viewPlay.setText("Playing");
-        viewPlay.setTextColor(Color.parseColor("#104E8B"));
-
-        member.setImageBitmap(globalVariables.GetUserPictureBitMap());
-        membersList.addView(member);
-        x.setClickable(false);
-        viewCurrentSize.setText(Integer.toString(membersImagesUrls.length() + 1));
-
-        //set status
-        if (Integer.valueOf((String) viewCurrentSize.getText()) == Integer.valueOf((String) viewSize.getText())) {
-            viewStatus.setVisibility(View.VISIBLE);
-            statusImg.setVisibility(View.VISIBLE);
-//            mainLayout.setBackgroundColor(Color.parseColor("#98fb98"));
+        ToggleButton x = (ToggleButton) v;
+        String eventTask = "join_event";
+        if (!x.isChecked()) { // leave event
+            eventTask = "leave_event";
+            //Todo check if the creator is leaving
+            x.setChecked(false);
+            viewPlay.setText("Play");
+            viewPlay.setTextColor(Color.parseColor("#D0D0D0"));
         }
+        else {//join event  - work properly
+            ImageView member = new ImageView(this);
+            member.setImageResource(R.drawable.pg_time);
+            x.setChecked(true);
+            viewPlay.setText("Playing");
+            viewPlay.setTextColor(Color.parseColor("#104E8B"));
 
-        if (userEvents == null)
-            userEvents = new HashSet<>();
-        userEvents.add(currentEvent.GetId());
-        currentUser.SetUserEvents(userEvents);
-        globalVariables.SetCurrentUser(currentUser);
+            member.setImageBitmap(globalVariables.GetUserPictureBitMap());
+            membersList.addView(member);
+            //x.setClickable(false);
+            viewCurrentSize.setText(Integer.toString(membersImagesUrls.length() + 1));
 
-    }
-
-    public class LeaveHandleEventTask extends AsyncTask<Void, Void, String> {
-
-        //        private Context context;
-        private EventsObject currentEvent;
-
-        public LeaveHandleEventTask(EventsObject currentEvent) {
-            this.currentEvent = currentEvent;
-        }
-
-        private String responseString;
-
-        protected void onPreExecute() {
-        }
-
-        @Override
-        protected String doInBackground(Void... params) {
-            // TODO: attempt authentication against a network service.
-            JSONObject cred = new JSONObject();
-            if (prefs.getString("userid", null) != null) {
-                //If the user is logged in
-                String userId = prefs.getString("userid", null);
-
-                try {//Send request to server for joining event
-                    cred.put(NetworkUtilities.TOKEN, userId);
-                    cred.put("event_id", currentEvent.GetId());
-                    responseString = NetworkUtilities.doPost(cred, NetworkUtilities.BASE_URL + "/leave_event/");
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                }
-                if (responseString == null) {
-
-                    Log.i("TESTID", currentEvent.GetId());
-                }
-
-                //Check response
-                JSONObject myObject = null;
-                String responseStatus = null;
-                try {
-                    myObject = new JSONObject(responseString);
-                    responseStatus = myObject.getString(Constants.RESPONSE_STATUS);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                if (myObject != null && responseStatus != null) {
-                    if (responseStatus.equals(Constants.RESPONSE_OK.toString())) {
-                        LeaveEventTask = null;
-                        //TODO YD Switch toggle button text to "playing"
-                    } else {
-                        LeaveEventTask = null;
-                        //TODO YD override toggle method -> not to switch text to "playing"
-                    }
-                }
-
-            } else {
-                // If user is not logged -> in send to login activity
-                Intent intent = new Intent(getApplicationContext(), Login.class);
-                startActivity(intent);
+            //set status
+            if (Integer.valueOf((String) viewCurrentSize.getText()) == Integer.valueOf((String) viewSize.getText())) {
+                viewStatus.setVisibility(View.VISIBLE);
+                statusImg.setVisibility(View.VISIBLE);
+                //            mainLayout.setBackgroundColor(Color.parseColor("#98fb98"));
             }
-
-            return null;
-
+            if (userEvents == null)
+                userEvents = new HashSet<>();
+            userEvents.add(currentEvent.GetId());
+            currentUser.SetUserEvents(userEvents);
+            globalVariables.SetCurrentUser(currentUser);
         }
+        /*Server side update */
+        handleEventTask = new HandleEventTask(currentEvent, eventTask);
+        handleEventTask.execute((Void) null);
+}
 
-        @Override
-        protected void onPostExecute(final String responseString) {
-        }
-
-    }
-
-
-    public class handleEventTask extends AsyncTask<Void, Void, String> {
-
-        //        private Context context;
-        private EventsObject currentEvent;
-        public handleEventTask(EventsObject currentEvent) {
-            this.currentEvent = currentEvent;
-
-        }
+    public class HandleEventTask extends AsyncTask<Void, Void, String> {
+        /*handle 3 requests: 1.join_event 2. leave_event 3. cancel_events (the whole event) */
+        //private Context context; //Todo : explain what is it or delete (idan wants to delete it)
 
         private String responseString;
-        protected void onPreExecute() {
+        String eventTask;
+        private EventsObject currentEvent;
+        public HandleEventTask(EventsObject currentEvent,String eventTask) {
+            this.currentEvent = currentEvent;
+            this.eventTask = eventTask;
+            assert(eventTask.equals("join_event") || eventTask.equals("leave_event")||eventTask.equals("cancel_event") );
         }
+
+        protected void onPreExecute() {}
 
         @Override
         protected String doInBackground(Void... params) {
@@ -733,17 +669,18 @@ public class EventInfo extends FragmentActivity {
                 //If the user is logged in
                 String userId = prefs.getString("userid", null);
 
-                try {//Send request to server for joining event
+                try {//Send request to server for eventTask
                     cred.put(NetworkUtilities.TOKEN, userId);
                     cred.put("event_id", currentEvent.GetId());
-                    responseString = NetworkUtilities.doPost(cred, NetworkUtilities.BASE_URL + "/join_event/");
+                    //Todo : should ask the creator to join
+                    //cred.put(<creator> , )
+                    responseString = NetworkUtilities.doPost(cred, NetworkUtilities.BASE_URL + "/" + eventTask+ "/");//'eventTask' can be: leave/cancel/join event
                 } catch (JSONException e) {
                     e.printStackTrace();
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
                 }
                 if (responseString == null) {
-
                     Log.i("TESTID", currentEvent.GetId());
                 }
 
@@ -758,10 +695,11 @@ public class EventInfo extends FragmentActivity {
                 }
                 if (myObject != null && responseStatus != null) {
                     if (responseStatus.equals(Constants.RESPONSE_OK.toString())) {
-                        JoinEventsTask = null;
+                        //Todo-Idan :cover the new eventTask that we have now: leave and cancel
+                        handleEventTask = null;
                         //TODO YD Switch toggle button text to "playing"
                     } else {
-                        JoinEventsTask = null;
+                        handleEventTask= null;
                         //TODO YD override toggle method -> not to switch text to "playing"
                     }
                 }
@@ -774,13 +712,10 @@ public class EventInfo extends FragmentActivity {
             }
 
             return null;
-
         }
 
         @Override
-        protected void onPostExecute(final String responseString) {
-
-        }
+        protected void onPostExecute(final String responseString) {}
 
     }
 
@@ -823,7 +758,6 @@ public class EventInfo extends FragmentActivity {
         }
         actionBar.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.primaryColor)));
     }
-
 
     public class GetMembersImages extends AsyncTask<String, String, String> {
         int i;
@@ -922,7 +856,6 @@ public class EventInfo extends FragmentActivity {
             Log.d(TAG, "getMembersUrls.successful" + membersImagesUrls.toString());
         }
     }
-
 
     public class EventPhotoUserListener extends AsyncTask<String, String, String> {
         int i;
