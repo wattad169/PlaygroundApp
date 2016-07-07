@@ -124,7 +124,19 @@ public class Constants {
 
     public static final String CREATED_COUNT = "createdCount";
 
+    public static final String IS_PUBLIC = "is_public";// 1/0 indicate that the creator do /don't need to approve join requests
+
+    //public static final String IS_PUBLIC = "is_public";// 1/0 indicate that the creator do /don't need to approve join requests
+
     public static final String INVITEE = "invitee";
+
+    public static final String EVENTS_EDITED = "events_edited";//Todo : make sure we use those
+
+    public static final String EVENTS_WAIT4APPROVAL = "events_wait4approval";
+
+    public static final String EVENTS_DECLINE = "events_decline";
+
+    public static final String EVENTS_HISTORY = "events_history";
 
 
 }

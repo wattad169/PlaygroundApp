@@ -115,6 +115,7 @@ public class EventInfo extends FragmentActivity {
     Bitmap imageBitmap;
     Set<String> userEvents;
     ScrollView mainLayout;
+    public ArrayList<String> urlList = new ArrayList<>(); //saves the url of members by order
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -609,9 +610,7 @@ public class EventInfo extends FragmentActivity {
     public void onPlayClick(View v) {
         ToggleButton x = (ToggleButton) v;
         /*user photo */
-        ImageView member = new ImageView(this);
-        member.setImageResource(R.drawable.pg_time);
-        member.setImageBitmap(globalVariables.GetUserPictureBitMap());
+
 
 
         String eventTask = null;
@@ -628,7 +627,7 @@ public class EventInfo extends FragmentActivity {
                 viewPlay.setText("Play");
                 viewPlay.setTextColor(Color.parseColor("#D0D0D0"));
                 //remove member picture
-                membersList.removeView(member);//todo: fix
+                membersList.removeView(findMemberPhoto());
                 userEvents.remove(currentEvent.GetId());//remove current event from userEvents
             }
         }
@@ -638,6 +637,11 @@ public class EventInfo extends FragmentActivity {
             viewPlay.setText("Playing");
             viewPlay.setTextColor(Color.parseColor("#104E8B"));
             //add member picture
+            ImageView member = new ImageView(this);
+            member.setImageResource(R.drawable.pg_time);
+            member.setImageBitmap(globalVariables.GetUserPictureBitMap());
+            member.setId(membersImagesUrls.length() + 1);
+            urlList.add(currentUser.getPhotoUrl());
             membersList.addView(member);
             viewCurrentSize.setText(Integer.toString(membersImagesUrls.length() + 1));
 
@@ -844,6 +848,7 @@ public class EventInfo extends FragmentActivity {
                 member.setImageBitmap(imageBitmap);
                 //member.setImageResource(R.drawable.pg_time);
                 member.getAdjustViewBounds();
+                urlList.add(photoURL);
                 member.setId(i);
                 LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(150, 150);
                 member.setLayoutParams(layoutParams);
@@ -933,6 +938,24 @@ public class EventInfo extends FragmentActivity {
             return null;
         }
         //Log.d("EVent info", "getMembersUrls.successful" + membersImagesUrls);
+    }
+
+    /**
+     *
+     * remove from url_list user url
+     * @return ImageView object on member list
+     */
+    public ImageView findMemberPhoto() {
+        String photoUrl;
+        for(int i=0; i< membersList.getChildCount() ;i++){
+            photoUrl = urlList.get(i);
+            if(photoUrl.equals(currentUser.getPhotoUrl())){
+                urlList.remove(i);
+                return (ImageView) membersList.getChildAt(i);
+            }
+        }
+        assert(3<1) ; // we should not get here !
+        return null;
     }
 }
 

@@ -45,6 +45,7 @@ import java.math.BigDecimal;
 import java.math.MathContext;
 import java.util.ArrayList;
 
+import java.util.EventObject;
 import java.util.HashMap;
 
 /**
@@ -236,6 +237,39 @@ final public class NetworkUtilities {
         return 2.0;
     }
 
+
+    /**
+     *
+     * @param jsonObject
+     * @param currentLocation
+     * @return
+     * @throws JSONException
+     */
+    public static EventUserObject fillEventObject(JSONObject jsonObject ,HashMap<String, Double> currentLocation) throws JSONException {
+        String eventId = jsonObject.getString(Constants.EVENT_ID);
+        EventUserObject currentEvent = new EventUserObject();
+        //ArrayList<String> members = new ArrayList<>(); //not used
+        currentEvent.SetId(eventId);
+        currentEvent.SetName(jsonObject.getString(Constants.EVENT_NAME));
+        currentEvent.SetFormattedLocation(jsonObject.getString(Constants.EVENT_LOCATION));
+        currentEvent.SetType(jsonObject.getString(Constants.EVENT_TYPE));
+        currentEvent.SetSize(jsonObject.getString(Constants.EVENT_SIZE));
+        currentEvent.SetDate(jsonObject.getString(Constants.EVENT_DATE));
+        currentEvent.SetStartTime(jsonObject.getString(Constants.START_TIME));
+        currentEvent.SetEndTime(jsonObject.getString(Constants.END_TIME));
+        currentEvent.SetDescription(jsonObject.getString(Constants.EVENT_DESCRIPTION));
+        currentEvent.SetCreatorId(jsonObject.getString(Constants.CREATED_BY));
+        currentEvent.setIsPublic(jsonObject.getString(Constants.IS_PUBLIC));
+
+        double currentLon  = currentLocation.get(Constants.LOCATION_LON);
+        double  currentLat= currentLocation.get(Constants.LOCATION_LAT);
+        String eventLon  = jsonObject.getJSONObject("location").getString(Constants.LOCATION_LON);
+        String eventLat = jsonObject.getJSONObject("location").getString(Constants.LOCATION_LAT);
+        currentEvent.SetPosition(eventLat, eventLon);
+        currentEvent.SetDistance(Double.toString(calculateDistance(currentLon, currentLat, Double.parseDouble(eventLon), Double.parseDouble(eventLat))));//change order
+        return currentEvent;
+    }
+
     /**
      *  Converts JSON Object containing events info to ArrayList of events objects
      * @param jsonInput - The JSON object received from server
@@ -244,41 +278,29 @@ final public class NetworkUtilities {
      * @throws JSONException
      */
     public static ArrayList<EventsObject> eventListToArrayList(JSONArray jsonInput,HashMap<String, Double> currentLocation) throws JSONException {
-        ArrayList<EventsObject> events = new ArrayList<>();
+        ArrayList<EventsObject> events = new ArrayList<EventsObject>();
         Log.i("testi",String.valueOf(jsonInput.length()));
         for(int i=0 ; i<jsonInput.length();i++){
             //Fill the EventObject with data from the JSON
             JSONObject currentObject = (JSONObject) jsonInput.get(i);
-            String eventId = currentObject.getString(Constants.EVENT_ID);
-            EventsObject currentEvent = new EventsObject();
-            ArrayList<String> members = new ArrayList<>();
-            currentEvent.SetId(eventId);
-            currentEvent.SetName(currentObject.getString(Constants.EVENT_NAME));
-            currentEvent.SetFormattedLocation(currentObject.getString(Constants.EVENT_LOCATION));
-            currentEvent.SetType(currentObject.getString(Constants.EVENT_TYPE));
-            currentEvent.SetSize(currentObject.getString(Constants.EVENT_SIZE));
-            currentEvent.SetDate(currentObject.getString(Constants.EVENT_DATE));
-            currentEvent.SetStartTime(currentObject.getString(Constants.START_TIME));
-            currentEvent.SetEndTime(currentObject.getString(Constants.END_TIME));
-            currentEvent.SetDescription(currentObject.getString(Constants.EVENT_DESCRIPTION));
-            currentEvent.SetCreatorId(currentObject.getString(Constants.CREATED_BY));
+            EventsObject currentEvent = fillEventObject(currentObject , currentLocation);
+            // add event to Hashmap
+            events.add(currentEvent);
+        }
+        return events;
+    }
 
-            /*extract created fields + played field */
-
-
-
-            //Calculate and set the event distance
-
-            //ADD
-
-            //??? = currentObject.getString(or key or something else)
-
-            double currentLon  = currentLocation.get(Constants.LOCATION_LON);
-            double  currentLat= currentLocation.get(Constants.LOCATION_LAT);
-            String eventLon  = currentObject.getJSONObject("location").getString(Constants.LOCATION_LON);
-            String eventLat = currentObject.getJSONObject("location").getString(Constants.LOCATION_LAT);
-            currentEvent.SetPosition(eventLat, eventLon);
-            currentEvent.SetDistance(Double.toString(calculateDistance(currentLon, currentLat, Double.parseDouble(eventLon), Double.parseDouble(eventLat))));//change order
+    public static ArrayList<EventUserObject> eventUserListToArrayList(JSONArray jsonInput,HashMap<String, Double> currentLocation ,String whichEventTable ) throws JSONException {
+        assert(whichEventTable.equals(Constants.EVENTS_EDITED) || whichEventTable.equals(Constants.EVENTS_WAIT4APPROVAL)||
+                whichEventTable.equals(Constants.EVENTS_DECLINE) || whichEventTable.equals(Constants.EVENTS_HISTORY) ||
+                whichEventTable.equals("events"));
+        ArrayList<EventUserObject> events = new ArrayList<EventUserObject>();
+        Log.i("testi",String.valueOf(jsonInput.length()));
+        for(int i=0 ; i<jsonInput.length();i++){
+            //Fill the EventObject with data from the JSON
+            JSONObject currentObject = (JSONObject) jsonInput.get(i);
+            EventUserObject currentEvent = fillEventObject(currentObject , currentLocation);
+            currentEvent.setEventUserStatus(whichEventTable);
             // add event to Hashmap
             events.add(currentEvent);
         }
@@ -286,5 +308,15 @@ final public class NetworkUtilities {
     }
 
 
+//    public static ArrayList<EventUserObject> allUserEvents(JSONObject jsonObject,HashMap<String, Double> currentLocation) throws JSONException {
+//        ArrayList<EventUserObject> events = new ArrayList<EventUserObject>();
+//        JSONArray jsonArray =  JSONObject
+//
+//
+//        }
 
-}
+
+
+
+
+        }
