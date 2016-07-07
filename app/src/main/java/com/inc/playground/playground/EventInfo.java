@@ -10,7 +10,10 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Path;
+import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
@@ -610,9 +613,6 @@ public class EventInfo extends FragmentActivity {
     public void onPlayClick(View v) {
         ToggleButton x = (ToggleButton) v;
         /*user photo */
-
-
-
         String eventTask = null;
         if (!x.isChecked()) {
             assert (currentUser!=null);
@@ -639,10 +639,21 @@ public class EventInfo extends FragmentActivity {
             //add member picture
             ImageView member = new ImageView(this);
             member.setImageResource(R.drawable.pg_time);
-            member.setImageBitmap(globalVariables.GetUserPictureBitMap());
+            Bitmap currentImgae = getRoundedShape(globalVariables.GetUserPictureBitMap());
+            member.setImageBitmap(currentImgae);
             member.setId(membersImagesUrls.length() + 1);
             urlList.add(currentUser.getPhotoUrl());
             membersList.addView(member);
+            //add for this new member listener
+            member.setOnClickListener(new View.OnClickListener() {
+                                          @Override
+                                          public void onClick(View v) {
+                                              // new changes
+                                              new EventPhotoUserListener(currentUser.getPhotoUrl()).execute();
+                                          }
+                                      }
+
+            );
             viewCurrentSize.setText(Integer.toString(membersImagesUrls.length() + 1));
 
             //set status -Todo : ask lina what is it?
@@ -844,30 +855,34 @@ public class EventInfo extends FragmentActivity {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+
+                Bitmap newMember = getRoundedShape(imageBitmap);
                 ImageView member = new ImageView(thisContext);
-                member.setImageBitmap(imageBitmap);
+                member.setImageBitmap(newMember);
                 //member.setImageResource(R.drawable.pg_time);
                 member.getAdjustViewBounds();
                 urlList.add(photoURL);
                 member.setId(i);
-                LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(150, 150);
-                member.setLayoutParams(layoutParams);
-                member.setPadding(7, 1, 7, 1);
-
-
-                //added for listener
-                member.setOnClickListener(new View.OnClickListener() {
-                                              @Override
-                                              public void onClick(View v) {
-                                                  // new changes
-                                                  new EventPhotoUserListener(photoURL).execute();
-                                              }
-                                          }
-
-                );
+//                LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(150, 150);
+//                member.setLayoutParams(layoutParams);
+                member.setPadding(10, 1, 10, 1);
 
                 membersList.addView(member);
 
+            }
+            // adding Listener for evrey memnber
+            for(int i=0;i<membersList.getChildCount();i++)
+            {
+                final String currentUrl = urlList.get(i);
+                membersList.getChildAt(i).setOnClickListener(new View.OnClickListener() {
+                                                                 @Override
+                                                                 public void onClick(View v) {
+                                                                     // new changes
+                                                                     new EventPhotoUserListener(currentUrl).execute();
+                                                                 }
+                                                             }
+
+                );
             }
 
             Log.d(TAG, "getMembersUrls.successful" + membersImagesUrls.toString());
@@ -956,6 +971,29 @@ public class EventInfo extends FragmentActivity {
         }
         assert(3<1) ; // we should not get here !
         return null;
+    }
+
+    public Bitmap getRoundedShape(Bitmap scaleBitmapImage) {
+        int targetWidth = 150;
+        int targetHeight = 150;
+        Bitmap targetBitmap = Bitmap.createBitmap(targetWidth,
+                targetHeight,Bitmap.Config.ARGB_8888);
+
+        Canvas canvas = new Canvas(targetBitmap);
+        Path path = new Path();
+        path.addCircle(((float) targetWidth - 1) / 2,
+                ((float) targetHeight - 1) / 2,
+                (Math.min(((float) targetWidth),
+                        ((float) targetHeight)) / 2),
+                Path.Direction.CCW);
+
+        canvas.clipPath(path);
+        Bitmap sourceBitmap = scaleBitmapImage;
+        canvas.drawBitmap(sourceBitmap,
+                new Rect(0, 0, sourceBitmap.getWidth(),
+                        sourceBitmap.getHeight()),
+                new Rect(0, 0, targetWidth, targetHeight), null);
+        return targetBitmap;
     }
 }
 

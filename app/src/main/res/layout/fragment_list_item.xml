@@ -97,7 +97,6 @@
             android:textOn=""
             android:textOff=""
             android:background="@drawable/play_toggle_btn"
-            android:onClick="myClickHandler"
             android:layout_alignBottom="@+id/img_distance"
             android:layout_alignRight="@+id/event_name" />
 
