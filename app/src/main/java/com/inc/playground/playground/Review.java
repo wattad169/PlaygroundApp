@@ -36,9 +36,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.InterstitialAd;
 
 import java.io.BufferedReader;
@@ -207,7 +205,7 @@ public class Review extends Activity {
 						Log.d("second", "second");
 						final RelativeLayout rl_dialoguser = (RelativeLayout) findViewById(R.id.rl_infodialog);
 
-						layout12 = getLayoutInflater().inflate(R.layout.json_dilaog, rl_dialoguser, false);
+						layout12 = getLayoutInflater().inflate(R.layout.logout_dilaog, rl_dialoguser, false);
 
 						rl_dialoguser.addView(layout12);
 						rl_dialoguser.startAnimation(AnimationUtils.loadAnimation(Review.this, R.anim.popup));

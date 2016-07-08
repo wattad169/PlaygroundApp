@@ -729,8 +729,8 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
 		currentUser.setEmail(email_id);
 		currentUser.setPhotoUrl(fullimage);
 
-
 		new GetUserEventsAsyncTask().execute();
+		globalVariables.SetCurrentUser(currentUser);
 	}
 	public class GetUserEventsAsyncTask extends AsyncTask<String, String, String> {
 
@@ -783,7 +783,7 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
 				currentUser.SetUserEvents(userEvents);
 				currentUser.setUserEventsObjects(userEventsObjects);
 				currentUser.setCreatedNumOfEvents(createdCount);
-				globalVariables.SetCurrentUser(currentUser);
+
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}

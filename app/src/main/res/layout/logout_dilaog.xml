@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="100dp"
+    android:gravity="center_vertical|center|center_horizontal">
+
+    <RelativeLayout
+        android:id="@+id/logout_dialog"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="false"
+        android:background="#90000000"
+        android:gravity="center_vertical|center|center_horizontal">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:background="#fbf5f5"
+            android:gravity="center_vertical|center|center_horizontal">
+
+
+            <TextView
+                android:id="@+id/txt_dia"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:text="you sure you want to logout?"
+                android:gravity="center"
+                android:textColor="@android:color/background_dark"
+                android:textSize="18dp"
+                android:typeface="sans"
+                android:layout_above="@+id/ok_btn"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="10dp" />
+
+
+
+            <Button
+                android:id="@+id/ok_btn"
+                android:layout_width="60dp"
+                android:layout_height="40dp"
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="10dp"
+                android:clickable="true"
+                android:text="ok"
+                android:textSize="15dp"
+                android:textColor="#fff"
+                android:textStyle="bold"
+                android:background="#104e8b"
+                android:layout_marginLeft="100dp" />
+
+            <Button
+                android:id="@+id/cancle_btn"
+                android:layout_width="60dp"
+                android:layout_height="40dp"
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="10dp"
+                android:clickable="true"
+                android:text="cancle"
+                android:textSize="15dp"
+                android:textColor="#fff"
+                android:textStyle="bold"
+                android:background="#104e8b"
+                android:layout_marginLeft="200dp" />
+        </RelativeLayout>
+
+    </RelativeLayout>
+</RelativeLayout>

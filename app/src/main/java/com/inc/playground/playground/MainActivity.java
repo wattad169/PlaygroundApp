@@ -18,6 +18,8 @@ package com.inc.playground.playground;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -29,6 +31,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Message;
 import android.support.annotation.IdRes;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.app.DialogFragment;
@@ -46,11 +49,14 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.PopupMenu;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigation;
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigationItem;
@@ -60,7 +66,10 @@ import com.inc.playground.playground.utils.User;
 
 
 import java.io.InputStream;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.concurrent.ExecutionException;
+import java.util.logging.Handler;
 
 public class MainActivity extends FragmentActivity implements ActionBar.TabListener {
 
@@ -96,7 +105,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         // of the app.
         mAppSectionsPagerAdapter = new AppSectionsPagerAdapter(getSupportFragmentManager());
 
-
+        globalVariables = ((GlobalVariables) getApplication());
         // Set up the action bar.
         final ActionBar actionBar = getActionBar();
         setPlayGroundActionBar();
@@ -189,11 +198,57 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
             public void onClick(View v) {
                 // TODO Auto-generated method stub
                 // new changes
-                Intent iv = new Intent(MainActivity.this, Login.class);
-                startActivity(iv);
-                finish();
-            }
-        });
+                LinearLayout ll_Login = (LinearLayout) v;
+                TextView loginTxt = (TextView) findViewById(R.id.login_txt);
+                if(loginTxt.getText().equals("Login")) {
+                    Intent iv = new Intent(MainActivity.this, Login.class);
+                    startActivity(iv);
+                    finish();
+                }
+                else if(loginTxt.getText().equals("Logout")) {
+                    final Dialog alertDialog = new Dialog(MainActivity.this);
+                    alertDialog.setContentView(R.layout.logout_dilaog);
+                    alertDialog.setTitle("Logout");
+                    alertDialog.findViewById(R.id.ok_btn).setOnClickListener(new View.OnClickListener() {
+
+                        @Override
+                        public void onClick(View v) {
+                            SharedPreferences prefs = getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
+                            SharedPreferences.Editor editor = prefs.edit();
+                            editor.clear();
+                            editor.commit();
+                            ImageView loginImg = (ImageView) findViewById(R.id.login_img);
+                            TextView loginTxt = (TextView) findViewById(R.id.login_txt);
+                            loginTxt.setText("Login");
+                            loginImg.setImageResource(R.drawable.pg_action_lock_open);
+
+                            globalVariables = ((GlobalVariables) getApplication());
+                            globalVariables.SetCurrentUser(null);
+                            globalVariables.SetUserPictureBitMap(null);
+                            globalVariables.SetUsersList(null);
+                            globalVariables.SetUsersImagesMap(null);
+
+                            Intent iv = new Intent(MainActivity.this, MainActivity.class);
+                            startActivity(iv);
+                            finish();
+                        }
+                    });
+
+                    alertDialog.findViewById(R.id.cancle_btn).setOnClickListener(new View.OnClickListener() {
+
+                        @Override
+                        public void onClick(View v) {
+                            Intent iv = new Intent(MainActivity.this, MainActivity.class);
+                            startActivity(iv);
+                            finish();
+                        }
+                    });
+
+                    alertDialog.show();  //<-- See This!
+                        }
+
+                    }
+                });
 
         /*Setting button*/
         LinearLayout ll_Setting = (LinearLayout) findViewById(R.id.ll_settings);
@@ -216,22 +271,34 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
             @Override
             public void onClick(View v) {
                 // new changes
-                Intent iv = new Intent(MainActivity.this,
-                        com.inc.playground.playground.upLeft3StripesButton.
-                                MyProfile.class);
                 globalVariables = ((GlobalVariables) getApplication());
                 User currentUser = globalVariables.GetCurrentUser();
-                //for my profile
-                iv.putExtra("name", currentUser.getName());
-                iv.putExtra("createdNumOfEvents",currentUser.getCreatedNumOfEvents());
-                iv.putExtra("userEventsObjects", currentUser.getUserEventsObjects());//ArrayList<EventsObject>
-                iv.putExtra("photoUrl", currentUser.getPhotoUrl());
-                startActivity(iv);
+                if(currentUser == null) {
+                    Toast.makeText(MainActivity.this, "You are not logged in", Toast.LENGTH_LONG).show();
+                }
+                else {
+
+                    Intent iv = new Intent(MainActivity.this,
+                            com.inc.playground.playground.upLeft3StripesButton.
+                                    MyProfile.class);
+
+                    //for my profile
+                    iv.putExtra("name", currentUser.getName());
+                    iv.putExtra("createdNumOfEvents", currentUser.getCreatedNumOfEvents());
+                    iv.putExtra("userEventsObjects", currentUser.getUserEventsObjects());//ArrayList<EventsObject>
+                    iv.putExtra("photoUrl", currentUser.getPhotoUrl());
+                    startActivity(iv);
+                }
 
             }
         });
 
     }
+
+
+
+
+
     public void setPlayGroundActionBar(){
         String userLoginId,userFullName,userEmail,userPhoto;
         Bitmap imageBitmap =null;
@@ -271,11 +338,12 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
                 Log.i(TAG,"Image found");
             }
             img_profile.setImageBitmap(imageBitmap);
-            LinearLayout ll_login = (LinearLayout) findViewById(R.id.ll_login);
 
+            TextView loginTxt = (TextView) findViewById(R.id.login_txt);
+            ImageView loginImg = (ImageView) findViewById(R.id.login_img);
             globalVariables.SetUserPictureBitMap(imageBitmap); // Make the imageBitMap global to all activities to avoid downloading twice
-            ll_login.setVisibility(View.GONE);
-
+            loginTxt.setText("Logout");
+            loginImg.setImageResource(R.drawable.pg_action_lock_close);
             // Register to notifications
             Intent intent = new Intent(this, RegistrationIntentService.class);
             startService(intent);
