@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Context;
 import android.graphics.Bitmap;
 
+import com.inc.playground.playground.utils.EventUserObject;
 import com.inc.playground.playground.utils.GPSTracker;
 import com.inc.playground.playground.utils.User;
 import com.inc.playground.playground.utils.UserImageEntry;

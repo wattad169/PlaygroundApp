@@ -37,8 +37,6 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 
-import static com.inc.playground.playground.utils.NetworkUtilities.eventListToArrayList;
-
 public class RegistrationIntentService extends IntentService {
 
     public static final String MY_PREFS_NAME = "Login";

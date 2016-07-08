@@ -19,6 +19,7 @@ import android.widget.TextView;
 
 import com.inc.playground.playground.utils.Constants;
 import com.inc.playground.playground.utils.DownloadImageBitmapTask;
+import com.inc.playground.playground.utils.EventUserObject;
 import com.inc.playground.playground.utils.GPSTracker;
 import com.inc.playground.playground.utils.NetworkUtilities;
 import com.inc.playground.playground.utils.User;
@@ -30,15 +31,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.EventObject;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
-
-import android.content.BroadcastReceiver;
-
-import static com.inc.playground.playground.utils.NetworkUtilities.eventListToArrayList;
-
 
 public class Splash extends Activity {
     private static final String TAG = "Splash: ";
@@ -132,8 +129,9 @@ public class Splash extends Activity {
             JSONObject responseJSON= null;
             try {
                 responseJSON = new JSONObject(allEventsResponseString);
-                eventsFromServerJSON = responseJSON.getJSONArray(Constants.RESPONSE_MESSAGE);
-                globalVariables.SetHomeEvents(eventListToArrayList(eventsFromServerJSON, globalVariables.GetCurrentLocation()));
+                eventsFromServerJSON = responseJSON.getJSONArray(Constants.RESPONSE_MESSAGE);//does that need change? (UserobjectEvents?)
+                ArrayList<EventsObject> eventObjectOnly = NetworkUtilities.eventListToArrayList(eventsFromServerJSON, globalVariables.GetCurrentLocation());
+                globalVariables.SetHomeEvents(eventObjectOnly);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -151,7 +149,7 @@ public class Splash extends Activity {
     }
 
     public class GetUserEventsAsyncTask extends AsyncTask<String, String, String> {
-        ArrayList<EventsObject> userEventsObjects;
+        ArrayList<EventUserObject> userEventsObjects;
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -183,18 +181,14 @@ public class Splash extends Activity {
                 responseJSON = new JSONObject(responseString);
                 JSONUserInfo = responseJSON.getJSONObject(Constants.RESPONSE_MESSAGE);
                 String createdCount = JSONUserInfo.getString("createdCount");
-                eventsFromServerJSON = JSONUserInfo.getJSONArray(Constants.EVENT_ENTRIES);
+                eventsFromServerJSON = JSONUserInfo.getJSONArray(Constants.EVENT_ENTRIES);//Todo:update what i get
 
 
-                userEventsObjects =  eventListToArrayList(eventsFromServerJSON, globalVariables.GetCurrentLocation());
+                userEventsObjects =  NetworkUtilities.allUserEvents(JSONUserInfo, globalVariables.GetCurrentLocation());
                 Set<String> userEvents = new HashSet<>();
-                for(int i=0 ; i<eventsFromServerJSON.length();i++){
-                    JSONObject currentObject = (JSONObject) eventsFromServerJSON.get(i);
-                    //getuser events:
-
-                    //
-                    String eventId = currentObject.getString(Constants.EVENT_ID);
-                    userEvents.add(eventId);
+                for(EventUserObject eUObject : userEventsObjects ){
+                    String eventId = eUObject.GetId(); //currentObject.getString(Constants.EVENT_ID);
+                    userEvents.add(eventId);//TODO: need to update the other types of events?
                 }
                 currentUser.setUserEventsObjects(userEventsObjects);
                 currentUser.SetUserEvents(userEvents);

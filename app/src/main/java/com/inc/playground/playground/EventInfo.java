@@ -51,6 +51,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.inc.playground.playground.utils.Constants;
 import com.inc.playground.playground.utils.CustomMarker;
 import com.inc.playground.playground.utils.DownloadImageBitmapTask;
+import com.inc.playground.playground.utils.EventUserObject;
 import com.inc.playground.playground.utils.GPSTracker;
 import com.inc.playground.playground.utils.LatLngInterpolator;
 import com.inc.playground.playground.utils.NetworkUtilities;
@@ -69,14 +70,13 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.EventObject;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
-
-import static com.inc.playground.playground.utils.NetworkUtilities.eventListToArrayList;
 
 /**
  * Created by lina on 5/13/2016.
@@ -224,11 +224,19 @@ public class EventInfo extends FragmentActivity {
         if (currentUser != null) { // the user is login
             userEvents = currentUser.GetUserEvents();
             if (!userEvents.isEmpty()) {
-                if (userEvents.contains(currentEvent.GetId())) {
-                    playButton.setChecked(true);
-                    //playButton.setClickable(false); -avoid it: make it impossbile to click on the button
-                    viewPlay.setText("Playing");
-                    viewPlay.setTextColor(Color.parseColor("#104E8B"));
+                if (userEvents.contains(currentEvent.GetId())) {//play in the event
+                    if(currentUser.GetUserId().equals(currentEvent.GetCreatorId())){//creator
+                        playButton.setChecked(true);//Todo change the tringle to other picture for manager
+                        playButton.setTextColor(Color.parseColor("#000000"));
+                        viewPlay.setText("Hosting");
+                        viewPlay.setTextColor(Color.parseColor("#000000"));
+                    }
+                    else { //regular member
+                        playButton.setChecked(true);
+                        //playButton.setClickable(false); -avoid it: make it impossbile to click on the button
+                        viewPlay.setText("Playing");
+                        viewPlay.setTextColor(Color.parseColor("#104E8B"));
+                    }
                 }
             }
         }
@@ -617,6 +625,7 @@ public class EventInfo extends FragmentActivity {
         if (!x.isChecked()) {
             assert (currentUser!=null);
             if(currentUser.GetUserId().equals(currentEvent.GetCreatorId())) {//cancel event
+                //Todo : toast message
                 eventTask = "cancel_event";
                 viewPlay.setText("cancel");
                 viewPlay.setTextColor(Color.parseColor("#D0D0D0"));
@@ -656,7 +665,7 @@ public class EventInfo extends FragmentActivity {
             );
             viewCurrentSize.setText(Integer.toString(membersImagesUrls.length() + 1));
 
-            //set status -Todo : ask lina what is it?
+            //set status ("game on!" or not)
             if (Integer.valueOf((String) viewCurrentSize.getText()) == Integer.valueOf((String) viewSize.getText())) {
                 viewStatus.setVisibility(View.VISIBLE);
                 statusImg.setVisibility(View.VISIBLE);
@@ -930,19 +939,19 @@ public class EventInfo extends FragmentActivity {
             try {
 
                 responseJSON = new JSONObject(userProfileResponseStr);
-                userInfoFroServer = responseJSON.getJSONObject(Constants.RESPONSE_MESSAGE);
+                userInfoFroServer = responseJSON.getJSONObject(Constants.RESPONSE_MESSAGE);//Todo:update what i get
 
                 Intent iv = new Intent(EventInfo.this,
                         com.inc.playground.playground.upLeft3StripesButton.
                                 MyProfile.class);
 
                 JSONArray eventEntries = userInfoFroServer.getJSONArray("eventsEntries");
-                ArrayList<EventsObject> memeberEvents = NetworkUtilities.eventListToArrayList(eventEntries, globalVariables.GetCurrentLocation());
+                ArrayList<EventUserObject> memeberEvents = NetworkUtilities.eventUserListToArrayList(eventEntries, globalVariables.GetCurrentLocation(), "eventsEntries");//Todo :update here
 
                 iv.putExtra("name", userInfoFroServer.getString("fullname"));
                 iv.putExtra("createdNumOfEvents",userInfoFroServer.getString("createdCount"));
                 iv.putExtra("photoUrl", photoUrl);
-                iv.putExtra("userEventsObjects", memeberEvents);//
+                iv.putExtra("userEventsObjects", memeberEvents);//for profile
                 startActivity(iv);
 //                finish();
 

@@ -29,6 +29,7 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.inc.playground.playground.utils.Constants;
+import com.inc.playground.playground.utils.EventUserObject;
 import com.inc.playground.playground.utils.NetworkUtilities;
 import com.inc.playground.playground.utils.User;
 import com.melnykov.fab.FloatingActionButton;
@@ -319,9 +320,18 @@ public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefre
                 if (!userEvents.isEmpty()) {
                     if (userEvents.contains(data.get(position).GetId())) {
                         //playButton.setClickable(false);
-                        playButton.setChecked(true);
-                        playTxt.setText("Playing");
-                        playTxt.setTextColor(Color.parseColor("#104E8B"));
+                        if(currentUser.GetUserId().equals(data.get(position).GetCreatorId())) {//cancel event
+                            //it's the creator
+                            playButton.setVisibility(View.INVISIBLE);
+                            playTxt.setText("Boss");
+                            playTxt.setTextColor(Color.parseColor("#000000"));
+                            //not allowed to cancel from here
+                        }
+                        else {
+                            playButton.setChecked(true);
+                            playTxt.setText("Playing");
+                            playTxt.setTextColor(Color.parseColor("#104E8B"));
+                        }
                     }
                     else{// if user dont play
                         playButton.setChecked(false);
