@@ -234,7 +234,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
                         }
                     });
 
-                    alertDialog.findViewById(R.id.cancle_btn).setOnClickListener(new View.OnClickListener() {
+                    alertDialog.findViewById(R.id.cancel_btn).setOnClickListener(new View.OnClickListener() {
 
                         @Override
                         public void onClick(View v) {
