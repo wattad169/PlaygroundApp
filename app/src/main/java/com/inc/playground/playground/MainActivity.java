@@ -60,14 +60,20 @@ import android.widget.Toast;
 
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigation;
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigationItem;
+import com.facebook.android.AsyncFacebookRunner;
+import com.facebook.android.Facebook;
+import com.facebook.android.FacebookError;
 import com.inc.playground.playground.upLeft3StripesButton.MyProfile;
 import com.inc.playground.playground.utils.DownloadImageBitmapTask;
 import com.inc.playground.playground.utils.User;
 
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.net.MalformedURLException;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Handler;
 
@@ -88,6 +94,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
     public static final String MY_PREFS_NAME = "Login";
     public static final String TAG = "MainActivity";
     EditText inputTextField;
+    private static String APP_ID = "1609067259420394";
     //Integer CreatedNumOfEvents; //CreatedNumOfEvents of the accout
 
     /**
@@ -213,6 +220,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 
                         @Override
                         public void onClick(View v) {
+
                             SharedPreferences prefs = getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
                             SharedPreferences.Editor editor = prefs.edit();
                             editor.clear();
@@ -221,6 +229,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
                             TextView loginTxt = (TextView) findViewById(R.id.login_txt);
                             loginTxt.setText("Login");
                             loginImg.setImageResource(R.drawable.pg_action_lock_open);
+
 
                             globalVariables = ((GlobalVariables) getApplication());
                             globalVariables.SetCurrentUser(null);

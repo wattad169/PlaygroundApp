@@ -82,8 +82,8 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
 	// private static String APP_ID = "823483137763059";
 	private static String APP_ID = "1609067259420394";
 	// Instance of Facebook Class
-	private Facebook facebook;
-	private AsyncFacebookRunner mAsyncRunner;
+	public static Facebook facebook;
+	public static AsyncFacebookRunner mAsyncRunner;
 
 	private SharedPreferences mPrefs;
 	View v;
@@ -146,7 +146,6 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
 
 			}
 		});
-
 		btn_logingoogle = (Button) findViewById(R.id.btn_google);
 		btn_logingoogle.setOnClickListener(new OnClickListener() {
 
@@ -389,76 +388,76 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
 		Bundle bundle = new Bundle();
 		bundle.putString("fields", "id,name,first_name,last_name,email,picture,gender,birthday,work");
 		mAsyncRunner.request("me", bundle, new RequestListener() {
-            @Override
-            public void onComplete(String response, Object state) {
-                mPrefs = getPreferences(MODE_PRIVATE);
-                String app_id = mPrefs.getString("access_id", null);
-                try {
+			@Override
+			public void onComplete(String response, Object state) {
+				mPrefs = getPreferences(MODE_PRIVATE);
+				String app_id = mPrefs.getString("access_id", null);
+				try {
 
-                    Bundle bundle = new Bundle();
-                    bundle.putString("fields", "id,name,first_name,last_name,email,picture,gender,birthday,work");
-                    Log.d("bundle", facebook.request("me", bundle));
-                } catch (MalformedURLException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
+					Bundle bundle = new Bundle();
+					bundle.putString("fields", "id,name,first_name,last_name,email,picture,gender,birthday,work");
+					Log.d("bundle", facebook.request("me", bundle));
+				} catch (MalformedURLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 
-                Log.d("Profile", response);
-                String json = response;
-                try {
-                    JSONObject profile = new JSONObject(json); //facebook profile
+				Log.d("Profile", response);
+				String json = response;
+				try {
+					JSONObject profile = new JSONObject(json); //facebook profile
 
-                    // getting name of the user
-                    name = profile.getString("name");
-                    // getting email of the user
+					// getting name of the user
+					name = profile.getString("name");
+					// getting email of the user
 
-                    facebook_id = profile.getString("id");
-                    imagefb = facebook_id;
+					facebook_id = profile.getString("id");
+					imagefb = facebook_id;
 //                    try {
 //                        email = profile.getString("email");
 //                    }
 //                    catch (JSONException e){
 //
 //                    }
-                    JSONObject picture = profile.getJSONObject("picture");
-                    JSONObject data = picture.getJSONObject("data");
-                    ppic = data.getString("url");
-                    Log.d("ppic", "" + ppic);
-                    Log.d("fbimage", "" + imagefb);
-                    Log.d("fbname", "" + name);
-                    if (name != null) {
-                        if (ppic != null) {
-                            name = name.replace(" ", "%20");
+					JSONObject picture = profile.getJSONObject("picture");
+					JSONObject data = picture.getJSONObject("data");
+					ppic = data.getString("url");
+					Log.d("ppic", "" + ppic);
+					Log.d("fbimage", "" + imagefb);
+					Log.d("fbname", "" + name);
+					if (name != null) {
+						if (ppic != null) {
+							name = name.replace(" ", "%20");
 
-                            imagefb = "https://graph.facebook.com/" + imagefb + "/picture?type=large";
+							imagefb = "https://graph.facebook.com/" + imagefb + "/picture?type=large";
 //                            email = email.replace(" ", "%20");
-                            new getlogin().execute();
-                        }
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
+							new getlogin().execute();
+						}
+					}
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+			}
 
-            @Override
-            public void onIOException(IOException e, Object state) {
-            }
+			@Override
+			public void onIOException(IOException e, Object state) {
+			}
 
-            @Override
-            public void onFileNotFoundException(FileNotFoundException e, Object state) {
-            }
+			@Override
+			public void onFileNotFoundException(FileNotFoundException e, Object state) {
+			}
 
-            @Override
-            public void onMalformedURLException(MalformedURLException e, Object state) {
-            }
+			@Override
+			public void onMalformedURLException(MalformedURLException e, Object state) {
+			}
 
-            @Override
-            public void onFacebookError(FacebookError e, Object state) {
-            }
-        });
+			@Override
+			public void onFacebookError(FacebookError e, Object state) {
+			}
+		});
 
 	}
 
@@ -548,6 +547,7 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
 
 		// getProfileInformation();
 	}
+
 
 	public void logoutFromFacebook() {
 		mAsyncRunner.logout(this, new RequestListener() {
