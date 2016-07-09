@@ -46,6 +46,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.EventObject;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -58,7 +59,6 @@ import com.inc.playground.playground.Register;
 import com.inc.playground.playground.Review;
 import com.inc.playground.playground.utils.User;
 
-import static com.inc.playground.playground.utils.NetworkUtilities.eventListToArrayList;
 
 public class Login extends Activity implements ConnectionCallbacks, OnConnectionFailedListener {
 	private static final String TAG = "MainActivity";
@@ -760,7 +760,7 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
 				responseStringUserInfo = "";
 			}
 			// Convert string received from server to JSON array
-			JSONArray eventsFromServerJSON;
+			JSONArray eventsTableJSONArr;
 //			JSONObject responseJSON=null;
 			JSONObject ServerJSONUserInfo;
 			JSONObject responseJSONUserInfo;
@@ -772,13 +772,15 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
 				responseJSONUserInfo = new JSONObject(responseStringUserInfo);
 				ServerJSONUserInfo = responseJSONUserInfo.getJSONObject(Constants.RESPONSE_MESSAGE);//.getJSONObject(Constants.EVENT_ENTRIES);//problem
 				createdCount = ServerJSONUserInfo.getString("createdCount");
-				eventsFromServerJSON = ServerJSONUserInfo.getJSONArray(Constants.EVENT_ENTRIES);
+				eventsTableJSONArr = ServerJSONUserInfo.getJSONArray(Constants.EVENT_ENTRIES);//Todo:update what i get
 
-				ArrayList<EventsObject> userEventsObjects =  eventListToArrayList(eventsFromServerJSON, globalVariables.GetCurrentLocation());
-				for(int i=0 ; i<eventsFromServerJSON.length();i++){
-					JSONObject currentObject = (JSONObject) eventsFromServerJSON.get(i);
-					String eventId = currentObject.getString(Constants.EVENT_ID);
-					userEvents.add(eventId);
+//				ArrayList<EventsObject> userEventsObjectsOld = NetworkUtilities. eventListToArrayList(eventsTableJSONArr, globalVariables.GetCurrentLocation());
+
+				ArrayList<EventUserObject> userEventsObjects =  NetworkUtilities.allUserEvents(ServerJSONUserInfo, globalVariables.GetCurrentLocation());
+
+				for(EventUserObject eUObject : userEventsObjects ){
+					String eventId = eUObject.GetId(); //currentObject.getString(Constants.EVENT_ID);
+					userEvents.add(eventId);//TODO: need to update the other types of events?
 				}
 				currentUser.SetUserEvents(userEvents);
 				currentUser.setUserEventsObjects(userEventsObjects);

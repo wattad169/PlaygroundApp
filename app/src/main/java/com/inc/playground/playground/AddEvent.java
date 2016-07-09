@@ -62,7 +62,7 @@ public class AddEvent extends Activity {
 		}
 
 		/** Show a toast from the web page */
-		@JavascriptInterface
+		@JavascriptInterface //not used
 		public void showToast(String toast) {
 			JSONObject responseJSON = null;
 			JSONArray eventsFromServerJSON = null;

@@ -18,16 +18,16 @@ public class User {
 	String userId , Status;
 	Set <String> userEvents;
 
-	ArrayList<EventsObject> userEventsObjects;
+	ArrayList<EventUserObject> userEventsObjects;
 
 	public String getEmail() {
 		return email;
 	}
-	public ArrayList<EventsObject> getUserEventsObjects() {
+	public ArrayList<EventUserObject> getUserEventsObjects() {
 		return userEventsObjects;
 	}
 
-	public void setUserEventsObjects(ArrayList<EventsObject> userEventsObjects) {
+	public void setUserEventsObjects(ArrayList<EventUserObject> userEventsObjects) {
 		this.userEventsObjects = userEventsObjects;
 	}
 

@@ -13,7 +13,7 @@ import java.util.HashMap;
 public class EventsObject implements Serializable ,EventsObjectInterface {
     String id, name, formattedLocation, type, size, date, startTime, endTime, description, status, distance;
 
-    String isPublic;
+    String isPublic;//1 indicate public, 0 indicate that members need approval
     ArrayList<String> members;
 
     // TODO ADD EVENT MEMBERS (A LIST CONTAINING USERS)
