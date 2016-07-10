@@ -109,6 +109,7 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
 		facebook = new Facebook(APP_ID);
 		mAsyncRunner = new AsyncFacebookRunner(facebook);
 
+
 		final ActionBar actionBar = getActionBar();
 		actionBar.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.primaryColor)));
 
@@ -693,6 +694,7 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
 
 	private void getProfileInformation1() {
 		try {
+
 			if (Plus.PeopleApi.getCurrentPerson(mGoogleApiClient) != null) {
 				Person currentPerson = Plus.PeopleApi.getCurrentPerson(mGoogleApiClient);
 				personname = currentPerson.getDisplayName();

@@ -150,6 +150,34 @@
         <item>-1</item>
     </string-array>
 
+   <!--types array for the filter-->
+    <string-array name="types_titles">
+        <item>Football</item>
+        <item>Basketball</item>
+        <item>Running</item>
+        <item>Gym</item>
+        <item>Tennis</item>
+    </string-array>
+    <string-array name="types_values">
+        <item>football</item>
+        <item>basketball</item>
+        <item>Running</item>
+        <item>gym</item>
+        <item>tennis</item>
+    </string-array>
+
+    <!--distance options for the filter -->
+    <string-array name="distance_titles">
+        <item>up to 100 km</item>
+        <item>up to 600 km</item>
+        <item>over 600 km</item>
+    </string-array>
+    <string-array name="distance_values">
+        <item>up to 100 km</item>
+        <item>up to 600 km</item>
+        <item>over 600 km</item>
+    </string-array>
+
     <!-- Example settings for Data & Sync -->
     <string name="pref_header_data_sync">Data &amp; sync</string>
     <string name="pref_title_sync_frequency">Sync frequency</string>

@@ -1,10 +1,19 @@
 package com.inc.playground.playground;
 
 import android.app.ActionBar;
+import android.app.DialogFragment;
+import android.app.Fragment;
+import android.app.FragmentTransaction;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.app.Activity;
+import android.preference.CheckBoxPreference;
+import android.preference.EditTextPreference;
+import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
@@ -14,46 +23,264 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 
+import com.google.android.gms.appindexing.Action;
+import com.google.android.gms.appindexing.AppIndex;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.plus.model.people.Person;
+import com.inc.playground.playground.utils.DatePreference;
 import com.inc.playground.playground.utils.DownloadImageBitmapTask;
+import com.inc.playground.playground.utils.EventUserObject;
+import com.inc.playground.playground.utils.MembersDialog;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.concurrent.ExecutionException;
 
 public class FilterActivity extends PreferenceActivity {
     public static final String TAG = "EventInfoActivity";
+    //    private static ArrayList<EventsObject> beforeFilterEvents;
+    private static ArrayList<EventsObject> afterFilterEvents;
+    private GlobalVariables globalVariables;
+    ListPreference typePicker, distancePicker;
+    DatePreference datePicker;
+    CheckBoxPreference myEventsOnly, myCreatedEventsOnly;
+    public Preference membersTxt;
+    public String memberID = "";
+    /**
+     * ATTENTION: This was auto-generated to implement the App Indexing API.
+     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     */
+    private GoogleApiClient client;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-//        // Display the fragment as the main content.
-//        getFragmentManager().beginTransaction()
-//                .replace(android.R.id.content, new SettingsFragment())
-//                .commit();
-        // Load the preferences from an XML resource
         addPreferencesFromResource(R.xml.filter);
-//        Preference button = (Preference)findPreference("exitlink");
-//        Button buttonOne = (Button) findViewById(R.id.btn_register);
-//        ListView v = getListView();
-//        v.addFooterView(buttonOne);
-//        setContentView(R.layout.buttons_layout);
-//        Button buttonOne = (Button) findViewById(R.id.btn_register);
-//
-//        buttonOne.setOnClickListener(new Button.OnClickListener() {
-//            public void onClick(View v) {
-//                Log.i("testbuttonfilter","catch");
-//            }
-//        });
-//
-//        if(button!=null){
-//            button.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-//                @Override
-//                public boolean onPreferenceClick(Preference preference) {
-//                    Log.i("testbuttonfilter","catch");
-//                    return true;
-//                }
-//            });
-//        }
+
+
+        datePicker = (DatePreference) findPreference("date_picker");
+        datePicker.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                //your code to change values.
+                datePicker.setSummary((String) newValue);
+                return true;
+            }
+        });
+
+        typePicker = (ListPreference) findPreference("type_picker");
+        typePicker.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                //your code to change values.
+                typePicker.setSummary((String) newValue);
+                return true;
+            }
+        });
+
+        myEventsOnly = (CheckBoxPreference) findPreference("myEvents_picker");
+        myCreatedEventsOnly = (CheckBoxPreference) findPreference("myCreatedEvents_picker");
+
+        membersTxt = (Preference) findPreference("member_picker");
+        membersTxt.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                FragmentTransaction ft = getFragmentManager().beginTransaction();
+                Fragment prev = getFragmentManager().findFragmentByTag("dialog");
+                if (prev != null) {
+                    ft.remove(prev);
+                }
+                ft.addToBackStack(null);
+                String inputText = "asd";
+                MembersDialog newFragment = new MembersDialog();
+                newFragment.show(ft, "dialog");
+                return true;
+            }
+        });
+
+        globalVariables = ((GlobalVariables) getApplication());
+
+
+        distancePicker = (ListPreference) findPreference("distance_picker");
+        distancePicker.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                //your code to change values.
+                distancePicker.setSummary((String) newValue);
+                return true;
+            }
+        });
+
+
+
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        afterFilterEvents = new ArrayList<EventsObject>();
+        if (myEventsOnly.isChecked()) {
+            if (globalVariables.GetCurrentUser() != null) {
+                ArrayList<EventUserObject> beforeFilterEvents = this.globalVariables.GetCurrentUser().getUserEventsObjects();
+                for (EventUserObject curEvent : beforeFilterEvents) {
+                    doFilter(afterFilterEvents, curEvent);
+                }
+            } else {
+                Intent iv = new Intent(this, MainActivity.class);
+                iv.putExtra("parent", "filter");
+                iv.putExtra("events", afterFilterEvents);
+                startActivity(iv);
+                finish();
+            }
+        } else {
+            afterFilterEvents = new ArrayList<EventsObject>();
+            ArrayList<EventsObject> beforeFilterEvents = this.globalVariables.GetHomeEvents();
+            for (EventsObject curEvent : beforeFilterEvents) {
+                doFilter(afterFilterEvents, curEvent);
+            }
+        }
+
+        Intent iv = new Intent(this, MainActivity.class);
+        iv.putExtra("parent", "filter");
+        iv.putExtra("events", afterFilterEvents);
+        startActivity(iv);
+        finish();
+    }
+
+
+    private void doFilter(ArrayList<EventsObject> afterFilterEvents, EventsObject curEvent) {
+        boolean isFiltred = false;
+
+        if (globalVariables.GetCurrentUser() != null && myCreatedEventsOnly.isChecked()) {
+            isFiltred = true;
+            if (curEvent.GetCreatorId().equals(globalVariables.GetCurrentUser().GetUserId()))
+                afterFilterEvents.add(curEvent);
+        }
+        if (datePicker.getSummary() != null) {
+            if (isFiltred) {
+                if (!curEvent.GetDate().equals(datePicker.getSummary()))
+                    afterFilterEvents.remove(curEvent);
+            } else {
+                isFiltred = true;
+                if (curEvent.GetDate().equals(datePicker.getSummary()))
+                    afterFilterEvents.add(curEvent);
+            }
+        }
+
+        if (typePicker.getSummary() != null) {
+            if (isFiltred) {
+                if (!curEvent.GetType().equals(typePicker.getSummary()))
+                    afterFilterEvents.remove(curEvent);
+            } else {
+                isFiltred = true;
+                if (curEvent.GetType().equals(typePicker.getSummary()))
+                    afterFilterEvents.add(curEvent);
+            }
+        }
+
+        if (distancePicker.getSummary() != null) {
+            if (isFiltred) {
+                if(distancePicker.getSummary().equals("up to 100 km"))
+                {
+                    if (!(Double.valueOf(curEvent.GetDistance()) < 100))
+                        afterFilterEvents.remove(curEvent);
+                }
+                else if(distancePicker.getSummary().equals("up to 600 km"))
+                {
+                    if (!(Double.valueOf(curEvent.GetDistance()) < 600))
+                        afterFilterEvents.remove(curEvent);
+                }
+                else if(distancePicker.getSummary().equals("over 600 km"))
+                {
+                    if (!(Double.valueOf(curEvent.GetDistance()) > 600))
+                        afterFilterEvents.remove(curEvent);
+                }
+
+            } else {
+                isFiltred = true;
+                if(distancePicker.getSummary().equals("up to 100 km"))
+                {
+                    if (Double.valueOf(curEvent.GetDistance()) < 100)
+                        afterFilterEvents.add(curEvent);
+                }
+                else if(distancePicker.getSummary().equals("up to 600 km"))
+                {
+                    if (Double.valueOf(curEvent.GetDistance()) < 600)
+                        afterFilterEvents.add(curEvent);
+                }
+                else if(distancePicker.getSummary().equals("over 600 km"))
+                {
+                    if (Double.valueOf(curEvent.GetDistance()) > 600)
+                        afterFilterEvents.add(curEvent);
+                }
+            }
+        }
+
+        if (membersTxt.getSummary() != null && ( ! membersTxt.getSummary().equals("Looking for somebody's events?"))) {
+            if(isFiltred)
+            {
+                if(! curEvent.GetMembers().contains(memberID))
+                    afterFilterEvents.remove(curEvent);
+
+            } else {
+                isFiltred = true;
+                if(curEvent.GetMembers().contains(memberID))
+                    afterFilterEvents.add(curEvent);
+            }
+
+        }
+        if (!isFiltred) {
+            afterFilterEvents.add(curEvent);
+        }
+
 
     }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client.connect();
+        Action viewAction = Action.newAction(
+                Action.TYPE_VIEW, // TODO: choose an action type.
+                "Filter Page", // TODO: Define a title for the content shown.
+                // TODO: If you have web page content that matches this app activity's content,
+                // make sure this auto-generated web page URL is correct.
+                // Otherwise, set the URL to null.
+                Uri.parse("http://host/path"),
+                // TODO: Make sure this auto-generated app deep link URI is correct.
+                Uri.parse("android-app://com.inc.playground.playground/http/host/path")
+        );
+        AppIndex.AppIndexApi.start(client, viewAction);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        Action viewAction = Action.newAction(
+                Action.TYPE_VIEW, // TODO: choose an action type.
+                "Filter Page", // TODO: Define a title for the content shown.
+                // TODO: If you have web page content that matches this app activity's content,
+                // make sure this auto-generated web page URL is correct.
+                // Otherwise, set the URL to null.
+                Uri.parse("http://host/path"),
+                // TODO: Make sure this auto-generated app deep link URI is correct.
+                Uri.parse("android-app://com.inc.playground.playground/http/host/path")
+        );
+        AppIndex.AppIndexApi.end(client, viewAction);
+        client.disconnect();
+    }
+
     public static class SettingsFragment extends PreferenceFragment {
         @Override
         public void onCreate(Bundle savedInstanceState) {
@@ -62,15 +289,15 @@ public class FilterActivity extends PreferenceActivity {
         }
     }
 
-    public void setPlayGroundActionBar(){
-        String userLoginId,userFullName,userEmail,userPhoto;
-        Bitmap imageBitmap =null;
+    public void setPlayGroundActionBar() {
+        String userLoginId, userFullName, userEmail, userPhoto;
+        Bitmap imageBitmap = null;
         GlobalVariables globalVariables;
         final ActionBar actionBar = getActionBar();
         final String MY_PREFS_NAME = "Login";
         SharedPreferences prefs = getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
         globalVariables = ((GlobalVariables) this.getApplication());
-        if (prefs.getString("userid", null) != null){
+        if (prefs.getString("userid", null) != null) {
             userLoginId = prefs.getString("userid", null);
             userFullName = prefs.getString("fullname", null);
             userEmail = prefs.getString("emilid", null);
@@ -82,8 +309,8 @@ public class FilterActivity extends PreferenceActivity {
             actionBar.setDisplayShowHomeEnabled(true);
             ImageView img_profile = (ImageView) findViewById(R.id.img_profile_action_bar);
             imageBitmap = globalVariables.GetUserPictureBitMap();
-            if(imageBitmap==null){
-                Log.i(TAG,"downloading");
+            if (imageBitmap == null) {
+                Log.i(TAG, "downloading");
                 try {
                     imageBitmap = new DownloadImageBitmapTask().execute(userPhoto).get();
                 } catch (InterruptedException e) {
@@ -92,9 +319,8 @@ public class FilterActivity extends PreferenceActivity {
                     e.printStackTrace();
                 }
 
-            }
-            else {
-                Log.i(TAG,"Image found");
+            } else {
+                Log.i(TAG, "Image found");
             }
             img_profile.setImageBitmap(imageBitmap);
             globalVariables.SetUserPictureBitMap(imageBitmap); // Make the imageBitMap global to all activities to avoid downloading twice

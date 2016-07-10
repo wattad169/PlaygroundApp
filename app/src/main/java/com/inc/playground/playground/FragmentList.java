@@ -3,6 +3,7 @@ package com.inc.playground.playground;
 
 import android.app.Activity;
 import android.app.ActivityOptions;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -40,7 +41,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Set;
 
 /**
@@ -70,8 +74,12 @@ public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefre
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_list, container, false);
         this.globalVariables = ((GlobalVariables) getActivity().getApplication());
-
         homeEvents = this.globalVariables.GetHomeEvents();
+        if(getActivity().getIntent().getStringExtra("parent") != null && getActivity().getIntent().getStringExtra("parent").equals("filter"))
+        {
+            homeEvents = (ArrayList<EventsObject>) getActivity().getIntent().getSerializableExtra("events");
+        }
+
         prefs = getActivity().getSharedPreferences("Login",getActivity().MODE_PRIVATE);
         userLoginId = prefs.getString("userid", null);
         currentUser = globalVariables.GetCurrentUser();
@@ -87,12 +95,12 @@ public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefre
 
             @Override
             public void onClick(View v) {
+                getActivity().finish();
                 Intent iv = new Intent(getActivity().getApplicationContext(),
                     FilterActivity.class );
                 Bundle bndlanimation =
                         ActivityOptions.makeCustomAnimation(getActivity(), R.anim.slide_down, R.anim.slide_up).toBundle();
                 startActivity(iv,bndlanimation);
-
                 }});
 
 
@@ -179,9 +187,6 @@ public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefre
                                             }
                     );*/
 
-
-
-
                     events_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
                         @Override
@@ -238,9 +243,7 @@ public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefre
                     view.setBackground(getResources().getDrawable(R.drawable.pg_cell_first_b));
                 }
             }
-            Typeface fontText = Typeface.createFromAsset(getActivity().getAssets(),"sansation.ttf");
-            Typeface fontText2 = Typeface.createFromAsset(getActivity().getAssets(),"kimberly.ttf");
-            Typeface fontText3 = Typeface.createFromAsset(getActivity().getAssets(),"crayon.ttf");
+
            // update type icon according to event type
             String uri = "@drawable/pg_" + data.get(position).GetType()+ "_icon";
             int imageResource = getResources().getIdentifier(uri,null,getActivity().getPackageName());
@@ -250,26 +253,19 @@ public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefre
 
             TextView eventName = (TextView) view.findViewById(R.id.event_name);
             eventName.setText(data.get(position).GetName());
-//            eventName.setTypeface(fontText);
 
             TextView formattedLocation = (TextView) view.findViewById(R.id.formatted_loctaion_txt);
             formattedLocation.setText(data.get(position).GetFormattedLocation());
-//            formattedLocation.setTypeface(fontText3);
 
             TextView eventDate = (TextView) view.findViewById(R.id.date_txt);
+
             eventDate.setText(data.get(position).GetDate());
-//            eventDate.setTypeface(fontText3);
 
             TextView starTime = (TextView) view.findViewById(R.id.start_time_txt);
             starTime.setText(data.get(position).GetStartTime());
-//            startTime.setTypeface(fontText3);
 
             TextView eventDistance = (TextView) view.findViewById(R.id.distance_txt);
             eventDistance.setText(data.get(position).GetDistance());
-//            eventDistance.setTypeface(fontText3);
-
-            TextView kmTxt = (TextView) view.findViewById(R.id.kmTxt);
-//            kmTxt.setTypeface(fontText3);
 
             final TextView playTxt = (TextView) view.findViewById(R.id.play_txt);
             view.setOnClickListener(new View.OnClickListener() {

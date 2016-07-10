@@ -63,6 +63,7 @@ import com.aurelhubert.ahbottomnavigation.AHBottomNavigationItem;
 import com.facebook.android.AsyncFacebookRunner;
 import com.facebook.android.Facebook;
 import com.facebook.android.FacebookError;
+import com.facebook.android.Util;
 import com.inc.playground.playground.upLeft3StripesButton.MyProfile;
 import com.inc.playground.playground.utils.DownloadImageBitmapTask;
 import com.inc.playground.playground.utils.User;
@@ -221,25 +222,26 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
                         @Override
                         public void onClick(View v) {
 
-                            SharedPreferences prefs = getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
-                            SharedPreferences.Editor editor = prefs.edit();
-                            editor.clear();
-                            editor.commit();
-                            ImageView loginImg = (ImageView) findViewById(R.id.login_img);
-                            TextView loginTxt = (TextView) findViewById(R.id.login_txt);
-                            loginTxt.setText("Login");
-                            loginImg.setImageResource(R.drawable.pg_action_lock_open);
+                    SharedPreferences prefs = getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
+                    SharedPreferences.Editor editor = prefs.edit();
+                    editor.clear();
+                    editor.commit();
+                    ImageView loginImg = (ImageView) findViewById(R.id.login_img);
+                    TextView loginTxt = (TextView) findViewById(R.id.login_txt);
+                    loginTxt.setText("Login");
+                    loginImg.setImageResource(R.drawable.pg_action_lock_open);
 
+                    globalVariables = ((GlobalVariables) getApplication());
+                    globalVariables.SetCurrentUser(null);
+                    globalVariables.SetUserPictureBitMap(null);
+                    globalVariables.SetUsersList(null);
+                    globalVariables.SetUsersImagesMap(null);
 
-                            globalVariables = ((GlobalVariables) getApplication());
-                            globalVariables.SetCurrentUser(null);
-                            globalVariables.SetUserPictureBitMap(null);
-                            globalVariables.SetUsersList(null);
-                            globalVariables.SetUsersImagesMap(null);
+                            Util.clearCookies(getApplicationContext());
 
-                            Intent iv = new Intent(MainActivity.this, MainActivity.class);
-                            startActivity(iv);
-                            finish();
+                    Intent iv = new Intent(MainActivity.this, MainActivity.class);
+                    startActivity(iv);
+                    finish();
                         }
                     });
 
@@ -330,6 +332,8 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
             actionBar.setDisplayHomeAsUpEnabled(true);
             ImageView logo_image = (ImageView) findViewById(R.id.img_profile_action_bar);
             logo_image.setBackgroundResource(R.drawable.pg_logo2);
+            TextView userName = (TextView) findViewById(R.id.email);
+            userName.setText(userFullName.replace("%20","  "));
             ImageView img_profile = (ImageView) findViewById(R.id.profile_image);
             imageBitmap = globalVariables.GetUserPictureBitMap();
             if(imageBitmap==null){

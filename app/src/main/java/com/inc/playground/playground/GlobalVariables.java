@@ -31,6 +31,8 @@ public class GlobalVariables extends Application {
 
     private User currentUser;
 
+    private String filterMember;
+
     public HashMap<String, Double> GetCurrentLocation(){
         return this.currentLocation;
     }
@@ -81,4 +83,8 @@ public class GlobalVariables extends Application {
     public ArrayList<UserImageEntry> GetUsersList(){
         return this.usersList;
     }
+
+    public String GetFilterMember() { return filterMember; }
+
+    public void SetFilterMember(String filterMember) { this.filterMember = filterMember; }
 }

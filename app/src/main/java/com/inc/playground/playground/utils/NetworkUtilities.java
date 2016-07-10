@@ -248,7 +248,7 @@ final public class NetworkUtilities {
     public static EventUserObject fillEventObject(JSONObject jsonObject ,HashMap<String, Double> currentLocation) throws JSONException {
         String eventId = jsonObject.getString(Constants.EVENT_ID);
         EventUserObject currentEvent = new EventUserObject();
-        //ArrayList<String> members = new ArrayList<>(); //not used
+
         currentEvent.SetId(eventId);
         currentEvent.SetName(jsonObject.getString(Constants.EVENT_NAME));
         currentEvent.SetFormattedLocation(jsonObject.getString(Constants.EVENT_LOCATION));
@@ -260,13 +260,20 @@ final public class NetworkUtilities {
         currentEvent.SetDescription(jsonObject.getString(Constants.EVENT_DESCRIPTION));
         currentEvent.SetCreatorId(jsonObject.getString(Constants.CREATED_BY));
         currentEvent.setIsPublic(jsonObject.getString(Constants.IS_PUBLIC));
-
+        // find distance
         double currentLon  = currentLocation.get(Constants.LOCATION_LON);
         double  currentLat= currentLocation.get(Constants.LOCATION_LAT);
         String eventLon  = jsonObject.getJSONObject("location").getString(Constants.LOCATION_LON);
         String eventLat = jsonObject.getJSONObject("location").getString(Constants.LOCATION_LAT);
         currentEvent.SetPosition(eventLat, eventLon);
         currentEvent.SetDistance(Double.toString(calculateDistance(currentLon, currentLat, Double.parseDouble(eventLon), Double.parseDouble(eventLat))));//change order
+
+        ArrayList<String> members = new ArrayList<>();
+        JSONArray membersJson = jsonObject.getJSONArray(Constants.EVENT_MEMBERS);
+        for(int i=0 ; i<membersJson.length();i++){
+            members.add(membersJson.getString(i));
+        }
+        currentEvent.SetMembers(members);
         return currentEvent;
     }
 
@@ -297,10 +304,6 @@ final public class NetworkUtilities {
         return events;
     }
     ///// check!!!
-
-
-
-
 
     /**
      *

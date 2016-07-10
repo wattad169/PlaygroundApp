@@ -1,66 +1,81 @@
  <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
 
-    <SwitchPreference
-        android:defaultValue="false"
-        android:key="example_switch"
-        android:summary="Shows only events that you are attending"
-        android:title="My Events Only" />
+     <com.inc.playground.playground.utils.DatePreference
+         android:key="date_picker"
+         android:negativeButtonText="@null"
+         android:positiveButtonText="@null"
+         android:title="Date " />
 
-     <SwitchPreference
-         android:defaultValue="false"
-         android:key="example_switch"
-         android:summary="Shows only events that related to your friends"
-         android:title="Friends events" />
-
-     <SwitchPreference
-         android:defaultValue="true"
-         android:key="example_switch"
-         android:summary="Shows only events that you can attend"
-         android:title="Active events" />
+     <ListPreference
+         android:entries="@array/types_titles"
+         android:entryValues="@array/types_values"
+         android:key="type_picker"
+         android:negativeButtonText="@null"
+         android:positiveButtonText="@null"
+         android:title="Type" />
 
      <ListPreference
          android:defaultValue="-1"
-         android:entries="@array/pref_example_list_titles"
-         android:entryValues="@array/pref_example_list_values"
-         android:key="example_list"
+         android:entries="@array/distance_titles"
+         android:entryValues="@array/distance_values"
+         android:key="distance_picker"
          android:negativeButtonText="@null"
          android:positiveButtonText="@null"
-         android:title="Date" />
+         android:title="Distance" />
+
+     <CheckBoxPreference
+         android:defaultValue="false"
+         android:key="myEvents_picker"
+         android:summary="Shows only events that you are attending"
+         android:title="My Events Only" />
+
+     <Preference android:title="Event Member"
+         android:key="member_picker"
+         android:summary="Looking for somebody's events?"/>
+
+     <!--<SwitchPreference-->
+         <!--android:defaultValue="false"-->
+         <!--android:key="example_switch"-->
+         <!--android:summary="Shows only events that related to your friends"-->
+         <!--android:title="Friends events" />-->
+
+     <!--<SwitchPreference-->
+         <!--android:defaultValue="true"-->
+         <!--android:key="example_switch"-->
+         <!--android:summary="Shows only events that you can attend"-->
+         <!--android:title="Active events" />-->
+
+
     <!-- NOTE: Hide buttons to simplify the UI. Users can touch outside the dialog to
          dismiss it. -->
     <!-- NOTE: ListPreference's summary should be set to its value by the activity code. -->
-    <ListPreference
-        android:defaultValue="-1"
-        android:entries="@array/pref_example_list_titles"
-        android:entryValues="@array/pref_example_list_values"
-        android:key="example_list"
-        android:negativeButtonText="@null"
-        android:positiveButtonText="@null"
-        android:title="Distance" />
 
-     <ListPreference
-         android:defaultValue="-1"
-         android:entries="@array/pref_example_list_titles"
-         android:entryValues="@array/pref_example_list_values"
-         android:key="example_list"
-         android:negativeButtonText="@null"
-         android:positiveButtonText="@null"
-         android:summary="Number of people who are going to the event"
-         android:title="Attendance" />
+
+
+
+     <!--<ListPreference-->
+         <!--android:defaultValue="-1"-->
+         <!--android:entries="@array/pref_example_list_titles"-->
+         <!--android:entryValues="@array/pref_example_list_values"-->
+         <!--android:key="example_list"-->
+         <!--android:negativeButtonText="@null"-->
+         <!--android:positiveButtonText="@null"-->
+         <!--android:summary="Number of people who are going to the event"-->
+         <!--android:title="Attendance" />-->
+
 
     <!-- NOTE: EditTextPreference accepts EditText attributes. -->
     <!-- NOTE: EditTextPreference's summary should be set to its value by the activity code. -->
-    <EditTextPreference
-        android:capitalize="words"
-        android:defaultValue="@string/pref_default_display_name"
-        android:inputType="textCapWords"
-        android:key="example_text"
-        android:maxLines="1"
-        android:selectAllOnFocus="true"
-        android:singleLine="true"
-        android:summary="Looking for somebody's events?"
-        android:title="Event Member" />
+
+
+     <CheckBoxPreference
+         android:defaultValue="false"
+         android:key="myCreatedEvents_picker"
+         android:summary="Shows only events that you are attending"
+         android:title="My Created Events Only" />
+
+
 
 
  </PreferenceScreen>

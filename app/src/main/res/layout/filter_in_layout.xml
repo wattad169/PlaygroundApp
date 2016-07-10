@@ -1,13 +1,69 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.inc.playground.playground.filterFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
 
-</FrameLayout>
+    <RelativeLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="Date: "
+            android:id="@+id/date"
+            android:layout_marginLeft="30dp"
+            android:layout_gravity="top|left"
+            android:layout_marginTop="40dp"
+            android:textSize="20dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="Small Text"
+            android:id="@+id/date_txt"
+            android:layout_gravity="center_horizontal"
+            android:layout_alignBottom="@+id/date"
+            android:layout_toRightOf="@+id/date"
+            android:layout_marginLeft="10dp"
+            android:textSize="20dp" />
+
+        <TextView
+            android:id="@+id/type"
+            android:text="Type: "
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textSize="20dp"
+            android:layout_marginTop="15dp"
+            android:layout_alignParentLeft="false"
+            android:layout_alignParentStart="false"
+            android:layout_below="@+id/date"
+            android:layout_alignLeft="@+id/date" />
+
+        <Spinner
+            android:id="@+id/spinner_type"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/date_txt"
+            android:layout_alignLeft="@+id/date_txt">
+
+        </Spinner>
+
+        <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="My events only"
+            android:id="@+id/checkBox"
+            android:layout_below="@+id/type"
+            android:checked="false"
+            android:layout_alignLeft="@+id/type"
+            android:layout_marginTop="15dp"
+            android:textSize="20dp" />
+    </RelativeLayout>
+</RelativeLayout>
