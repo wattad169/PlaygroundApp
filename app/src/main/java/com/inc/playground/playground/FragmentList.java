@@ -14,14 +14,18 @@ import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.support.v4.app.Fragment;
+import android.view.WindowManager;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -58,7 +62,6 @@ public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefre
     ArrayList<EventsObject> homeEvents;; //List<Movie> movieList;
     //SwipeListAdapter adapter (in code already - HomeEventsAdapter homeEventsAdapter)
 
-
     ProgressDialog progressDialog;
     GlobalVariables globalVariables;
     private HandleEventTask myEventsTask = null;
@@ -69,10 +72,15 @@ public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefre
     String userLoginId;
     User currentUser;
     Set<String> userEvents;
+    EditText inputSearch;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_list, container, false);
+        // avoiding opening Keyboard automatically
+        getActivity().getWindow().setSoftInputMode(
+                WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+
         this.globalVariables = ((GlobalVariables) getActivity().getApplication());
         homeEvents = this.globalVariables.GetHomeEvents();
         if(getActivity().getIntent().getStringExtra("parent") != null && getActivity().getIntent().getStringExtra("parent").equals("filter"))
@@ -97,14 +105,60 @@ public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefre
             public void onClick(View v) {
                 getActivity().finish();
                 Intent iv = new Intent(getActivity().getApplicationContext(),
-                    FilterActivity.class );
+                        FilterActivity.class);
                 Bundle bndlanimation =
                         ActivityOptions.makeCustomAnimation(getActivity(), R.anim.slide_down, R.anim.slide_up).toBundle();
-                startActivity(iv,bndlanimation);
-                }});
+                startActivity(iv, bndlanimation);
+            }
+        });
 
 
         new getList().execute();
+
+        inputSearch = (EditText) rootView.findViewById(R.id.inputSearch);
+
+        /**
+         * Enabling Search Filter
+         * */
+        inputSearch.addTextChangedListener(new TextWatcher() {
+
+
+            @Override
+            public void beforeTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence cs, int arg1, int arg2, int arg3) {
+                if(cs.toString().equals(""))
+                {
+                    HomeEventsAdapter homeEventsAdapter = new HomeEventsAdapter(getActivity(), homeEvents);//homeEvents= globalVariable.currentuserevents
+                    homeEventsAdapter.notifyDataSetChanged();
+                    events_list.setAdapter(homeEventsAdapter);
+                }
+                else
+                {
+                    int textlength = cs.length();
+                    ArrayList<EventsObject> tempArrayList = new ArrayList<EventsObject>();
+                    for(EventsObject c: homeEvents){
+                        if (textlength <= c.GetName().length()) {
+                            if (c.GetName().toLowerCase().contains(cs.toString().toLowerCase())) {
+                                tempArrayList.add(c);
+                            }
+                        }
+                    }
+                    HomeEventsAdapter homeEventsAdapter = new HomeEventsAdapter(getActivity(), tempArrayList);//homeEvents= globalVariable.currentuserevents
+                    homeEventsAdapter.notifyDataSetChanged();
+                    events_list.setAdapter(homeEventsAdapter);
+                }
+
+            }
+            @Override
+            public void afterTextChanged(Editable arg0) {
+                // TODO Auto-generated method stub
+            }
+        });
+
         return rootView;
 
     }

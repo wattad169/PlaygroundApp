@@ -20,13 +20,20 @@
             android:layout_gravity="center_horizontal"
             android:background="#104e8b">
 
+
+            <EditText android:id="@+id/inputSearch"
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:hint="Search"
+                android:textColor="#ffffff" />
+
             <ImageButton
                 android:layout_width="40dp"
                 android:layout_height="45dp"
                 android:id="@+id/filter_button"
                 android:background="@drawable/pg_filter_icon"
 
-                android:layout_marginLeft="300dp"
+                android:layout_marginLeft="20dp"
                 android:layout_marginTop="-4dp" />
 
 
