@@ -269,9 +269,7 @@ public class EventInfo extends FragmentActivity {
                                     ft.remove(prev);
                                 }
                                 ft.addToBackStack(null);
-
                                 String inputText = "asd";
-
                                 DialogFragment newFragment = new MyDialogFragment(currentEvent.GetId(), currentUser.GetUserId());
                                 newFragment.show(ft, "dialog");
                                 break;

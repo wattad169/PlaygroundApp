@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:id="@+id/rel_fav"
+        android:layout_width="fill_parent"
+        android:layout_height="100dp"
+        android:background="#f0f8ff">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="notification_type"
+            android:id="@+id/notification_typeTxt"
+            android:textSize="15dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="15dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="event_name"
+            android:id="@+id/event_nameTxt"
+            android:layout_below="@+id/notification_typeTxt"
+            android:layout_alignParentLeft="false"
+            android:layout_alignParentStart="false"
+            android:layout_alignLeft="@+id/notification_typeTxt"
+            android:layout_marginTop="10dp"
+            android:textSize="20dp"
+            android:textColor="#1874cd"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="notification description"
+            android:id="@+id/notification_descriptionTxt"
+            android:layout_alignParentBottom="false"
+            android:layout_alignLeft="@+id/event_nameTxt"
+            android:layout_alignStart="@+id/event_nameTxt"
+            android:layout_below="@+id/event_nameTxt"
+            android:layout_marginTop="5dp"
+            android:textSize="10dp"
+            android:textColor="#474747" />
+
+        <Button
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:text="positive button"
+            android:id="@+id/positive_btn"
+            android:layout_alignParentRight="false"
+            android:layout_alignParentEnd="false"
+            android:layout_marginRight="10dp"
+            android:background="#1874cd"
+            android:allowUndo="false"
+            android:textColor="#ffffff"
+            android:textStyle="bold"
+            android:layout_alignParentTop="true"
+            android:layout_toLeftOf="@+id/negative_btn"
+            android:layout_marginTop="15dp" />
+
+        <Button
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:text="negative button"
+            android:id="@+id/negative_btn"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="false"
+            android:background="#dcdcdc"
+            android:textColor="#474747"
+            android:textStyle="bold"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="15dp"
+            android:layout_marginRight="10dp" />
+    </RelativeLayout>
+
+</RelativeLayout>

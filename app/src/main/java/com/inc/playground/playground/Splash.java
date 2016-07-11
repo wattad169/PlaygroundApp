@@ -60,7 +60,8 @@ public class Splash extends Activity {
         SharedPreferences prefs = getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
 
         currentUser = new User();
-
+        globalVariables = ((GlobalVariables) this.getApplication());
+        globalVariables.SetCurrentUser(currentUser);
         if (prefs.getString("fullname", null) != null){
             String userName = prefs.getString("fullname", null);
             currentUser.setName(userName);
@@ -74,7 +75,7 @@ public class Splash extends Activity {
             new GetUserEventsAsyncTask().execute();
         }
         // Get events from server
-        globalVariables = ((GlobalVariables) this.getApplication());
+
         setContentView(R.layout.activity_splash);
 
         globalVariables.InitGPS(Splash.this);
@@ -193,7 +194,7 @@ public class Splash extends Activity {
                 currentUser.setUserEventsObjects(userEventsObjects);
                 currentUser.SetUserEvents(userEvents);
                 currentUser.setCreatedNumOfEvents(createdCount);
-                globalVariables.SetCurrentUser(currentUser);
+
             } catch (JSONException e) {
                 e.printStackTrace();
             }
