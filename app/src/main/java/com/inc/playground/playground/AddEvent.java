@@ -90,7 +90,7 @@ public class AddEvent extends Activity {
 		web_addstore = (WebView) findViewById(R.id.web_addstore);
 		web_addstore.addJavascriptInterface(new JavaScriptInterface(this,getApplication()), "Android");
 		web_addstore.getSettings().setJavaScriptEnabled(true);
-		web_addstore.addJavascriptInterface(this, "android");
+//		web_addstore.addJavascriptInterface(this, "android");
 		web_addstore.getSettings().getUserAgentString();
 
 		web_addstore.setScrollBarStyle(View.SCROLLBARS_OUTSIDE_OVERLAY);
