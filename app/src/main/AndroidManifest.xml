@@ -129,6 +129,10 @@
             android:name=".FilterActivity"
             android:label="@string/app_name"></activity>
 
+        <activity
+            android:name=".EditEvent"
+            android:label="@string/app_name"></activity>
+
 
     </application>
 

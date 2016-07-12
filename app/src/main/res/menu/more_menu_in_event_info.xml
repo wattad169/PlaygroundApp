@@ -1,0 +1,20 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.inc.playground.playground.EventInfo">
+    <item
+        android:id="@+id/edit_event_id"
+        android:icon="@drawable/edit_event"
+        android:title="Edit event"/>
+
+    <item
+        android:id="@+id/cancel_event_id"
+        android:icon="@drawable/cancel_event"
+        android:title="Cancel event"/>
+    <item
+        android:id="@+id/join_requests"
+        android:icon="@drawable/approve_join"
+        android:title="Join requests"/>
+
+
+</menu>

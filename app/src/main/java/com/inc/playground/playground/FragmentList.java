@@ -366,7 +366,7 @@ public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefre
                 }});
 
             //TODO check if userLoginId is on members event
-            if(currentUser != null ) {
+            if(currentUser != null && userEvents !=null ) {
                 if (!userEvents.isEmpty()) {
                     if (userEvents.contains(data.get(position).GetId())) {
                         //playButton.setClickable(false);

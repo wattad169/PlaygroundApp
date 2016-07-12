@@ -254,6 +254,7 @@ final public class NetworkUtilities {
         currentEvent.SetFormattedLocation(jsonObject.getString(Constants.EVENT_LOCATION));
         currentEvent.SetType(jsonObject.getString(Constants.EVENT_TYPE));
         currentEvent.SetSize(jsonObject.getString(Constants.EVENT_SIZE));
+        currentEvent.setMaxSize(jsonObject.getString(Constants.EVENT_MAX_SIZE));
         currentEvent.SetDate(jsonObject.getString(Constants.EVENT_DATE));
         currentEvent.SetStartTime(jsonObject.getString(Constants.START_TIME));
         currentEvent.SetEndTime(jsonObject.getString(Constants.END_TIME));

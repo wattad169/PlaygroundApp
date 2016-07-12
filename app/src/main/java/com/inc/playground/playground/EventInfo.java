@@ -100,7 +100,7 @@ public class EventInfo extends FragmentActivity {
     double longitudecur;
     GoogleMap googleMap;
     GlobalVariables globalVariables;
-    ImageButton shareButton;
+    ImageButton shareButton,moreButton;
 
     public static final String TAG = "EventInfoActivity";
     //DahanLina
@@ -145,6 +145,8 @@ public class EventInfo extends FragmentActivity {
         typeImg = (ImageView) findViewById(R.id.type_img);
         playButton = (ToggleButton) findViewById(R.id.playing_btn);
         viewPlay = (TextView) findViewById(R.id.Play_txt);
+
+        moreButton = (ImageButton) findViewById(R.id.more_btn);
         shareButton = (ImageButton) findViewById(R.id.share_btn);
         viewStatus = (TextView) findViewById(R.id.statusTxt);
         statusImg = (ImageView) findViewById(R.id.statusImg);
@@ -293,6 +295,46 @@ public class EventInfo extends FragmentActivity {
                 popup.show();//showing popup menu
             }
         });//closing the setOnClickListener method
+        if(currentUser.GetUserId().equals(currentEvent.GetCreatorId())){
+            //show the more menu that contains cancel/edit event for the creator only
+
+            moreButton.setOnClickListener(new View.OnClickListener() {
+
+                @Override
+                public void onClick(View v) {
+                    //Creating the instance of PopupMenu
+                    PopupMenu popup = new PopupMenu(EventInfo.this, moreButton);
+                    setForceShowIcon(popup);
+                    //Inflating the Popup using xml file
+                    popup.getMenuInflater().inflate(R.menu.more_menu_in_event_info, popup.getMenu());
+
+                    //registering popup with OnMenuItemClickListener
+                    popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                        public boolean onMenuItemClick(MenuItem item) {
+
+                            switch (item.getItemId()) {
+                                case R.id.edit_event_id:
+                                    Intent intent = new Intent(EventInfo.this, EditEvent.class);
+                                    intent.putExtra("eventObject",currentEvent);
+                                    startActivity(intent);
+                                    break;
+                                case R.id.cancel_event_id:
+
+                                    break;
+                            }
+    //
+
+                            return true;
+                        }
+                    });
+                    popup.show();//showing popup menu
+                }
+            });//closing the setOnClickListener method
+        }
+
+
+
+
 //		CustomPagerAdapter mCustomPagerAdapter = new CustomPagerAdapter(Detailpage.this);
 //		ViewPager mViewPager = (ViewPager) findViewById(R.id.pager);
 //		mViewPager.setAdapter(mCustomPagerAdapter);
