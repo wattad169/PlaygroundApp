@@ -49,6 +49,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -59,7 +60,7 @@ public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefre
 
     private SwipeRefreshLayout swipeRefreshLayout;
     ListView events_list; //ListView listView;
-    ArrayList<EventsObject> homeEvents;; //List<Movie> movieList;
+    List<EventsObject> homeEvents;; //List<Movie> movieList;
     //SwipeListAdapter adapter (in code already - HomeEventsAdapter homeEventsAdapter)
 
     ProgressDialog progressDialog;
@@ -82,7 +83,8 @@ public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefre
                 WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
         this.globalVariables = ((GlobalVariables) getActivity().getApplication());
-        homeEvents = this.globalVariables.GetHomeEvents();
+        //Display only the latest events
+        homeEvents = this.globalVariables.GetHomeEvents().subList(0, Constants.maxEvents);
         if(getActivity().getIntent().getStringExtra("parent") != null && getActivity().getIntent().getStringExtra("parent").equals("filter"))
         {
             homeEvents = (ArrayList<EventsObject>) getActivity().getIntent().getSerializableExtra("events");
@@ -162,7 +164,6 @@ public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefre
         return rootView;
 
     }
-
     private class getList extends AsyncTask<String, Integer, Integer> {
 
         @Override
@@ -260,11 +261,13 @@ public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefre
     public class HomeEventsAdapter extends BaseAdapter {
 
         private Activity activity;
-        private ArrayList<EventsObject> data;
+        private List<EventsObject> data;
         private LayoutInflater inflater = null;
 
-        public HomeEventsAdapter(Activity activity, ArrayList<EventsObject> homeEvents) {
+        public HomeEventsAdapter(Activity activity, List<EventsObject> homeEvents) {
+//            this.data = new ArrayList<EventsObject>();
             this.activity = activity;
+
             this.data = homeEvents;
             inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         }
