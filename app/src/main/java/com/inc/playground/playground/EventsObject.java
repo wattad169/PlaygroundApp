@@ -11,7 +11,9 @@ import java.util.HashMap;
  * Created by mostafawattad on 06/05/2016.
  */
 public class EventsObject implements Serializable ,EventsObjectInterface {
-    String id, name, formattedLocation, type, size, date, startTime, endTime, description, status, distance;
+    // TODO: 12/07/2016 mostafa: all functions should start with small case
+
+    String id, name, formattedLocation, type, size, date, startTime, endTime, description, status, distance, maxSize;
 
     String isPublic;//1 indicate public, 0 indicate that members need approval
     ArrayList<String> members;
@@ -86,6 +88,14 @@ public class EventsObject implements Serializable ,EventsObjectInterface {
 
     public void setIsPublic(String isPublic) {// Todo:check that we use it
         this.isPublic = isPublic;
+    }
+
+    public void setMaxSize(String maxSizeInput){
+        this.maxSize = maxSizeInput;
+    }
+
+    public String getMaxSize(){
+        return this.maxSize;
     }
 
 

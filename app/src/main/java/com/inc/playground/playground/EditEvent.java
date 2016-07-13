@@ -16,13 +16,11 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.webkit.JavascriptInterface;
-import android.webkit.JsResult;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.inc.playground.playground.utils.Constants;
@@ -40,7 +38,7 @@ import java.util.concurrent.ExecutionException;
 import static com.inc.playground.playground.utils.NetworkUtilities.eventListToArrayList;
 
 
-public class AddEvent extends Activity {
+public class EditEvent extends Activity {
 	private static int RESULT_LOAD_IMAGE = 1;
 	private Uri imageUri;
 	WebView web_addstore;
@@ -48,8 +46,9 @@ public class AddEvent extends Activity {
 	public static GlobalVariables globalVariables;
 	private ValueCallback<Uri> mUploadMessage;
 	private final static int FILECHOOSER_RESULTCODE = 1;
-	public static final String TAG = "AddEventActivity";
+	public static final String TAG = "EditEventActivity";
 	Map<String,String> headers =  new HashMap<String,String>();
+	EventsObject currentEvent;
 
 	public class JavaScriptInterface {
 		Context mContext;
@@ -70,7 +69,7 @@ public class AddEvent extends Activity {
 			try {
 				responseJSON = new JSONObject(toast);
 				eventsFromServerJSON = responseJSON.getJSONArray(Constants.RESPONSE_MESSAGE);
-				Intent iv = new Intent(AddEvent.this,EventInfo.class);
+				Intent iv = new Intent(EditEvent.this,EventInfo.class);
 				EventsObject newEvent = eventListToArrayList(eventsFromServerJSON, globalVariables.GetCurrentLocation()).get(0);
 				ArrayList<EventsObject> newHomeEvents = globalVariables.GetHomeEvents();
 				newHomeEvents.add(newEvent);
@@ -86,8 +85,86 @@ public class AddEvent extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_edit_event);
-		setPlayGroundActionBar();
-		web_addstore = (WebView) findViewById(R.id.web_addstore);
+//		setPlayGroundActionBar();
+		Intent intent 			= getIntent();
+		SharedPreferences prefs = getSharedPreferences("Login", MODE_PRIVATE);
+		String usertoken 		= prefs.getString("userid", null);
+
+		currentEvent 			= (EventsObject) intent.getSerializableExtra("eventObject");
+		String urlInWebApp 		= "https://playground-1290.appspot.com/addevent.php?uname="+usertoken +"&update_event=1&event_id="+currentEvent.GetId();
+		try{
+			double latitude = 0, longitude = 0;
+			HashMap<String, String> location = this.currentEvent.GetLocation();
+			latitude = Double.parseDouble(location.get("lat"));
+			longitude = Double.parseDouble(location.get("lon"));
+			urlInWebApp += "&lat="+latitude +"&long="+longitude;
+
+		}
+		catch (Exception e){
+			// TODO: 12/07/2016 message that we cannot update to the user
+		}
+		try{
+			urlInWebApp += "&event_name="+currentEvent.GetName();
+		}
+		catch (Exception e){
+			// Don't crash, this value will not be filled
+		}
+		try{
+			urlInWebApp += "&event_category="+currentEvent.GetType();
+		}
+		catch (Exception e){
+			// Don't crash, this value will not be filled
+		}
+		try{
+			urlInWebApp += "&event_date="+currentEvent.GetDate();
+		}
+		catch (Exception e){
+			// Don't crash, this value will not be filled
+		}
+		try{
+			urlInWebApp += "&from_time="+currentEvent.GetStartTime();
+		}
+		catch (Exception e){
+			// Don't crash, this value will not be filled
+		}
+		try{
+			urlInWebApp += "&from_time="+currentEvent.GetEndTime();
+		}
+		catch (Exception e){
+			// Don't crash, this value will not be filled
+		}
+		try{
+			urlInWebApp += "&end_time="+currentEvent.GetEndTime();
+		}
+		catch (Exception e){
+			// Don't crash, this value will not be filled
+		}
+		try{
+			urlInWebApp += "&minatt="+currentEvent.GetSize();
+		}
+		catch (Exception e){
+			// Don't crash, this value will not be filled
+		}
+		try{
+			urlInWebApp += "&maxatt="+currentEvent.getMaxSize();
+		}
+		catch (Exception e){
+			// Don't crash, this value will not be filled
+		}
+		try{
+			urlInWebApp += "&formatted_loc="+currentEvent.GetFormattedLocation();
+		}
+		catch (Exception e){
+			// Don't crash, this value will not be filled
+		}
+		try{
+			urlInWebApp += "&description="+currentEvent.GetDescription();
+		}
+		catch (Exception e){
+			// Don't crash, this value will not be filled
+		}
+		Log.d(TAG,urlInWebApp);
+		web_addstore = (WebView) findViewById(R.id.web_edit_event);
 		web_addstore.addJavascriptInterface(new JavaScriptInterface(this,getApplication()), "Android");
 		web_addstore.getSettings().setJavaScriptEnabled(true);
 //		web_addstore.addJavascriptInterface(this, "android");
@@ -97,7 +174,7 @@ public class AddEvent extends Activity {
 
 		final AlertDialog alertDialog = new AlertDialog.Builder(this).create();
 
-		progressBar = ProgressDialog.show(AddEvent.this, "Playground", "Loading...");
+		progressBar = ProgressDialog.show(EditEvent.this, "Playground", "Loading...");
 
 		web_addstore.setWebViewClient(new WebViewClient() {
 			@Override
@@ -117,7 +194,7 @@ public class AddEvent extends Activity {
 			@Override
 			public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
 				Log.e("12", "Error: " + description);
-				Toast.makeText(AddEvent.this, "Oh no! " + description, Toast.LENGTH_SHORT).show();
+				Toast.makeText(EditEvent.this, "Oh no! " + description, Toast.LENGTH_SHORT).show();
 				alertDialog.setTitle("Error");
 				alertDialog.setMessage(description);
 				alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
@@ -133,24 +210,23 @@ public class AddEvent extends Activity {
 		web_addstore.setWebChromeClient(new WebChromeClient() {
 
 			public void openFileChooser(ValueCallback<Uri> uploadMsg) {
-				AddEvent.this.showAttachmentDialog(uploadMsg);
+				EditEvent.this.showAttachmentDialog(uploadMsg);
 			}
 
 			// For Android > 3.x
 			public void openFileChooser(ValueCallback<Uri> uploadMsg, String acceptType) {
-				AddEvent.this.showAttachmentDialog(uploadMsg);
+				EditEvent.this.showAttachmentDialog(uploadMsg);
 			}
 
 			// For Android > 4.1
 			public void openFileChooser(ValueCallback<Uri> uploadMsg, String acceptType, String capture) {
-				AddEvent.this.showAttachmentDialog(uploadMsg);
+				EditEvent.this.showAttachmentDialog(uploadMsg);
 			}
 
 		});
-		SharedPreferences prefs = getSharedPreferences("Login", MODE_PRIVATE);
-		String usertoken = prefs.getString("userid", null);
+
 		headers.put("uname",usertoken);
-		web_addstore.loadUrl("https://playground-1290.appspot.com/addevent.php?uname="+usertoken);
+		web_addstore.loadUrl(urlInWebApp);
 	}
 
 	@Override

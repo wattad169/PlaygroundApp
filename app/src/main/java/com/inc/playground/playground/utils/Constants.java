@@ -52,7 +52,9 @@ public class Constants {
 
     public static final String EVENT_ID = "id";
 
-    public static final String EVENT_SIZE = "min_attend";
+    public static final String EVENT_SIZE = "min_attend"; // TODO: 12/07/2016 mostafa: need to refactor to min_attend, I cannot in my PC
+
+    public static final String EVENT_MAX_SIZE = "max_attend";
 
     public static final String START_TIME = "from_time";
 
