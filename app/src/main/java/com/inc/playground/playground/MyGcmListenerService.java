@@ -100,15 +100,15 @@ public class MyGcmListenerService extends GcmListenerService {
     private void sendNotification(String message,String title,JSONObject inputJson) {
 
         globalVariables = ((GlobalVariables) this.getApplication());
-
+        EventsObject curEvent = new EventsObject();
         NotificationObject curNotification = new NotificationObject();
         curNotification.setDescription(message);
         curNotification.setTitle(title);
 
-
-
         Intent intent = new Intent(this, MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+        // if cancel event
         JSONArray eventsFromServerJSON = new JSONArray();
         try {
             eventsFromServerJSON = inputJson.getJSONArray("more");
@@ -116,12 +116,20 @@ public class MyGcmListenerService extends GcmListenerService {
             e.printStackTrace();
         }
         Intent iv = new Intent(MyGcmListenerService.this,EventInfo.class);
-        try {
-            iv.putExtra("eventObject",eventListToArrayList(eventsFromServerJSON, globalVariables.GetCurrentLocation()).get(0));
-        } catch (JSONException e) {
-            e.printStackTrace();
+
+        if(! title.contains("cancelled"))
+        {
+            try {
+                curEvent = eventListToArrayList(eventsFromServerJSON, globalVariables.GetCurrentLocation()).get(0);
+                curNotification.setEvent(curEvent);
+                iv.putExtra("eventObject",curEvent);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            iv.putExtra("parentActivity", Constants.createParentMode);
         }
-        iv.putExtra("parentActivity", Constants.createParentMode);
+
+        globalVariables.GetNotifications().add(curNotification);
 
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, iv,
                 PendingIntent.FLAG_ONE_SHOT);

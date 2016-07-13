@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.PriorityQueue;
 import java.util.Queue;
+import java.util.Stack;
 
 /**
  * Created by lina on 5/11/2016.
@@ -32,7 +33,7 @@ public class GlobalVariables extends Application {
 
     private User currentUser;
 
-    private Queue<NotificationObject> notifications;
+    private ArrayList<NotificationObject> notifications;
 
     public HashMap<String, Double> GetCurrentLocation(){
         return this.currentLocation;
@@ -83,12 +84,12 @@ public class GlobalVariables extends Application {
         return this.usersList;
     }
 
-    public void SetNotifications(Queue<NotificationObject> notifications){
-        this.notifications = new PriorityQueue<>();
+    public void SetNotifications(ArrayList<NotificationObject> notifications){
+        this.notifications = new ArrayList<>();
         this.notifications = notifications;
     }
 
-    public Queue<NotificationObject> GetNotifications(){
+    public ArrayList<NotificationObject> GetNotifications(){
         return this.notifications;
     }
 

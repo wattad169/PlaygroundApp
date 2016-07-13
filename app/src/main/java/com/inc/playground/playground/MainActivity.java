@@ -330,6 +330,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
             actionBar.setDisplayShowCustomEnabled(true);
             actionBar.setDisplayUseLogoEnabled(true);
             actionBar.setDisplayHomeAsUpEnabled(true);
+
             ImageView logo_image = (ImageView) findViewById(R.id.img_profile_action_bar);
             logo_image.setBackgroundResource(R.drawable.pg_logo2);
             TextView userName = (TextView) findViewById(R.id.email);

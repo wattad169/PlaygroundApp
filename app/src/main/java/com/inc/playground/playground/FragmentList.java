@@ -65,7 +65,7 @@ public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefre
 
 
     private ListView events_list; //ListView listView;
-    private ArrayList<EventsObject> homeEvents;; //List<Movie> movieList;
+    private ArrayList<EventsObject> homeEvents;;
     private GlobalVariables globalVariables;
     private HandleEventTask myEventsTask = null;
     public SharedPreferences prefs ;

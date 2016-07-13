@@ -8,16 +8,6 @@
     android:orientation="vertical">
 
 
-    <!--<ProgressBar-->
-        <!--android:id="@+id/progress_bar_main"-->
-        <!--android:layout_width="150dp"-->
-        <!--android:layout_height="150dp"-->
-        <!--android:layout_centerVertical="true"-->
-        <!--android:layout_gravity="center"-->
-        <!--android:layout_marginLeft="100dp"-->
-        <!--style="?android:attr/progressBarStyleLarge">-->
-    <!--</ProgressBar>-->
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -48,28 +38,6 @@
 
 
         </LinearLayout>
-
-
-
-        <!--<LinearLayout-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:weightSum="1">-->
-
-        <!--<ImageButton-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:id="@+id/filter_button"-->
-
-        <!--android:background="@drawable/filter_icon"-->
-        <!--android:layout_alignParentBottom="true"-->
-        <!--android:layout_alignRight="@+id/fab"-->
-        <!--android:layout_marginBottom="570dp"-->
-        <!--android:layout_alignEnd="@+id/fab" />-->
-
-
-
-        <!--</LinearLayout>-->
 
         <LinearLayout
             android:orientation="horizontal"
