@@ -15,12 +15,16 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.Editable;
+import android.text.SpannableString;
 import android.text.TextWatcher;
+import android.text.style.ForegroundColorSpan;
+import android.text.style.RelativeSizeSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.support.v4.app.Fragment;
+import android.view.Window;
 import android.view.WindowManager;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
@@ -29,6 +33,8 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
@@ -83,8 +89,7 @@ public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefre
                 WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
         this.globalVariables = ((GlobalVariables) getActivity().getApplication());
-        //Display only the latest events
-        homeEvents = this.globalVariables.GetHomeEvents().subList(0, Constants.maxEvents);
+        homeEvents = this.globalVariables.GetHomeEvents();
         if(getActivity().getIntent().getStringExtra("parent") != null && getActivity().getIntent().getStringExtra("parent").equals("filter"))
         {
             homeEvents = (ArrayList<EventsObject>) getActivity().getIntent().getSerializableExtra("events");
@@ -164,23 +169,22 @@ public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefre
         return rootView;
 
     }
-    private class getList extends AsyncTask<String, Integer, Integer> {
+
+    private class getList extends AsyncTask<Integer, Integer,String> { // params , progress, result
+
+        private ProgressDialog dialog = new ProgressDialog(FragmentList.this.getActivity());
 
         @Override
         protected void onPreExecute() {
-            // TODO ?
-            super.onPreExecute();
+            initProgressDialog(dialog);
         }
         @Override
-        protected Integer doInBackground(String... params) {
+        protected String doInBackground(Integer... params) {
             // TODO Auto-generated method stub
             return null;
         }
         @Override
-        protected void onPostExecute(Integer result) {
-
-//            if (progressDialog.isShowing()) {
-//                progressDialog.dismiss();
+        protected void onPostExecute(String result) {
             events_list = (ListView) getActivity().findViewById(R.id.list_detail);
             SwipeRefreshLayout swipeRefreshLayout =  (SwipeRefreshLayout)getActivity().
             findViewById(R.id.swipe_refresh_layout);
@@ -255,7 +259,25 @@ public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefre
                         }
                     });
                 }
-            }}
+            }
+            try
+            {
+                if(dialog.isShowing())
+                {
+                    dialog.dismiss();
+                }
+                // do your Display and data setting operation here
+            }
+            catch(Exception e)
+            {
+
+            }
+        }
+
+        @Override
+        protected void onProgressUpdate(Integer... values) {
+            super.onProgressUpdate(values);
+        }
     }
 
     public class HomeEventsAdapter extends BaseAdapter {
@@ -267,7 +289,6 @@ public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefre
         public HomeEventsAdapter(Activity activity, List<EventsObject> homeEvents) {
 //            this.data = new ArrayList<EventsObject>();
             this.activity = activity;
-
             this.data = homeEvents;
             inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         }
@@ -407,7 +428,11 @@ public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefre
         }
         private String responseString;
 
-        protected void onPreExecute() {}
+        protected void onPreExecute() {
+//            progressBar = (ProgressBar) rootView.findViewById(R.id.progress_bar);
+//            progressBar.setVisibility(View.VISIBLE);
+            super.onPreExecute();
+        }
 
         @Override
         protected String doInBackground(Void... params) {
@@ -467,7 +492,14 @@ public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefre
             return null;
         }
         @Override
-        protected void onPostExecute(final String responseString) {}
+        protected void onPostExecute(final String responseString) {
+//            progressBar.setVisibility(View.GONE);
+        }
+
+//        @Override
+//        protected void onProgressUpdate(Integer... values) {
+//            super.onProgressUpdate(values);
+//        }
     }
 
     @Override
@@ -489,6 +521,21 @@ public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefre
         events_list.setAdapter(homeEventsAdapter);
 
         swipeRefreshLayout.setRefreshing(false);
+
+    }
+
+    private void initProgressDialog(ProgressDialog dialog)
+    {
+        String message = "Loading ...";
+        SpannableString spanMessage = new SpannableString(message);
+        spanMessage.setSpan(new RelativeSizeSpan(1.2f),0,spanMessage.length(),0);
+        spanMessage.setSpan(new ForegroundColorSpan(Color.parseColor("#104e8b")), 0, spanMessage.length(), 0);
+        dialog.setTitle("Please wait");
+        dialog.setMessage(spanMessage);
+        dialog.setIcon(R.drawable.pg_loading);
+        dialog.show();
+        Window window = dialog.getWindow();
+        window.setLayout(800,420);
     }
 
 }

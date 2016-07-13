@@ -4,13 +4,14 @@ import android.app.Application;
 import android.content.Context;
 import android.graphics.Bitmap;
 
-import com.inc.playground.playground.utils.EventUserObject;
 import com.inc.playground.playground.utils.GPSTracker;
 import com.inc.playground.playground.utils.User;
 import com.inc.playground.playground.utils.UserImageEntry;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.PriorityQueue;
+import java.util.Queue;
 
 /**
  * Created by lina on 5/11/2016.
@@ -31,7 +32,7 @@ public class GlobalVariables extends Application {
 
     private User currentUser;
 
-    private String filterMember;
+    private Queue<NotificationObject> notifications;
 
     public HashMap<String, Double> GetCurrentLocation(){
         return this.currentLocation;
@@ -41,9 +42,7 @@ public class GlobalVariables extends Application {
         return this.gps;
     }
 
-    public void SetCurrentLocation(HashMap<String, Double> currentLocation){
-        this.currentLocation = currentLocation;
-    }
+    public void SetCurrentLocation(HashMap<String, Double> currentLocation){ this.currentLocation = currentLocation; }
 
     public void InitGPS(Context activityFrom){
         this.gps = new GPSTracker(activityFrom);
@@ -84,7 +83,16 @@ public class GlobalVariables extends Application {
         return this.usersList;
     }
 
-    public String GetFilterMember() { return filterMember; }
+    public void SetNotifications(Queue<NotificationObject> notifications){
+        this.notifications = new PriorityQueue<>();
+        this.notifications = notifications;
+    }
 
-    public void SetFilterMember(String filterMember) { this.filterMember = filterMember; }
+    public Queue<NotificationObject> GetNotifications(){
+        return this.notifications;
+    }
+
+
+
+
 }

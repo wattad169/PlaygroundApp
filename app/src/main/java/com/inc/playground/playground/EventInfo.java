@@ -24,9 +24,13 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.CalendarContract;
 import android.support.v4.app.FragmentActivity;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
+import android.text.style.RelativeSizeSpan;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -128,7 +132,6 @@ public class EventInfo extends FragmentActivity {
 
         prefs = getSharedPreferences("Login", MODE_PRIVATE);
 
-
         setPlayGroundActionBar();
         Intent intent = getIntent();
         currentEvent = (EventsObject) intent.getSerializableExtra("eventObject");
@@ -153,34 +156,22 @@ public class EventInfo extends FragmentActivity {
         membersList = (LinearLayout) findViewById(R.id.members_list);
         mainLayout = (ScrollView) findViewById(R.id.mainLayout);
 
-
         new GetMembersImages(this).execute();
         gps = new GPSTracker(EventInfo.this);
         // check if GPS enabled
         if (gps.canGetLocation()) {
             latitudecur = gps.getLatitude();
             longitudecur = gps.getLongitude();
-
-        } else {
+        }
+        else {
             // can't get location
             // GPS or Network is not enabled
             // Ask user to enable GPS/network in settings
             gps.showSettingsAlert();
-
         }
-
-
         setdata();
 
-// btn_fvrt = (Button) findViewById(R.id.btn_fvrt);
-//		btn_fvrt1 = (Button) findViewById(R.id.btn_fvrt1);
-
-
-//		txt_header = (TextView) findViewById(R.id.txt_header);
-//		txt_header.setTypeface(tfh);
-
     }
-
 
     private void setdata() {
         double latitude = 0, longitude = 0;
@@ -287,8 +278,6 @@ public class EventInfo extends FragmentActivity {
                                 startActivity(intent);
                                 break;
                         }
-//
-
                         return true;
                     }
                 });
@@ -322,8 +311,6 @@ public class EventInfo extends FragmentActivity {
 
                                     break;
                             }
-    //
-
                             return true;
                         }
                     });
@@ -331,199 +318,6 @@ public class EventInfo extends FragmentActivity {
                 }
             });//closing the setOnClickListener method
         }
-
-
-
-
-//		CustomPagerAdapter mCustomPagerAdapter = new CustomPagerAdapter(Detailpage.this);
-//		ViewPager mViewPager = (ViewPager) findViewById(R.id.pager);
-//		mViewPager.setAdapter(mCustomPagerAdapter);
-
-//        Button btn_call = (Button) findViewById(R.id.btn_video);
-//        btn_call.setOnClickListener(new View.OnClickListener() {
-//
-//            @Override
-//            public void onClick(View arg0) {
-//                // TODO YD Implement
-////				String uri = "tel:" + temp_Obj3.getPhoneno();
-////				Intent i = new Intent(Intent.ACTION_DIAL);
-////				i.setData(Uri.parse(uri));
-////				startActivity(i);
-//            }
-//        });
-//
-//        Button btn_share = (Button) findViewById(R.id.btn_share);
-//        btn_share.setOnClickListener(new View.OnClickListener() {
-//
-//            @Override
-//            public void onClick(View v) {
-//                // TODO YD Implement
-//				Uri imageUri = Uri.parse("android.resource://" + getPackageName() + "/drawable/" + "download");
-//				Intent share = new Intent(android.content.Intent.ACTION_SEND);
-//				share.setType("text/plain");
-//				share.setType("image/jpeg");
-//				share.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
-//				share.putExtra(Intent.EXTRA_SUBJECT, currentEvent.GetName());
-//				share.putExtra(Intent.EXTRA_STREAM, imageUri);
-//				share.putExtra(Intent.EXTRA_TEXT,
-//						"https://play.google.com/store/apps/details?id=" + EventInfo.this.getPackageName() + "\n"
-//								+ "Email: " + Html.fromHtml(temp_Obj3.getEmail()) + "\n" + "Address: " + Html.fromHtml(temp_Obj3.getAddress()));
-//				startActivity(Intent.createChooser(share, "Share link!"));
-//            }
-//        });
-
-//        Button btn_map = (Button) findViewById(R.id.btn_map);
-//        btn_map.setOnClickListener(new View.OnClickListener() {
-//
-//            @Override
-//            public void onClick(View arg0) {
-//                // // TODO YD Implement
-//				/*
-//				 * Intent iv = new Intent(Detailpage.this, MainActivity.class);
-//				 * iv.putExtra("lat", "" + temp_Obj3.getLat());
-//				 * iv.putExtra("lng", "" + temp_Obj3.getLongi());
-//				 * iv.putExtra("nm", "" + temp_Obj3.getName());
-//				 * iv.putExtra("ad", "" + temp_Obj3.getAddress());
-//				 * iv.putExtra("id", "" + temp_Obj3.getStore_id());
-//				 * iv.putExtra("rate", "" + rating); // iv.putExtra("curlat", ""
-//				 * + curlat); // iv.putExtra("curlng", "" + curlng);
-//				 * startActivity(iv);
-////				 */
-////				Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
-////						Uri.parse("http://maps.google.com/maps?saddr=" + temp_Obj3.getLat() + "," + temp_Obj3.getLongi()
-////								+ "&daddr=" + latitudecur + "," + longitudecur));
-////				intent.setClassName("com.google.android.apps.maps", "com.google.android.maps.MapsActivity");
-////				startActivity(intent);
-//            }
-//        });
-//
-//        Button btn_web = (Button) findViewById(R.id.btn_web);
-//        btn_web.setOnClickListener(new View.OnClickListener() {
-//
-//            @Override
-//            public void onClick(View arg0) {
-//                // TODO YD Implement
-//// 				Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(temp_Obj3.getWebsite()));
-////				startActivity(browserIntent);
-//            }
-//        });
-//
-//        Button btn_mail = (Button) findViewById(R.id.btn_book);
-//        btn_mail.setOnClickListener(new View.OnClickListener() {
-//
-//            @Override
-//            public void onClick(View v) {
-//                // TODO YD Implement
-////				Intent iv = new Intent(Detailpage.this, Setting.class);
-////				iv.putExtra("email", "" + temp_Obj3.getEmail());
-////				iv.putExtra("namec", "" + temp_Obj3.getName());
-////				iv.putExtra("address", "" + temp_Obj3.getAddress());
-////				iv.putExtra("phone", "" + temp_Obj3.getPhoneno());
-////
-////				startActivity(iv);
-//            }
-//        });
-
-//        Button btn_review = (Button) findViewById(R.id.btn_review);
-//        btn_review.setOnClickListener(new View.OnClickListener() {
-//
-//            @Override
-//            public void onClick(View arg0) {
-//                //  TODO YD Implement
-////				Intent iv = new Intent(getApplicationContext(), Review.class);
-////				iv.putExtra("id", "" + temp_Obj3.getStore_id());
-////				startActivity(iv);
-//            }
-//        });
-
-//        btn_fvrt.setOnClickListener(new View.OnClickListener() {
-//
-//            @Override
-//            public void onClick(View arg0) {
-        // TODO YD Implement
-//				btn_fvrt1.setVisibility(View.VISIBLE);
-//				btn_fvrt.setVisibility(View.INVISIBLE);
-//				myDbHelpel = new DBAdapter(Detailpage.this);
-//				try {
-//					myDbHelpel.createDataBase();
-//				} catch (IOException io) {
-//					throw new Error("Unable TO Create DataBase");
-//				}
-//				try {
-//					myDbHelpel.openDataBase();
-//				} catch (SQLException e) {
-//					e.printStackTrace();
-//				}
-//				db = myDbHelpel.getWritableDatabase();
-//				ContentValues values = new ContentValues();
-//
-//				values.put("store_id", temp_Obj3.getStore_id());
-//				values.put("name", temp_Obj3.getName());
-//				values.put("address", temp_Obj3.getAddress());
-//
-//				values.put("distance", homedistance);
-//
-//				db.insert("favourite", null, values);
-//
-//				myDbHelpel.close();
-//            }
-//        });
-
-//        btn_fvrt1.setOnClickListener(new View.OnClickListener() {
-//
-//            @Override
-//            public void onClick(View v) {
-        // TODO YD Implement
-        // btn_fvrt.setVisibility(View.VISIBLE);
-//				btn_fvrt1.setVisibility(View.INVISIBLE);
-//
-//				DBAdapter myDbHelper = new DBAdapter(Detailpage.this);
-//				myDbHelper = new DBAdapter(Detailpage.this);
-//				try {
-//					myDbHelper.createDataBase();
-//				} catch (IOException e) {
-//
-//					e.printStackTrace();
-//				}
-//
-//				try {
-//
-//					myDbHelper.openDataBase();
-//
-//				} catch (SQLException sqle) {
-//					sqle.printStackTrace();
-//				}
-//
-//				int i = 1;
-//				db = myDbHelper.getWritableDatabase();
-//
-//				cur = db.rawQuery("Delete from favourite where store_id =" + temp_Obj3.getStore_id() + ";", null);
-//				if (cur.getCount() != 0) {
-//					if (cur.moveToFirst()) {
-//						do {
-//							Getsetfav obj = new Getsetfav();
-//
-//							store_id = cur.getString(cur.getColumnIndex("store_id"));
-//							name1 = cur.getString(cur.getColumnIndex("name"));
-//							address = cur.getString(cur.getColumnIndex("address"));
-//
-//							distance = cur.getString(cur.getColumnIndex("distance"));
-//
-//							obj.setName(name1);
-//							obj.setAddress(address);
-//							obj.setStore_id(store_id);
-//							obj.setDistance(distance);
-//
-//							FileList.add(obj);
-//
-//						} while (cur.moveToNext());
-//					}
-//				}
-//				cur.close();
-//				db.close();
-//				myDbHelper.close();
-//            }
-//        });
     }
 
     public static void setForceShowIcon(PopupMenu popupMenu) {
@@ -620,7 +414,6 @@ public class EventInfo extends FragmentActivity {
 //			bmImage.setImageBitmap(result);
 //		}
 //	}
-
 
     public void addMarkerToHashMap(CustomMarker customMarker, Marker marker) {
         setUpMarkersHashMap();
@@ -795,7 +588,6 @@ public class EventInfo extends FragmentActivity {
 
     }
 
-
     public void setPlayGroundActionBar() {
         String userLoginId, userFullName, userEmail, userPhoto;
         Bitmap imageBitmap = null;
@@ -835,19 +627,20 @@ public class EventInfo extends FragmentActivity {
         actionBar.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.primaryColor)));
     }
 
-    public class GetMembersImages extends AsyncTask<String, String, String> {
+    public class GetMembersImages extends AsyncTask<String, Integer, String> {
         int i;
         String photoURL;
 
         Context thisContext;
+        private ProgressDialog dialog = new ProgressDialog(EventInfo.this);
 
         GetMembersImages(Context thisCon) {
             thisContext = thisCon;
-
         }
 
         @Override
         protected void onPreExecute() {
+            initProgressDialog(dialog);
             super.onPreExecute();
         }
 
@@ -935,7 +728,26 @@ public class EventInfo extends FragmentActivity {
             }
 
             Log.d(TAG, "getMembersUrls.successful" + membersImagesUrls.toString());
+
+            try
+            {
+                if(dialog.isShowing())
+                {
+                    dialog.dismiss();
+                }
+                // do your Display and data setting operation here
+            }
+            catch(Exception e)
+            {
+
+            }
         }
+        @Override
+        protected void onProgressUpdate(Integer... values) {
+            super.onProgressUpdate(values);
+//            progressBar.setProgress(values[0]);
+        }
+
     }
 
     public class EventPhotoUserListener extends AsyncTask<String, String, String> {
@@ -1043,6 +855,20 @@ public class EventInfo extends FragmentActivity {
                         sourceBitmap.getHeight()),
                 new Rect(0, 0, targetWidth, targetHeight), null);
         return targetBitmap;
+    }
+
+    private void initProgressDialog(ProgressDialog dialog)
+    {
+        String message = "Loading ...";
+        SpannableString spanMessage = new SpannableString(message);
+        spanMessage.setSpan(new RelativeSizeSpan(1.2f),0,spanMessage.length(),0);
+        spanMessage.setSpan(new ForegroundColorSpan(Color.parseColor("#104e8b")), 0, spanMessage.length(), 0);
+        dialog.setTitle("Please wait");
+        dialog.setMessage(spanMessage);
+        dialog.setIcon(R.drawable.pg_loading);
+        dialog.show();
+        Window window = dialog.getWindow();
+        window.setLayout(800, 420);
     }
 }
 

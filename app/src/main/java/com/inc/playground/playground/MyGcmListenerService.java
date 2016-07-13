@@ -69,7 +69,6 @@ public class MyGcmListenerService extends GcmListenerService {
             }
 //        }
 
-
         if (from.startsWith("/topics/")) {
             // message received from some topic.
         } else {
@@ -101,6 +100,13 @@ public class MyGcmListenerService extends GcmListenerService {
     private void sendNotification(String message,String title,JSONObject inputJson) {
 
         globalVariables = ((GlobalVariables) this.getApplication());
+
+        NotificationObject curNotification = new NotificationObject();
+        curNotification.setDescription(message);
+        curNotification.setTitle(title);
+
+
+
         Intent intent = new Intent(this, MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         JSONArray eventsFromServerJSON = new JSONArray();

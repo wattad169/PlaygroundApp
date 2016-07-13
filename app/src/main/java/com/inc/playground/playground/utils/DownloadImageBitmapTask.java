@@ -13,8 +13,6 @@ final public class DownloadImageBitmapTask extends AsyncTask<String, Void, Bitma
     // The DownloadImageTask downloads and sets the image value also.
 
     Bitmap mIcon11;
-
-
     @Override
     protected Bitmap doInBackground(String... urls) {
         String urldisplay = urls[0];
@@ -38,7 +36,5 @@ final public class DownloadImageBitmapTask extends AsyncTask<String, Void, Bitma
         return myValue;
     }
 
-
-
-
 }
+
