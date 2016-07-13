@@ -33,6 +33,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 
 import static com.inc.playground.playground.utils.NetworkUtilities.eventListToArrayList;
@@ -100,6 +101,7 @@ public class MyGcmListenerService extends GcmListenerService {
     private void sendNotification(String message,String title,JSONObject inputJson) {
 
         globalVariables = ((GlobalVariables) this.getApplication());
+        ArrayList<NotificationObject> notificationList = globalVariables.GetNotifications();
         EventsObject curEvent = new EventsObject();
         NotificationObject curNotification = new NotificationObject();
         curNotification.setDescription(message);
@@ -128,8 +130,8 @@ public class MyGcmListenerService extends GcmListenerService {
             }
             iv.putExtra("parentActivity", Constants.createParentMode);
         }
-
-        globalVariables.GetNotifications().add(curNotification);
+        notificationList.add(curNotification);
+        globalVariables.SetNotifications(notificationList);
 
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, iv,
                 PendingIntent.FLAG_ONE_SHOT);

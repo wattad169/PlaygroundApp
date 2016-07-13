@@ -1,7 +1,10 @@
 package com.inc.playground.playground;
 
+import android.app.ListActivity;
+
 import com.inc.playground.playground.utils.Constants;
 import com.inc.playground.playground.utils.EventsObjectInterface;
+import com.inc.playground.playground.utils.User;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -18,12 +21,13 @@ public class EventsObject implements Serializable ,EventsObjectInterface {
     String isPublic;//1 indicate public, 0 indicate that members need approval
     ArrayList<String> members;
 
+    ArrayList<User> approveList;
+
     // TODO ADD EVENT MEMBERS (A LIST CONTAINING USERS)
     String creatorId;
     HashMap<String, String> location= new HashMap<String, String>();
-    // TODO add GetDistance method
-    public String GetId() { return id; }
 
+    public String GetId() { return id; }
 
     public void SetId(String id) { this.id = id; }
     public String GetName() { return name; }
@@ -99,6 +103,14 @@ public class EventsObject implements Serializable ,EventsObjectInterface {
     }
 
 
+    public ArrayList<User> getApproveList() {
+        return approveList;
+    }
+
+    public void setApproveList(ArrayList<User> approveList) {
+        this.approveList = new ArrayList<>();
+        this.approveList = approveList;
+    }
 
 
 

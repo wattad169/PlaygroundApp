@@ -18,6 +18,7 @@ package com.inc.playground.playground;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.ActivityOptions;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.FragmentTransaction;
@@ -353,6 +354,30 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
             }
             img_profile.setImageBitmap(imageBitmap);
 
+            ImageView notificationBtn = (ImageView) findViewById(R.id.notification_btn);
+            notificationBtn.setVisibility(View.VISIBLE);
+            notificationBtn.setOnClickListener(new View.OnClickListener() {
+
+                @Override
+                public void onClick(View v) {
+                    Intent iv = new Intent(MainActivity.this, NotificationsList.class);
+                    startActivity(iv);
+                    finish();
+                }
+            });
+            TextView notificationNumber = (TextView) findViewById(R.id.notification__numberTxt);
+            if(globalVariables.GetNotifications() !=  null && globalVariables.GetNotifications().size() != 0 )
+            {
+                notificationNumber.setText(Integer.toString(globalVariables.GetNotifications().size()));
+                notificationNumber.setVisibility(View.VISIBLE);
+            }
+            else
+            {
+                notificationNumber.setVisibility(View.INVISIBLE);
+            }
+
+
+
             TextView loginTxt = (TextView) findViewById(R.id.login_txt);
             ImageView loginImg = (ImageView) findViewById(R.id.login_img);
             globalVariables.SetUserPictureBitMap(imageBitmap); // Make the imageBitMap global to all activities to avoid downloading twice
@@ -361,6 +386,8 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
             // Register to notifications
             Intent intent = new Intent(this, RegistrationIntentService.class);
             startService(intent);
+
+
         }
     }
 

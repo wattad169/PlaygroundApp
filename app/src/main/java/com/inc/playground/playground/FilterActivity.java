@@ -185,19 +185,19 @@ public class FilterActivity extends PreferenceActivity {
 
         if (distancePicker.getSummary() != null) {
             if (isFiltred) {
-                if(distancePicker.getSummary().equals("up to 100 km"))
+                if(distancePicker.getSummary().equals("Walking distance (up to 2 km)"))
                 {
-                    if (!(Double.valueOf(curEvent.GetDistance()) < 100))
+                    if (!(Double.valueOf(curEvent.GetDistance()) < 2))
                         afterFilterEvents.remove(curEvent);
                 }
-                else if(distancePicker.getSummary().equals("up to 600 km"))
+                else if(distancePicker.getSummary().equals("Local area (up to 10 km)"))
                 {
-                    if (!(Double.valueOf(curEvent.GetDistance()) < 600))
+                    if (!(Double.valueOf(curEvent.GetDistance()) < 10))
                         afterFilterEvents.remove(curEvent);
                 }
-                else if(distancePicker.getSummary().equals("over 600 km"))
+                else if(distancePicker.getSummary().equals("Over 10 km"))
                 {
-                    if (!(Double.valueOf(curEvent.GetDistance()) > 600))
+                    if (!(Double.valueOf(curEvent.GetDistance()) > 10))
                         afterFilterEvents.remove(curEvent);
                 }
 

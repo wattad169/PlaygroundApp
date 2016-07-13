@@ -310,6 +310,9 @@ public class EventInfo extends FragmentActivity {
                                 case R.id.cancel_event_id:
 
                                     break;
+                                case R.id.join_requests:
+
+                                    break;
                             }
                             return true;
                         }

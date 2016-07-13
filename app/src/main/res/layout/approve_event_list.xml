@@ -9,12 +9,12 @@
         android:layout_height="match_parent"
         android:layout_below="@+id/textView">
 
-    <ListView
-        android:id="@+id/list_detail"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        <ListView
+            android:id="@+id/list_detail"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
 
     </android.support.v4.widget.SwipeRefreshLayout>
 
@@ -22,7 +22,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceSmall"
-        android:text="Notifications:"
+        android:text="Requests:"
         android:id="@+id/textView"
         android:layout_alignParentBottom="false"
         android:layout_alignParentRight="false"

@@ -168,14 +168,14 @@
 
     <!--distance options for the filter -->
     <string-array name="distance_titles">
-        <item>up to 100 km</item>
-        <item>up to 600 km</item>
-        <item>over 600 km</item>
+        <item>Walking distance (up to 2 km)</item>
+        <item>Local area (up to 10 km)</item>
+        <item>Over 10 km</item>
     </string-array>
     <string-array name="distance_values">
-        <item>up to 100 km</item>
-        <item>up to 600 km</item>
-        <item>over 600 km</item>
+        <item>Walking distance (up to 2 km)</item>
+        <item>Local area (up to 10 km)</item>
+        <item>Over 10 km</item>
     </string-array>
 
     <!-- Example settings for Data & Sync -->

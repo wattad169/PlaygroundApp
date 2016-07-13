@@ -5,10 +5,8 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.SpannableString;
@@ -19,26 +17,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ToggleButton;
-
-import com.melnykov.fab.FloatingActionButton;
-import com.melnykov.fab.ScrollDirectionListener;
 
 import java.util.ArrayList;
 
 /**
- * Created by lina on 7/10/2016.
+ * Created by lina on 7/13/2016.
  */
-public class NotificationsList extends FragmentActivity implements SwipeRefreshLayout.OnRefreshListener{
-
+public class ApproveEventList extends FragmentActivity implements SwipeRefreshLayout.OnRefreshListener {
     private ListView notifications_list; //ListView listView;
     private ArrayList<NotificationObject> notifications;
     private GlobalVariables globalVariables;
@@ -47,7 +38,7 @@ public class NotificationsList extends FragmentActivity implements SwipeRefreshL
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.notification_list);
+        setContentView(R.layout.approve_event_list);
         this.globalVariables = ((GlobalVariables) getApplication());
         notifications = globalVariables.GetNotifications();
 
@@ -57,7 +48,7 @@ public class NotificationsList extends FragmentActivity implements SwipeRefreshL
 
     private class getList extends AsyncTask<Integer, Integer,String> { // params , progress, result
 
-        private ProgressDialog dialog = new ProgressDialog(NotificationsList.this);
+        private ProgressDialog dialog = new ProgressDialog(ApproveEventList.this);
 
         @Override
         protected void onPreExecute() {
@@ -72,25 +63,22 @@ public class NotificationsList extends FragmentActivity implements SwipeRefreshL
         @Override
         protected void onPostExecute(String result) {
             notifications_list = (ListView) findViewById(R.id.list_detail);
-            SwipeRefreshLayout swipeRefreshLayout =  (SwipeRefreshLayout)NotificationsList.this.
+            SwipeRefreshLayout swipeRefreshLayout =  (SwipeRefreshLayout)ApproveEventList.this.
                     findViewById(R.id.swipe_refresh_layout);
 
 
-            if (notifications !=  null) {
-                if(globalVariables.GetNotifications().size() == 0) {
-                    Toast.makeText(NotificationsList.this, "No Notifications Found", Toast.LENGTH_LONG).show();
-                    notifications_list.setVisibility(View.INVISIBLE);
-                }
-
+            if (notifications ==  null) {
+                Toast.makeText(ApproveEventList.this, "No Requests Found", Toast.LENGTH_LONG).show();
+                notifications_list.setVisibility(View.INVISIBLE);
+            }
             else {
-                    // Display events
-                    notifications_list.setVisibility(View.VISIBLE);
-                    NotificationsAdapter notificationsAdapter = new NotificationsAdapter(NotificationsList.this, notifications);//homeEvents= globalVariable.currentuserevents
-                    notificationsAdapter.notifyDataSetChanged();
-                    notifications_list.setAdapter(notificationsAdapter);
+                // Display events
+                notifications_list.setVisibility(View.VISIBLE);
+                NotificationsAdapter notificationsAdapter = new NotificationsAdapter(ApproveEventList.this, notifications);                notificationsAdapter.notifyDataSetChanged();
+                notifications_list.setAdapter(notificationsAdapter);
 
-                    //swipe listener
-                    swipeRefreshLayout.setOnRefreshListener(NotificationsList.this);
+                //swipe listener
+                swipeRefreshLayout.setOnRefreshListener(ApproveEventList.this);
                     /*swipeRefreshLayout.post(new Runnable() {
                                                 @Override
                                                 public void run() {
@@ -101,20 +89,20 @@ public class NotificationsList extends FragmentActivity implements SwipeRefreshL
                                             }
                     );*/
 
-                    notifications_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                notifications_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
-                        @Override
-                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                            // TODO Auto-generated method stub
-                            Intent intent = new Intent(NotificationsList.this, EventInfo.class);
-                            intent.putExtra("eventObject", notifications.get(position).getEvent());
-                            startActivity(intent);
-                            finish();
-                            notifications.remove(notifications.get(position));
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        // TODO Auto-generated method stub
+                        Intent intent = new Intent(ApproveEventList.this, EventInfo.class);
+                        intent.putExtra("eventObject", notifications.get(position).getEvent());
+                        startActivity(intent);
+                        finish();
+                        notifications.remove(notifications.get(position));
 
-                        }
-                    });
-                }
+                    }
+                });
+
             }
             try
             {
@@ -168,22 +156,29 @@ public class NotificationsList extends FragmentActivity implements SwipeRefreshL
         public View getView(final int position, View convertView, ViewGroup parent) {
             View view = convertView;
             if (convertView == null) {
-                view = inflater.inflate(R.layout.notification_item, null);
+                view = inflater.inflate(R.layout.approve_event_item, null);
             }
+
 
             TextView eventName =(TextView) view.findViewById(R.id.event_nameTxt);
             TextView notificationDescription = (TextView) view.findViewById(R.id.notification_descriptionTxt);
+            Button approveBtn = (Button) view.findViewById(R.id.ok_btn);
+            Button rejectBtn = (Button) view.findViewById(R.id.cancel_btn);
 
             eventName.setText(data.get(position).getEvent().GetName());
             notificationDescription.setText(data.get(position).getDescription());
 
-            view.setOnClickListener(new View.OnClickListener() {
+            approveBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = new Intent(NotificationsList.this, EventInfo.class);
-                    intent.putExtra("eventObject", data.get(position).getEvent());
-                    startActivity(intent);
-                    notifications.remove(data.get(position));
+
+                }
+            });
+
+            rejectBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
                 }
             });
 
@@ -195,13 +190,13 @@ public class NotificationsList extends FragmentActivity implements SwipeRefreshL
     public void onRefresh() {
         Log.i("Enter on refresh", "");
 
-        SwipeRefreshLayout swipeRefreshLayout =  (SwipeRefreshLayout)NotificationsList.this.
+        SwipeRefreshLayout swipeRefreshLayout =  (SwipeRefreshLayout)ApproveEventList.this.
                 findViewById(R.id.swipe_refresh_layout);
 
         swipeRefreshLayout.setRefreshing(true);
-        Splash.GetEventsAsyncTask getEventsAsyncTask = new Splash.GetEventsAsyncTask(NotificationsList.this);
+        Splash.GetEventsAsyncTask getEventsAsyncTask = new Splash.GetEventsAsyncTask(ApproveEventList.this);
         getEventsAsyncTask.execute();
-        NotificationsAdapter notificationsAdapter = new NotificationsAdapter(NotificationsList.this,notifications);
+        NotificationsAdapter notificationsAdapter = new NotificationsAdapter(ApproveEventList.this,notifications);
 
         notificationsAdapter.notifyDataSetChanged();
         notifications_list.setAdapter(notificationsAdapter);
@@ -227,10 +222,8 @@ public class NotificationsList extends FragmentActivity implements SwipeRefreshL
     @Override
     public void onBackPressed()
     {
-        Intent iv = new Intent(NotificationsList.this,MainActivity.class);
+        Intent iv = new Intent(ApproveEventList.this,MainActivity.class);
         startActivity(iv);
         finish();
     }
-
 }
-

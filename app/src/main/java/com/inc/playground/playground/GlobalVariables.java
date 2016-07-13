@@ -33,7 +33,7 @@ public class GlobalVariables extends Application {
 
     private User currentUser;
 
-    private ArrayList<NotificationObject> notifications;
+    private ArrayList<NotificationObject> notifications = new ArrayList<>();
 
     public HashMap<String, Double> GetCurrentLocation(){
         return this.currentLocation;
@@ -92,6 +92,9 @@ public class GlobalVariables extends Application {
     public ArrayList<NotificationObject> GetNotifications(){
         return this.notifications;
     }
+
+
+
 
 
 
