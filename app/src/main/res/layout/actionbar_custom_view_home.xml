@@ -5,6 +5,8 @@
     android:weightSum="1"
     android:gravity="right"
     android:orientation="horizontal" >
+
+
     <com.inc.playground.playground.utils.RoundedImageView
         android:id="@+id/img_profile_action_bar"
         android:layout_width="35dp"

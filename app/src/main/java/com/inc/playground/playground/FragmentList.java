@@ -56,6 +56,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.math.*;
 import java.util.Set;
 
 /**
@@ -65,12 +66,9 @@ import java.util.Set;
 public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefreshListener{
 
     private SwipeRefreshLayout swipeRefreshLayout;
-    ListView events_list; //ListView listView;
-    List<EventsObject> homeEvents;; //List<Movie> movieList;
-    //SwipeListAdapter adapter (in code already - HomeEventsAdapter homeEventsAdapter)
 
     private ListView events_list; //ListView listView;
-    private ArrayList<EventsObject> homeEvents;; //List<Movie> movieList;
+    private List<EventsObject> homeEvents;; //List<Movie> movieList;
     private GlobalVariables globalVariables;
     private HandleEventTask myEventsTask = null;
     public SharedPreferences prefs ;
@@ -80,6 +78,7 @@ public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefre
     private User currentUser;
     private Set<String> userEvents;
     private EditText inputSearch;
+    private int eventSize = 0;
 
     View rootView;
     @Override
@@ -91,7 +90,8 @@ public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefre
                 WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
         this.globalVariables = ((GlobalVariables) getActivity().getApplication());
-        homeEvents = this.globalVariables.GetHomeEvents();
+        eventSize = Math.min(Constants.maxEvents, this.globalVariables.GetHomeEvents().size());
+        homeEvents = this.globalVariables.GetHomeEvents().subList(0,eventSize);
         if(getActivity().getIntent().getStringExtra("parent") != null && getActivity().getIntent().getStringExtra("parent").equals("filter"))
         {
             homeEvents = (ArrayList<EventsObject>) getActivity().getIntent().getSerializableExtra("events");
@@ -513,12 +513,6 @@ public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefre
         swipeRefreshLayout.setRefreshing(true);
         Splash.GetEventsAsyncTask getEventsAsyncTask = new Splash.GetEventsAsyncTask(this.getContext());
         getEventsAsyncTask.execute();
-        HomeEventsAdapter homeEventsAdapter = new HomeEventsAdapter(  getActivity(),globalVariables.GetHomeEvents() );
-
-        //userEventsAdapter userEventsAdapter = new userEventsAdapter(  getActivity(),globalVariables.GetHomeEvents() );
-
-        homeEventsAdapter.notifyDataSetChanged();
-        events_list.setAdapter(homeEventsAdapter);
 
         swipeRefreshLayout.setRefreshing(false);
 
