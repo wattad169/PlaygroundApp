@@ -18,7 +18,7 @@
             android:textSize="15dp"
             android:layout_alignParentTop="true"
             android:layout_alignParentLeft="true"
-            android:layout_marginLeft="25dp"
+            android:layout_marginLeft="15dp"
             android:layout_marginTop="15dp" />
 
         <TextView
@@ -50,6 +50,37 @@
             android:textSize="10dp"
             android:textColor="#474747" />
 
+        <Button
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:text="Approve"
+            android:id="@+id/positive_btn"
+            android:layout_alignParentRight="false"
+            android:layout_alignParentEnd="false"
+            android:layout_marginRight="10dp"
+            android:background="#1874cd"
+            android:allowUndo="false"
+            android:textColor="#ffffff"
+            android:textStyle="bold"
+            android:layout_alignParentTop="true"
+            android:layout_toLeftOf="@+id/negative_btn"
+            android:layout_marginTop="35dp" />
+
+        <Button
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:text="Reject"
+            android:id="@+id/negative_btn"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="false"
+            android:background="#dcdcdc"
+            android:textColor="#474747"
+            android:textStyle="bold"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="35dp"
+            android:layout_marginRight="10dp" />
     </RelativeLayout>
 
 </RelativeLayout>

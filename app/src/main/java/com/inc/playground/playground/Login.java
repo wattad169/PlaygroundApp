@@ -2,19 +2,25 @@ package com.inc.playground.playground;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.IntentSender.SendIntentException;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
+import android.text.style.RelativeSizeSpan;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -734,10 +740,13 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
 		new GetUserEventsAsyncTask().execute();
 		globalVariables.SetCurrentUser(currentUser);
 	}
-	public class GetUserEventsAsyncTask extends AsyncTask<String, String, String> {
+	public class GetUserEventsAsyncTask extends AsyncTask<String, Integer, String> {
+
+		private ProgressDialog dialog = new ProgressDialog(Login.this);
 
 		@Override
 		protected void onPreExecute() {
+			initProgressDialog(dialog);
 			super.onPreExecute();
 		}
 
@@ -797,7 +806,38 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
 		@Override
 		protected void onPostExecute(String lenghtOfFile) {
 			// do stuff after posting data
+			try
+			{
+				if(dialog.isShowing())
+				{
+					dialog.dismiss();
+				}
+				// do your Display and data setting operation here
+			}
+			catch(Exception e)
+			{
+
+			}
 			Log.d("successful", "successful");
 		}
+
+		@Override
+		protected void onProgressUpdate(Integer... values) {
+			super.onProgressUpdate(values);
+		}
+	}
+
+	private void initProgressDialog(ProgressDialog dialog)
+	{
+		String message = "Loading ...";
+		SpannableString spanMessage = new SpannableString(message);
+		spanMessage.setSpan(new RelativeSizeSpan(1.2f),0,spanMessage.length(),0);
+		spanMessage.setSpan(new ForegroundColorSpan(Color.parseColor("#104e8b")), 0, spanMessage.length(), 0);
+		dialog.setTitle("Please wait");
+		dialog.setMessage(spanMessage);
+		dialog.setIcon(R.drawable.pg_loading);
+		dialog.show();
+		Window window = dialog.getWindow();
+		window.setLayout(800,420);
 	}
 }

@@ -24,6 +24,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.support.v4.app.Fragment;
+import android.view.Window;
 import android.view.WindowManager;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
@@ -33,6 +34,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
@@ -73,8 +75,6 @@ public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefre
     private User currentUser;
     private Set<String> userEvents;
     private EditText inputSearch;
-    private ProgressBar progressBar ;
-    private ProgressDialog progressDialog;
 
     View rootView;
     @Override
@@ -156,16 +156,13 @@ public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefre
                     homeEventsAdapter.notifyDataSetChanged();
                     events_list.setAdapter(homeEventsAdapter);
                 }
-
             }
             @Override
             public void afterTextChanged(Editable arg0) {
                 // TODO Auto-generated method stub
             }
         });
-
         return rootView;
-
     }
 
     private class getList extends AsyncTask<Integer, Integer,String> { // params , progress, result
@@ -174,18 +171,7 @@ public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefre
 
         @Override
         protected void onPreExecute() {
-//            progressBar = (ProgressBar) rootView.findViewById(R.id.progress_bar_main);
-//            progressBar.setVisibility(View.VISIBLE);
-            String message = "Loading ...";
-            SpannableString spanMessage = new SpannableString(message);
-            spanMessage.setSpan(new RelativeSizeSpan(2f),0,spanMessage.length(),0);
-            spanMessage.setSpan(new ForegroundColorSpan(Color.parseColor("#104e8b")),0,spanMessage.length(),0);
-            dialog.setTitle("Please wait");
-            dialog.setMessage(spanMessage);
-            dialog.setIcon(R.drawable.pg_loading);
-//            dialog.setIcon();
-            dialog.show();
-//            super.onPreExecute();
+            initProgressDialog(dialog);
         }
         @Override
         protected String doInBackground(Integer... params) {
@@ -270,7 +256,6 @@ public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefre
                     });
                 }
             }
-//            progressBar.setVisibility(View.GONE);
             try
             {
                 if(dialog.isShowing())
@@ -288,7 +273,6 @@ public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefre
         @Override
         protected void onProgressUpdate(Integer... values) {
             super.onProgressUpdate(values);
-//            progressBar.setProgress(values[0]);
         }
     }
 
@@ -521,7 +505,6 @@ public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefre
                 findViewById(R.id.swipe_refresh_layout);
 
         swipeRefreshLayout.setRefreshing(true);
-
         Splash.GetEventsAsyncTask getEventsAsyncTask = new Splash.GetEventsAsyncTask(this.getContext());
         getEventsAsyncTask.execute();
         HomeEventsAdapter homeEventsAdapter = new HomeEventsAdapter(  getActivity(),globalVariables.GetHomeEvents() );
@@ -532,6 +515,21 @@ public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefre
         events_list.setAdapter(homeEventsAdapter);
 
         swipeRefreshLayout.setRefreshing(false);
+
+    }
+
+    private void initProgressDialog(ProgressDialog dialog)
+    {
+        String message = "Loading ...";
+        SpannableString spanMessage = new SpannableString(message);
+        spanMessage.setSpan(new RelativeSizeSpan(1.2f),0,spanMessage.length(),0);
+        spanMessage.setSpan(new ForegroundColorSpan(Color.parseColor("#104e8b")), 0, spanMessage.length(), 0);
+        dialog.setTitle("Please wait");
+        dialog.setMessage(spanMessage);
+        dialog.setIcon(R.drawable.pg_loading);
+        dialog.show();
+        Window window = dialog.getWindow();
+        window.setLayout(800,420);
     }
 
 }

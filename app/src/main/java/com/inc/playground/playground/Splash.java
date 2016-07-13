@@ -44,7 +44,6 @@ public class Splash extends Activity {
     public static GlobalVariables globalVariables;
     public User currentUser;
     private BroadcastReceiver mRegistrationBroadcastReceiver;
-    private static ProgressBar progressBar;
     private TextView mInformationTextView;
 
     JSONArray getAllUsersResponse;
@@ -60,8 +59,6 @@ public class Splash extends Activity {
         // Set action bar color
         final ActionBar actionBar = getActionBar();
         actionBar.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.primaryColor)));
-        // Set progress bar
-        progressBar = (ProgressBar) findViewById(R.id.progress_bar);
         //Check if user is login
         SharedPreferences prefs = getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
         currentUser = new User();
@@ -78,7 +75,6 @@ public class Splash extends Activity {
             currentUser.SetUserId(userLoginId);
             // Create server call
             GetUserEventsAsyncTask taskUserEvents = new GetUserEventsAsyncTask();
-            taskUserEvents.setProgressBar(progressBar);
             taskUserEvents.execute();
         }
         // Get events from server
@@ -87,7 +83,6 @@ public class Splash extends Activity {
         globalVariables.SetCurrentLocation(Utils.getMyLocation(globalVariables.GetGPS()));
         // Create server call
         GetEventsAsyncTask tsakEvents = new GetEventsAsyncTask(this);
-        tsakEvents.setProgressBar(progressBar);
         tsakEvents.execute();
         new GetUsersImages(this).execute();
 
@@ -106,15 +101,8 @@ public class Splash extends Activity {
             this.context = cntx;
         }
 
-        ProgressBar bar;
-
-        public void setProgressBar(ProgressBar bar) {
-            this.bar = bar;
-        }
-
         @Override
         protected void onPreExecute() {
-            this.bar.setVisibility(View.VISIBLE);
             super.onPreExecute();
         }
 
@@ -157,7 +145,6 @@ public class Splash extends Activity {
         @Override
         protected void onPostExecute(String lenghtOfFile) {
             // do stuff after posting data
-            this.bar.setVisibility(View.GONE);
             Intent i = new Intent(this.context, MainActivity.class);
             this.context.startActivity(i);
             ((Activity)this.context).finish();
@@ -170,13 +157,8 @@ public class Splash extends Activity {
 
         ProgressBar bar;
 
-        public void setProgressBar(ProgressBar bar) {
-            this.bar = bar;
-        }
-
         @Override
         protected void onPreExecute() {
-            this.bar.setVisibility(View.VISIBLE);
             super.onPreExecute();
         }
 
@@ -227,7 +209,6 @@ public class Splash extends Activity {
 
         @Override
         protected void onPostExecute(String lenghtOfFile) {
-            this.bar.setVisibility(View.GONE);
             super.onPostExecute(lenghtOfFile);
             Log.d("successful", "successful");
         }
@@ -251,8 +232,6 @@ public class Splash extends Activity {
         }
         @Override
         protected void onPreExecute() {
-//            progressBar = (ProgressBar) findViewById(R.id.progress_bar);
-//            progressBar.setVisibility(View.VISIBLE);
             super.onPreExecute();
         }
 
@@ -309,7 +288,6 @@ public class Splash extends Activity {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-//                progressBar.setVisibility(View.GONE);
                 super.onPostExecute(lenghtOfFile);
 
             }
