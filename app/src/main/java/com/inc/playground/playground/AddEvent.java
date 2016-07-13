@@ -85,7 +85,7 @@ public class AddEvent extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_edit_event);
+		setContentView(R.layout.activity_addstore);
 		setPlayGroundActionBar();
 		web_addstore = (WebView) findViewById(R.id.web_addstore);
 		web_addstore.addJavascriptInterface(new JavaScriptInterface(this,getApplication()), "Android");

@@ -30,8 +30,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
@@ -116,19 +119,24 @@ public class EditEvent extends Activity {
 			// Don't crash, this value will not be filled
 		}
 		try{
-			urlInWebApp += "&event_date="+currentEvent.GetDate();
+			final String NEW_FORMAT = "dd-mm-yyyy";
+			final String OLD_FORMAT = "yyyy-mm-dd";
+			try {
+				SimpleDateFormat sdf = new SimpleDateFormat(OLD_FORMAT);
+				Date d = sdf.parse(currentEvent.GetDate());
+				sdf.applyPattern(NEW_FORMAT);
+				urlInWebApp += "&event_date="+sdf.format(d);
+			}
+			catch(Exception e) {
+				Log.d(TAG,e.toString());
+				urlInWebApp += "&event_date=" + currentEvent.GetDate();
+			}
 		}
 		catch (Exception e){
 			// Don't crash, this value will not be filled
 		}
 		try{
 			urlInWebApp += "&from_time="+currentEvent.GetStartTime();
-		}
-		catch (Exception e){
-			// Don't crash, this value will not be filled
-		}
-		try{
-			urlInWebApp += "&from_time="+currentEvent.GetEndTime();
 		}
 		catch (Exception e){
 			// Don't crash, this value will not be filled
@@ -159,6 +167,12 @@ public class EditEvent extends Activity {
 		}
 		try{
 			urlInWebApp += "&description="+currentEvent.GetDescription();
+		}
+		catch (Exception e){
+			// Don't crash, this value will not be filled
+		}
+		try{
+			urlInWebApp += "&is_public="+currentEvent.getIsPublic();
 		}
 		catch (Exception e){
 			// Don't crash, this value will not be filled
