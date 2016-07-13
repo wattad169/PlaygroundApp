@@ -55,6 +55,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -63,9 +64,13 @@ import java.util.Set;
 
 public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefreshListener{
 
+    private SwipeRefreshLayout swipeRefreshLayout;
+    ListView events_list; //ListView listView;
+    List<EventsObject> homeEvents;; //List<Movie> movieList;
+    //SwipeListAdapter adapter (in code already - HomeEventsAdapter homeEventsAdapter)
 
     private ListView events_list; //ListView listView;
-    private ArrayList<EventsObject> homeEvents;;
+    private ArrayList<EventsObject> homeEvents;; //List<Movie> movieList;
     private GlobalVariables globalVariables;
     private HandleEventTask myEventsTask = null;
     public SharedPreferences prefs ;
@@ -279,10 +284,11 @@ public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefre
     public class HomeEventsAdapter extends BaseAdapter {
 
         private Activity activity;
-        private ArrayList<EventsObject> data;
+        private List<EventsObject> data;
         private LayoutInflater inflater = null;
 
-        public HomeEventsAdapter(Activity activity, ArrayList<EventsObject> homeEvents) {
+        public HomeEventsAdapter(Activity activity, List<EventsObject> homeEvents) {
+//            this.data = new ArrayList<EventsObject>();
             this.activity = activity;
             this.data = homeEvents;
             inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);

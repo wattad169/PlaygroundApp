@@ -95,6 +95,7 @@ public class Constants {
     public static final int joinParentMode = 1;
     public static final int createParentMode = 2;
     public static final int nonParentMode = 3;
+    public static final int maxEvents = 30;
     public static String apiGetDistanceUrl = "https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=X1,Y1&destinations=X2%2CY2&key=APIKEY";
     public static final String apiKey = "AIzaSyBKtVDM9E9Th-kzV7QgMKg4Qn9EtvoeYlw";
     public static final String ID = "id";
