@@ -15,7 +15,10 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.Editable;
+import android.text.SpannableString;
 import android.text.TextWatcher;
+import android.text.style.ForegroundColorSpan;
+import android.text.style.RelativeSizeSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,6 +32,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
@@ -57,26 +61,26 @@ import java.util.Set;
 
 public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefreshListener{
 
-    private SwipeRefreshLayout swipeRefreshLayout;
-    ListView events_list; //ListView listView;
-    ArrayList<EventsObject> homeEvents;; //List<Movie> movieList;
-    //SwipeListAdapter adapter (in code already - HomeEventsAdapter homeEventsAdapter)
 
-    ProgressDialog progressDialog;
-    GlobalVariables globalVariables;
+    private ListView events_list; //ListView listView;
+    private ArrayList<EventsObject> homeEvents;; //List<Movie> movieList;
+    private GlobalVariables globalVariables;
     private HandleEventTask myEventsTask = null;
-    //private LeaveHandleEventTask LeaveEventTask = null; //not needed
     public SharedPreferences prefs ;
-    ImageButton filterButton;
-    Boolean isOK = true;
-    String userLoginId;
-    User currentUser;
-    Set<String> userEvents;
-    EditText inputSearch;
+    private ImageButton filterButton;
+    private Boolean isOK = true;
+    private String userLoginId;
+    private User currentUser;
+    private Set<String> userEvents;
+    private EditText inputSearch;
+    private ProgressBar progressBar ;
+    private ProgressDialog progressDialog;
+
+    View rootView;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_list, container, false);
+        rootView = inflater.inflate(R.layout.fragment_list, container, false);
         // avoiding opening Keyboard automatically
         getActivity().getWindow().setSoftInputMode(
                 WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
@@ -111,6 +115,7 @@ public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefre
                 startActivity(iv, bndlanimation);
             }
         });
+
 
 
         new getList().execute();
@@ -163,23 +168,33 @@ public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefre
 
     }
 
-    private class getList extends AsyncTask<String, Integer, Integer> {
+    private class getList extends AsyncTask<Integer, Integer,String> { // params , progress, result
+
+        private ProgressDialog dialog = new ProgressDialog(FragmentList.this.getActivity());
 
         @Override
         protected void onPreExecute() {
-            // TODO ?
-            super.onPreExecute();
+//            progressBar = (ProgressBar) rootView.findViewById(R.id.progress_bar_main);
+//            progressBar.setVisibility(View.VISIBLE);
+            String message = "Loading ...";
+            SpannableString spanMessage = new SpannableString(message);
+            spanMessage.setSpan(new RelativeSizeSpan(2f),0,spanMessage.length(),0);
+            spanMessage.setSpan(new ForegroundColorSpan(Color.parseColor("#104e8b")),0,spanMessage.length(),0);
+            dialog.setTitle("Please wait");
+            dialog.setMessage(spanMessage);
+            dialog.setIcon(R.drawable.pg_loading);
+//            dialog.setIcon();
+            dialog.show();
+//            super.onPreExecute();
         }
         @Override
-        protected Integer doInBackground(String... params) {
+        protected String doInBackground(Integer... params) {
             // TODO Auto-generated method stub
             return null;
         }
-        @Override
-        protected void onPostExecute(Integer result) {
 
-//            if (progressDialog.isShowing()) {
-//                progressDialog.dismiss();
+        @Override
+        protected void onPostExecute(String result) {
             events_list = (ListView) getActivity().findViewById(R.id.list_detail);
             SwipeRefreshLayout swipeRefreshLayout =  (SwipeRefreshLayout)getActivity().
             findViewById(R.id.swipe_refresh_layout);
@@ -254,7 +269,27 @@ public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefre
                         }
                     });
                 }
-            }}
+            }
+//            progressBar.setVisibility(View.GONE);
+            try
+            {
+                if(dialog.isShowing())
+                {
+                    dialog.dismiss();
+                }
+                // do your Display and data setting operation here
+            }
+            catch(Exception e)
+            {
+
+            }
+        }
+
+        @Override
+        protected void onProgressUpdate(Integer... values) {
+            super.onProgressUpdate(values);
+//            progressBar.setProgress(values[0]);
+        }
     }
 
     public class HomeEventsAdapter extends BaseAdapter {
@@ -404,7 +439,11 @@ public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefre
         }
         private String responseString;
 
-        protected void onPreExecute() {}
+        protected void onPreExecute() {
+//            progressBar = (ProgressBar) rootView.findViewById(R.id.progress_bar);
+//            progressBar.setVisibility(View.VISIBLE);
+            super.onPreExecute();
+        }
 
         @Override
         protected String doInBackground(Void... params) {
@@ -464,7 +503,14 @@ public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefre
             return null;
         }
         @Override
-        protected void onPostExecute(final String responseString) {}
+        protected void onPostExecute(final String responseString) {
+//            progressBar.setVisibility(View.GONE);
+        }
+
+//        @Override
+//        protected void onProgressUpdate(Integer... values) {
+//            super.onProgressUpdate(values);
+//        }
     }
 
     @Override

@@ -69,7 +69,6 @@ public class MyGcmListenerService extends GcmListenerService {
             }
 //        }
 
-
         if (from.startsWith("/topics/")) {
             // message received from some topic.
         } else {

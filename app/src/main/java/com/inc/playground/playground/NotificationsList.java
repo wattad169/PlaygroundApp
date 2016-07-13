@@ -78,14 +78,28 @@ public class NotificationsList extends Fragment {
             String type = "";
             switch (type){
                 case "invited":
+                    positiveBtn.setText("Join");
+                    negativeBtn.setText("Cancel");
                     break;
                 case "join":
+                    //if (event is public)
+                    positiveBtn.setVisibility(View.INVISIBLE);
+                    negativeBtn.setVisibility(View.INVISIBLE);
+                    //else
+                    positiveBtn.setText("Approve");
+                    negativeBtn.setText("Reject");
                     break;
-                case "edited":
+                case "edited": // what is the terminology
+                    positiveBtn.setText("Approve");
+                    negativeBtn.setText("Reject");
                     break;
                 case "decline":
+                    positiveBtn.setVisibility(View.INVISIBLE);
+                    negativeBtn.setVisibility(View.INVISIBLE);
                     break;
                 case "game_on":
+                    positiveBtn.setVisibility(View.INVISIBLE);
+                    negativeBtn.setVisibility(View.INVISIBLE);
                     break;
             }
             return view;

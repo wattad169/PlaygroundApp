@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -43,22 +44,26 @@ public class Splash extends Activity {
     public static GlobalVariables globalVariables;
     public User currentUser;
     private BroadcastReceiver mRegistrationBroadcastReceiver;
-    private ProgressBar mRegistrationProgressBar;
+    private static ProgressBar progressBar;
     private TextView mInformationTextView;
 
     JSONArray getAllUsersResponse;
     HashMap<String,Bitmap> userToImage = new HashMap<String,Bitmap>();
     ArrayList<UserImageEntry> usersList = new ArrayList<UserImageEntry>() ;
     private boolean isReceiverRegistered;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_splash);
         // Set action bar color
         final ActionBar actionBar = getActionBar();
         actionBar.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.primaryColor)));
+        // Set progress bar
+        progressBar = (ProgressBar) findViewById(R.id.progress_bar);
         //Check if user is login
         SharedPreferences prefs = getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
-
         currentUser = new User();
         globalVariables = ((GlobalVariables) this.getApplication());
         globalVariables.SetCurrentUser(currentUser);
@@ -72,16 +77,18 @@ public class Splash extends Activity {
             String userLoginId = prefs.getString("userid", null);
             currentUser.SetUserId(userLoginId);
             // Create server call
-            new GetUserEventsAsyncTask().execute();
+            GetUserEventsAsyncTask taskUserEvents = new GetUserEventsAsyncTask();
+            taskUserEvents.setProgressBar(progressBar);
+            taskUserEvents.execute();
         }
         // Get events from server
-
-        setContentView(R.layout.activity_splash);
 
         globalVariables.InitGPS(Splash.this);
         globalVariables.SetCurrentLocation(Utils.getMyLocation(globalVariables.GetGPS()));
         // Create server call
-        new GetEventsAsyncTask(this).execute();
+        GetEventsAsyncTask tsakEvents = new GetEventsAsyncTask(this);
+        tsakEvents.setProgressBar(progressBar);
+        tsakEvents.execute();
         new GetUsersImages(this).execute();
 
     }
@@ -92,14 +99,22 @@ public class Splash extends Activity {
             isReceiverRegistered = true;
         }
     }
+
     public static class GetEventsAsyncTask extends AsyncTask<String, String, String> {
         private Context context;
         GetEventsAsyncTask(Context cntx){
             this.context = cntx;
         }
 
+        ProgressBar bar;
+
+        public void setProgressBar(ProgressBar bar) {
+            this.bar = bar;
+        }
+
         @Override
         protected void onPreExecute() {
+            this.bar.setVisibility(View.VISIBLE);
             super.onPreExecute();
         }
 
@@ -142,6 +157,7 @@ public class Splash extends Activity {
         @Override
         protected void onPostExecute(String lenghtOfFile) {
             // do stuff after posting data
+            this.bar.setVisibility(View.GONE);
             Intent i = new Intent(this.context, MainActivity.class);
             this.context.startActivity(i);
             ((Activity)this.context).finish();
@@ -149,10 +165,18 @@ public class Splash extends Activity {
         }
     }
 
-    public class GetUserEventsAsyncTask extends AsyncTask<String, String, String> {
+    public class GetUserEventsAsyncTask extends AsyncTask<String, Integer, String> {
         ArrayList<EventUserObject> userEventsObjects;
+
+        ProgressBar bar;
+
+        public void setProgressBar(ProgressBar bar) {
+            this.bar = bar;
+        }
+
         @Override
         protected void onPreExecute() {
+            this.bar.setVisibility(View.VISIBLE);
             super.onPreExecute();
         }
 
@@ -203,11 +227,18 @@ public class Splash extends Activity {
 
         @Override
         protected void onPostExecute(String lenghtOfFile) {
-            // do stuff after posting data
+            this.bar.setVisibility(View.GONE);
+            super.onPostExecute(lenghtOfFile);
             Log.d("successful", "successful");
         }
+
+
+        @Override
+        protected void onProgressUpdate(Integer... values) {
+            super.onProgressUpdate(values);
+        }
     }
-    public class GetUsersImages extends AsyncTask<String, String, String> {
+    public class GetUsersImages extends AsyncTask<String, Integer, String> {
         public static final String TAG = "GetUsersImages";
 
         Bitmap imageBitmap;
@@ -220,6 +251,8 @@ public class Splash extends Activity {
         }
         @Override
         protected void onPreExecute() {
+//            progressBar = (ProgressBar) findViewById(R.id.progress_bar);
+//            progressBar.setVisibility(View.VISIBLE);
             super.onPreExecute();
         }
 
@@ -276,11 +309,19 @@ public class Splash extends Activity {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+//                progressBar.setVisibility(View.GONE);
+                super.onPostExecute(lenghtOfFile);
 
             }
             globalVariables.SetUsersList(usersList);
             globalVariables.SetUsersImagesMap(userToImage);
             Log.d(TAG, "getUsersImages.successful" + userToImage.toString());
+        }
+
+
+        @Override
+        protected void onProgressUpdate(Integer... values) {
+            super.onProgressUpdate(values);
         }
     }
 

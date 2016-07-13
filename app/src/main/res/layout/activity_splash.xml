@@ -5,5 +5,12 @@
     android:background="@drawable/pg_splash"
     tools:context="com.inc.playground.playground.Splash" >
 
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_gravity="center"
+        android:layout_centerInParent="true">
+    </ProgressBar>
 
 </RelativeLayout>
