@@ -93,7 +93,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:id="@+id/current_size"
+                android:id="@+id/min_size"
                 android:layout_alignParentBottom="true"
                 android:paddingLeft="70dp" />
 
@@ -104,7 +104,7 @@
                 android:text="/"
                 android:id="@+id/textView2"
                 android:layout_alignParentBottom="false"
-                android:layout_toRightOf="@+id/current_size"
+                android:layout_toRightOf="@+id/min_size"
                 android:textStyle="bold"
                 android:layout_below="@+id/Play_txt"
                 android:layout_marginTop="1dp" />
@@ -113,7 +113,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:id="@+id/event_max_size"
+                android:id="@+id/min_size"
                 android:layout_alignParentBottom="true"
                 android:layout_toRightOf="@+id/textView2" />
 

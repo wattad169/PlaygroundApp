@@ -102,7 +102,7 @@ public class MyGcmListenerService extends GcmListenerService {
 
         globalVariables = ((GlobalVariables) this.getApplication());
         ArrayList<NotificationObject> notificationList = globalVariables.GetNotifications();
-        EventsObject curEvent = new EventsObject();
+        EventsObject curEvent;
         NotificationObject curNotification = new NotificationObject();
         curNotification.setDescription(message);
         curNotification.setTitle(title);

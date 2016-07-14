@@ -16,12 +16,12 @@ import java.util.HashMap;
 public class EventsObject implements Serializable ,EventsObjectInterface {
     // TODO: 12/07/2016 mostafa: all functions should start with small case
 
-    String id, name, formattedLocation, type, size, date, startTime, endTime, description, status, distance, maxSize;
+    String id,name, formattedLocation, type, size, date, startTime, endTime, description, status, distance, maxSize;
 
     String isPublic;//1 indicate public, 0 indicate that members need approval
     ArrayList<String> members;
 
-    ArrayList<User> approveList;
+    ArrayList<User> approveList =  new ArrayList<>();;
 
     // TODO ADD EVENT MEMBERS (A LIST CONTAINING USERS)
     String creatorId;
@@ -56,7 +56,7 @@ public class EventsObject implements Serializable ,EventsObjectInterface {
 
     public String GetSize() { return size; }
 
-    public void SetSize(String size){ this.size = size;	}
+    public void SetSize(String size){ this.size = size;	} // size is the min attend
 
     public String GetDate() { return date; }
 

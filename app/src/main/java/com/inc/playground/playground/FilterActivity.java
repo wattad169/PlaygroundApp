@@ -17,6 +17,7 @@ import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
+import android.preference.PreferenceScreen;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -57,7 +58,6 @@ public class FilterActivity extends PreferenceActivity {
         super.onCreate(savedInstanceState);
 
         addPreferencesFromResource(R.xml.filter);
-
 
         datePicker = (DatePreference) findPreference("date_picker");
         datePicker.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
@@ -112,7 +112,13 @@ public class FilterActivity extends PreferenceActivity {
             }
         });
 
-
+        SharedPreferences prefs = getSharedPreferences("Login", MODE_PRIVATE);
+        if (prefs.getString("userid", null) == null)
+        {
+            PreferenceScreen preferenceScreen = getPreferenceScreen();
+            preferenceScreen.removePreference(myEventsOnly);
+            preferenceScreen.removePreference(myCreatedEventsOnly);
+        }
 
 
         // ATTENTION: This was auto-generated to implement the App Indexing API.

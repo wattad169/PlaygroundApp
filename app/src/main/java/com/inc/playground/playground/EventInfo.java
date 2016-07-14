@@ -5,7 +5,6 @@ import android.app.DialogFragment;
 import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
@@ -17,12 +16,8 @@ import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
-import android.media.Image;
-import android.os.AsyncTask;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.provider.CalendarContract;
 import android.support.v4.app.FragmentActivity;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
@@ -38,11 +33,8 @@ import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.ScrollView;
 import android.widget.TextView;
-import android.widget.Toast;
-import android.widget.ToggleButton;
 import android.widget.ToggleButton;
 
-import com.facebook.android.Util;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -57,13 +49,8 @@ import com.inc.playground.playground.utils.CustomMarker;
 import com.inc.playground.playground.utils.DownloadImageBitmapTask;
 import com.inc.playground.playground.utils.EventUserObject;
 import com.inc.playground.playground.utils.GPSTracker;
-import com.inc.playground.playground.utils.LatLngInterpolator;
 import com.inc.playground.playground.utils.NetworkUtilities;
-import com.inc.playground.playground.utils.RoundedImageView;
 import com.inc.playground.playground.utils.User;
-import com.inc.playground.playground.utils.Utils;
-
-import junit.framework.Assert;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -74,7 +61,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.EventObject;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -110,7 +96,7 @@ public class EventInfo extends FragmentActivity {
     //DahanLina
 
     EventsObject currentEvent;
-    TextView viewName, viewDateEvent, viewStartTime, viewEndTime, viewCurMembers, viewLocation, viewSize, viewCurrentSize, viewEventDescription, viewPlay, viewStatus;
+    TextView viewName, viewDateEvent, viewStartTime, viewEndTime, viewCurMembers, viewLocation, viewMinSize, viewCurrentSize, viewMaxSize, viewEventDescription, viewPlay, viewStatus;
     ImageView typeImg, statusImg;
     JSONArray membersImagesUrls;
     private HandleEventTask handleEventTask = null;
@@ -142,8 +128,9 @@ public class EventInfo extends FragmentActivity {
         viewEndTime = (TextView) findViewById(R.id.event_end_time);
         viewCurMembers = (TextView) findViewById(R.id.cur_membersTxt);
         viewLocation = (TextView) findViewById(R.id.event_formatted_location);
-        viewSize = (TextView) findViewById(R.id.event_max_size);
-        viewCurrentSize = (TextView) findViewById(R.id.current_size);
+        viewMinSize = (TextView) findViewById(R.id.event_min_size);
+        viewCurrentSize = (TextView) findViewById(R.id.event_current_size);
+        viewMaxSize = (TextView) findViewById(R.id.event_max_size);
         viewEventDescription = (TextView) findViewById(R.id.event_description);
         typeImg = (ImageView) findViewById(R.id.type_img);
         playButton = (ToggleButton) findViewById(R.id.playing_btn);
@@ -210,7 +197,8 @@ public class EventInfo extends FragmentActivity {
         viewStartTime.setText(currentEvent.GetStartTime());
         viewEndTime.setText(currentEvent.GetEndTime());
         viewLocation.setText(currentEvent.GetFormattedLocation());
-        viewSize.setText(currentEvent.GetSize());
+        viewMinSize.setText(currentEvent.GetSize());
+        viewMaxSize.setText(currentEvent.getMaxSize());
         viewEventDescription.setText(currentEvent.GetDescription());
         viewStatus.setVisibility(View.INVISIBLE);
         statusImg.setVisibility(View.INVISIBLE);
@@ -474,6 +462,7 @@ public class EventInfo extends FragmentActivity {
                 //remove member picture
                 membersList.removeView(findMemberPhoto());
                 userEvents.remove(currentEvent.GetId());//remove current event from userEvents
+                viewCurrentSize.setText(Integer.toString(membersList.getChildCount()));
             }
         }
         else {//join event
@@ -502,10 +491,14 @@ public class EventInfo extends FragmentActivity {
             viewCurrentSize.setText(Integer.toString(membersImagesUrls.length() + 1));
 
             //set status ("game on!" or not)
-            if (Integer.valueOf((String) viewCurrentSize.getText()) == Integer.valueOf((String) viewSize.getText())) {
+            if (Integer.valueOf((String) viewCurrentSize.getText()) == Integer.valueOf((String) viewMinSize.getText())) {
                 viewStatus.setVisibility(View.VISIBLE);
                 statusImg.setVisibility(View.VISIBLE);
                 //            mainLayout.setBackgroundColor(Color.parseColor("#98fb98"));
+            }
+            if (Integer.valueOf((String) viewCurrentSize.getText()) == Integer.valueOf((String) viewMaxSize.getText())) {
+                //TODO : set not clickable for join to event -> only for leave
+
             }
             if (userEvents == null) userEvents = new HashSet<>();
             userEvents.add(currentEvent.GetId());
@@ -684,10 +677,13 @@ public class EventInfo extends FragmentActivity {
             // do stuff after posting data
             viewCurrentSize.setText(Integer.toString(membersImagesUrls.length()));
             viewCurMembers.setText(Integer.toString(membersImagesUrls.length()));
-            if (Integer.valueOf((String) viewCurrentSize.getText()) == Integer.valueOf((String) viewSize.getText())) {
+            if (Integer.valueOf((String) viewCurrentSize.getText()) == Integer.valueOf((String) viewMinSize.getText())) {
                 viewStatus.setVisibility(View.VISIBLE);
                 statusImg.setVisibility(View.VISIBLE);
 //                mainLayout.setBackgroundColor(Color.parseColor("#98fb98"));
+            }
+            if (Integer.valueOf((String) viewCurrentSize.getText()) == Integer.valueOf((String) viewMaxSize.getText())) {
+                //TODO : set not clickable for join to event -> only for leave
             }
             for (int i = 0; i < membersImagesUrls.length(); i++) {
                 try {

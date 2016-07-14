@@ -45,7 +45,6 @@ import java.math.BigDecimal;
 import java.math.MathContext;
 import java.util.ArrayList;
 
-import java.util.EventObject;
 import java.util.HashMap;
 
 /**
@@ -253,7 +252,7 @@ final public class NetworkUtilities {
         currentEvent.SetName(jsonObject.getString(Constants.EVENT_NAME));
         currentEvent.SetFormattedLocation(jsonObject.getString(Constants.EVENT_LOCATION));
         currentEvent.SetType(jsonObject.getString(Constants.EVENT_TYPE));
-        currentEvent.SetSize(jsonObject.getString(Constants.EVENT_SIZE));
+        currentEvent.SetSize(jsonObject.getString(Constants.EVENT_MIN_SIZE));
         currentEvent.setMaxSize(jsonObject.getString(Constants.EVENT_MAX_SIZE));
         currentEvent.SetDate(jsonObject.getString(Constants.EVENT_DATE));
         currentEvent.SetStartTime(jsonObject.getString(Constants.START_TIME));
