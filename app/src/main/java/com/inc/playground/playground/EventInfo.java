@@ -33,6 +33,7 @@ import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.google.android.gms.maps.CameraUpdate;
@@ -167,7 +168,7 @@ public class EventInfo extends FragmentActivity {
             latitude = Double.parseDouble(location.get("lat"));
             longitude = Double.parseDouble(location.get("lon"));
         } catch (NumberFormatException e) {
-            // TODO: handle exception
+            // TODO: handle exception how? lina,yarden, mostafa?
         }
 
         Log.d("location", "" + latitude + longitude);
@@ -449,10 +450,14 @@ public class EventInfo extends FragmentActivity {
         if (!x.isChecked()) {
             assert (currentUser!=null);
             if(currentUser.GetUserId().equals(currentEvent.GetCreatorId())) {//cancel event
-                //Todo : toast message
+                //toast
+                String text = "Event was canceled";
+                Toast toast = Toast.makeText(getApplicationContext(),text,Toast.LENGTH_LONG);
+                toast.show();
                 eventTask = "cancel_event";
                 viewPlay.setText("cancel");
                 viewPlay.setTextColor(Color.parseColor("#D0D0D0"));
+                finish();
             }
             else{ //leave_event
                 eventTask = "leave_event";
@@ -544,6 +549,9 @@ public class EventInfo extends FragmentActivity {
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
                 }
+                catch(NullPointerException nPiotExc){
+                    nPiotExc.printStackTrace();
+                }
                 if (responseString == null) {
                     Log.i("TESTID", currentEvent.GetId());
                 }
@@ -557,6 +565,10 @@ public class EventInfo extends FragmentActivity {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+                catch(NullPointerException nPiotExc){
+                    nPiotExc.printStackTrace();
+                }
+
                 if (myObject != null && responseStatus != null) {
                     if (responseStatus.equals(Constants.RESPONSE_OK.toString())) {
                         //Todo-Idan :cover the new eventTask that we have now: leave and cancel
@@ -789,14 +801,14 @@ public class EventInfo extends FragmentActivity {
             try {
 
                 responseJSON = new JSONObject(userProfileResponseStr);
-                userInfoFroServer = responseJSON.getJSONObject(Constants.RESPONSE_MESSAGE);//Todo:update what i get
+                userInfoFroServer = responseJSON.getJSONObject(Constants.RESPONSE_MESSAGE);
 
                 Intent iv = new Intent(EventInfo.this,
                         com.inc.playground.playground.upLeft3StripesButton.
                                 MyProfile.class);
 
                 JSONArray eventEntries = userInfoFroServer.getJSONArray("eventsEntries");
-                ArrayList<EventUserObject> memeberEvents = NetworkUtilities.eventUserListToArrayList(eventEntries, globalVariables.GetCurrentLocation(), "eventsEntries");//Todo :update here
+                ArrayList<EventUserObject> memeberEvents = NetworkUtilities.eventUserListToArrayList(eventEntries, globalVariables.GetCurrentLocation(), "eventsEntries");
 
                 iv.putExtra("name", userInfoFroServer.getString("fullname"));
                 iv.putExtra("createdNumOfEvents",userInfoFroServer.getString("createdCount"));

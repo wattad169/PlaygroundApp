@@ -88,10 +88,9 @@ public class Splash extends Activity {
         globalVariables.InitGPS(Splash.this);
         globalVariables.SetCurrentLocation(Utils.getMyLocation(globalVariables.GetGPS()));
 
-        if(NetworkUtilities.onlineException==false) {//not helping
-            new GetEventsAsyncTask(this).execute();
-            new GetUsersImages(this).execute();
-        }
+        //server calls
+        new GetEventsAsyncTask(this).execute();
+        new GetUsersImages(this).execute();
 
     }
     private void registerReceiver(){
@@ -317,6 +316,9 @@ public class Splash extends Activity {
                     } catch (ExecutionException e) {
                         e.printStackTrace();
                     } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    catch(NullPointerException e){
                         e.printStackTrace();
                     }
                     super.onPostExecute(lenghtOfFile);
