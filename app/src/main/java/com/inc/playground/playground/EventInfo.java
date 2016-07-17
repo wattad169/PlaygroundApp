@@ -513,7 +513,6 @@ public class EventInfo extends FragmentActivity {
 
     public class HandleEventTask extends AsyncTask<Void, Void, String> {
         /*handle 3 requests: 1.join_event 2. leave_event 3. cancel_events (the whole event) */
-        //private Context context; //Todo : explain what is it or delete (idan wants to delete it)
 
         private String responseString;
         String eventTask;

@@ -77,6 +77,8 @@ final public class NetworkUtilities {
 
     public static final String USER_ID = "user_id";
 
+    public static boolean onlineException = false;
+
     public static final String PHOTO_URL = "photo_url";
     private static double originLon;
     private static double originLat;
@@ -147,6 +149,7 @@ final public class NetworkUtilities {
             }
         } catch (final IOException e) {
             Log.e(TAG, "IOException when getting authtoken", e);
+            onlineException= true; // will be used in Splash to detect errors in internet connections
             return null;
         } finally {
             Log.v(TAG, "getAuthtoken completing");
