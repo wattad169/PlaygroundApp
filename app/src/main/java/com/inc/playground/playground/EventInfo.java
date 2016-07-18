@@ -168,6 +168,7 @@ public class EventInfo extends FragmentActivity {
             latitude = Double.parseDouble(location.get("lat"));
             longitude = Double.parseDouble(location.get("lon"));
         } catch (NumberFormatException e) {
+            e.printStackTrace();
             // TODO: handle exception how? lina,yarden, mostafa?
         }
 
@@ -544,13 +545,8 @@ public class EventInfo extends FragmentActivity {
                     //Todo : should ask the creator to join
                     //cred.put(<creator> , )
                     responseString = NetworkUtilities.doPost(cred, NetworkUtilities.BASE_URL + "/" + eventTask+ "/");//'eventTask' can be: leave/cancel/join event
-                } catch (JSONException e) {
+                } catch (JSONException|UnsupportedEncodingException|NullPointerException e) {
                     e.printStackTrace();
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                }
-                catch(NullPointerException nPiotExc){
-                    nPiotExc.printStackTrace();
                 }
                 if (responseString == null) {
                     Log.i("TESTID", currentEvent.GetId());
@@ -562,11 +558,8 @@ public class EventInfo extends FragmentActivity {
                 try {
                     myObject = new JSONObject(responseString);
                     responseStatus = myObject.getString(Constants.RESPONSE_STATUS);
-                } catch (JSONException e) {
+                } catch (JSONException|NullPointerException e) {
                     e.printStackTrace();
-                }
-                catch(NullPointerException nPiotExc){
-                    nPiotExc.printStackTrace();
                 }
 
                 if (myObject != null && responseStatus != null) {
@@ -621,7 +614,7 @@ public class EventInfo extends FragmentActivity {
                     imageBitmap = new DownloadImageBitmapTask().execute(userPhoto).get();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
-                } catch (ExecutionException e) {
+                } catch (ExecutionException|NullPointerException e) {
                     e.printStackTrace();
                 }
 
@@ -660,7 +653,7 @@ public class EventInfo extends FragmentActivity {
                 try {
                     cred.put(NetworkUtilities.TOKEN, userToken);
                     cred.put("event_id", currentEvent.GetId());
-                } catch (JSONException e) {
+                } catch (JSONException|NullPointerException e) {
                     Log.i(TAG, e.toString());
                 }
                 responseString = NetworkUtilities.doPost(cred, NetworkUtilities.BASE_URL + "/get_members_urls/");
@@ -700,14 +693,9 @@ public class EventInfo extends FragmentActivity {
                 try {
                     photoURL = membersImagesUrls.getString(i);
                     imageBitmap = new DownloadImageBitmapTask().execute(photoURL).get();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } catch (ExecutionException e) {
-                    e.printStackTrace();
-                } catch (JSONException e) {
+                } catch (InterruptedException|ExecutionException|JSONException e) {
                     e.printStackTrace();
                 }
-
                 Bitmap newMember = getRoundedShape(imageBitmap);
                 ImageView member = new ImageView(thisContext);
                 member.setImageBitmap(newMember);
@@ -747,9 +735,8 @@ public class EventInfo extends FragmentActivity {
                 }
                 // do your Display and data setting operation here
             }
-            catch(Exception e)
-            {
-
+            catch(Exception e) {
+                e.printStackTrace();
             }
         }
         @Override
@@ -768,7 +755,6 @@ public class EventInfo extends FragmentActivity {
             this.photoUrl = photoUrl;
 
         }
-
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -785,9 +771,7 @@ public class EventInfo extends FragmentActivity {
                     cred.put(NetworkUtilities.PHOTO_URL, photoUrl);
                     userProfileResponseStr = NetworkUtilities.doPost(cred, NetworkUtilities.BASE_URL + "/get_user_by_photo/");
 
-                } catch (JSONException e) {
-                    Log.i(TAG, e.toString());
-                } catch (UnsupportedEncodingException e) {
+                } catch (JSONException|UnsupportedEncodingException e) {
                     Log.i(TAG, e.toString());
                 }
             } catch (Exception ex) {
@@ -818,7 +802,7 @@ public class EventInfo extends FragmentActivity {
 //                finish();
 
 
-            } catch (JSONException e) {
+            } catch (JSONException|NullPointerException e) {
                 e.printStackTrace();
             }
             return null;

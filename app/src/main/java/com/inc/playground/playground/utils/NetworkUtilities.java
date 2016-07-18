@@ -77,7 +77,9 @@ final public class NetworkUtilities {
 
     public static final String USER_ID = "user_id";
 
-    public static boolean onlineException = false;
+    public static boolean onlineException = false;//indicate if the user have internet problems
+
+    public static boolean serverException = false;//indicate if we have problem in the server
 
     public static final String PHOTO_URL = "photo_url";
     private static double originLon;
@@ -145,6 +147,7 @@ final public class NetworkUtilities {
                 return resopnseString;
             } else {
                 Log.e(TAG, "Error authenticating" + resp.getStatusLine());
+                serverException = true;
                 return null;
             }
         } catch (final IOException e) {
@@ -187,8 +190,8 @@ final public class NetworkUtilities {
 
         String str_originLon_tune  =  (originLon_tune_bg+"").substring(0,6);
         String str_originLat_tune  =  (originLat_tune_bg+"").substring(0,6);
-        String str_distanceLon_tune=  (distanceLon_tune_bg+"").substring(0,6);
-        String str_distanceLat_tune=  (distanceLat_tune_bg+"").substring(0,6);
+        String str_distanceLon_tune=  (distanceLon_tune_bg+"").substring(0, 6);
+        String str_distanceLat_tune=  (distanceLat_tune_bg+"").substring(0, 6);
 
 /*
         String originLon_tune = String.format("%.3f", ( originLon));
@@ -301,12 +304,6 @@ final public class NetworkUtilities {
     }
 
 
-    ///// check!!!
-    public static ArrayList<EventsObject> eventListToArrayList2(JSONArray jsonInput,HashMap<String, Double> currentLocation) throws JSONException {
-        ArrayList<EventsObject> events = new ArrayList<EventsObject>();
-        return events;
-    }
-    ///// check!!!
 
     /**
      *
@@ -337,7 +334,7 @@ final public class NetworkUtilities {
      *
      * @param jsonObject
      * @param currentLocation
-     * @return
+     * @return ArrayList<EventUserObject> - all the events types of the login user
      * @throws JSONException
      */
     public static ArrayList<EventUserObject> allUserEvents(JSONObject jsonObject,HashMap<String, Double> currentLocation) throws JSONException {
@@ -357,7 +354,5 @@ final public class NetworkUtilities {
         }
         return eventsUserObject;
     }
-
-
 
 }

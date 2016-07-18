@@ -151,17 +151,17 @@ public class Splash extends Activity {
             return null;
         }
 
-        @Override
+        @Override //GetEventsAsyncTask class
         protected void onPostExecute(String lenghtOfFile) {
             // do stuff after posting data
-            if (NetworkUtilities.onlineException == false) { //connection works properly
+            if(NetworkUtilities.onlineException==false && NetworkUtilities.serverException==false) { //connection works properly
                 Intent i = new Intent(this.context, MainActivity.class);
                 this.context.startActivity(i);
                 ((Activity) this.context).finish();
                 Log.d("successful", "successful");
             }
-            else{//GetEventsAsyncTask
-                InternetErrorToast(this.context);
+            else{
+                InternetErrorGenericToast(this.context, NetworkUtilities.onlineException, NetworkUtilities.serverException);
 
             }
         }
@@ -230,12 +230,12 @@ public class Splash extends Activity {
         @Override //GetUserEventsAsyncTask
         protected void onPostExecute(String lenghtOfFile) {
             //internt work properly
-            if(NetworkUtilities.onlineException==false) {
+            if(NetworkUtilities.onlineException==false && NetworkUtilities.serverException==false) {
                 super.onPostExecute(lenghtOfFile);
+                Log.d("successful", "successful");
             }
             else {
-                Log.d("successful", "successful");
-                InternetErrorToast(getApplicationContext());
+                InternetErrorGenericToast(getApplicationContext(), NetworkUtilities.onlineException, NetworkUtilities.serverException);
             }
         }
 
@@ -294,10 +294,10 @@ public class Splash extends Activity {
             return null;
         }
 
-        @Override
+        @Override //GetUsersImages class
         protected void onPostExecute(String lenghtOfFile) {
 
-            if(NetworkUtilities.onlineException==false) {//internet work properly
+            if(NetworkUtilities.onlineException==false && NetworkUtilities.serverException==false) {//internet work properly
                 // do stuff after posting data
                 for(int i=0;i<getAllUsersResponse.length();i++)
                 {
@@ -329,7 +329,7 @@ public class Splash extends Activity {
                 Log.d(TAG, "getUsersImages.successful" + userToImage.toString());
             }
             else {
-            InternetErrorToast(getApplicationContext());
+                InternetErrorGenericToast(getApplicationContext(), NetworkUtilities.onlineException ,NetworkUtilities.serverException );
             }
         }
 
@@ -353,10 +353,43 @@ public class Splash extends Activity {
         super.onPause();
     }
 
+
+    /**
+     * present appropriate Toast message for internet/Server error
+     * @param context
+     * @param onlineException
+     * @param serverException
+     */
+    public static void InternetErrorGenericToast(Context context , boolean onlineException,boolean serverException ){
+        if(onlineException){//==true
+            InternetErrorToast(context);
+        }
+        else if(serverException){
+            serverErrorToast(context);
+        }
+    }
+
+        /**
+         * Present Toast message in case the user has internet connection problems
+         * @param context
+         */
     public static void InternetErrorToast(Context context){
-        String text = "Can't connect to PlayGround service at the moment. Sorry. please check your internet connection";
+        String text = "Can't connect to PlayGround service. Please check your internet connection";
         Toast toast = Toast.makeText(context,text,Toast.LENGTH_LONG);
         toast.show();
     }
+
+    /**
+     * Present Toast message in case we have error in server
+     * @param context
+     */
+    public static void serverErrorToast(Context context){
+        String text = "Can't connect to PlayGround service at the moment. Sorry .Please try again later";
+        Toast toast = Toast.makeText(context,text,Toast.LENGTH_LONG);
+        toast.show();
+    }
+
+
+
 }
 
