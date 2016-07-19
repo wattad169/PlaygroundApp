@@ -1,11 +1,15 @@
 package com.inc.playground.playground;
 
+import org.json.JSONObject;
+
 /**
  * Created by lina on 7/13/2016.
  */
 public class NotificationObject {
     EventsObject event;
     String description, type, title;
+    JSONObject inputJson;
+
 
     public String getTitle() {
         return title;
@@ -37,6 +41,13 @@ public class NotificationObject {
 
     public void setType(String type) {
         this.type = type;
+    }
+    public JSONObject getInputJson() {
+        return inputJson;
+    }
+
+    public void setInputJson(JSONObject inputJson) {
+        this.inputJson = inputJson;
     }
 }
 

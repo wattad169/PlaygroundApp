@@ -44,20 +44,20 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
-
+import com.inc.playground.playground.utils.InitGlobalVariables;
 public class Splash extends Activity {
     private static final String TAG = "Splash: ";
     public static final String MY_PREFS_NAME = "Login";
-    public static GlobalVariables globalVariables;
-    public User currentUser;
+
+    public static User currentUser;
     private BroadcastReceiver mRegistrationBroadcastReceiver;
     private TextView mInformationTextView;
 
-    HashMap<String,Bitmap> userToImage = new HashMap<String,Bitmap>();
-    ArrayList<UserImageEntry> usersList = new ArrayList<UserImageEntry>() ;
+    public static HashMap<String,Bitmap> userToImage = new HashMap<String,Bitmap>();
+    public static ArrayList<UserImageEntry> usersList = new ArrayList<UserImageEntry>() ;
     private boolean isReceiverRegistered;
-        JSONArray getAllUsersResponse;
-
+    public static JSONArray getAllUsersResponse;
+    public static InitGlobalVariables initInSplash;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,30 +67,11 @@ public class Splash extends Activity {
         final ActionBar actionBar = getActionBar();
         actionBar.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.primaryColor)));
         //Check if user is login
-        SharedPreferences prefs = getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
-        currentUser = new User();
-        globalVariables = ((GlobalVariables) this.getApplication());
-        globalVariables.SetCurrentUser(currentUser);
-        if (prefs.getString("fullname", null) != null){
-            String userName = prefs.getString("fullname", null);
-            currentUser.setName(userName);
-        }
+        Intent i = new Intent(this, MainActivity.class);
+        initInSplash = new InitGlobalVariables(this,i);
+        initInSplash.init();
 
-        if (prefs.getString("userid", null) != null)
-        { // Get users events
-            String userLoginId = prefs.getString("userid", null);
-            currentUser.SetUserId(userLoginId);
-            // Create server call
-            GetUserEventsAsyncTask taskUserEvents = new GetUserEventsAsyncTask();
-            taskUserEvents.execute();
-            //call to GetEventsAsyncTask and GetUsersImages from: onPostExcute (to handle internet connecetions)
-        }
-        globalVariables.InitGPS(Splash.this);
-        globalVariables.SetCurrentLocation(Utils.getMyLocation(globalVariables.GetGPS()));
 
-        //server calls
-        new GetEventsAsyncTask(this).execute();
-        new GetUsersImages(this).execute();
 
     }
     private void registerReceiver(){
@@ -103,13 +84,16 @@ public class Splash extends Activity {
 
     public static class GetEventsAsyncTask extends AsyncTask<String, String, String> {
         private Context context;
-        GetEventsAsyncTask(Context cntx){
+        private Intent nextActivity;
+        public GetEventsAsyncTask(Context cntx,Intent nextActivityIn){
             this.context = cntx;
+            this.nextActivity = nextActivityIn;
         }
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
+
         }
 
         @Override
@@ -140,8 +124,8 @@ public class Splash extends Activity {
             try {
                 responseJSON = new JSONObject(allEventsResponseString);
                 eventsFromServerJSON = responseJSON.getJSONArray(Constants.RESPONSE_MESSAGE);//does that need change? (UserobjectEvents?)
-                ArrayList<EventsObject> eventObjectOnly = NetworkUtilities.eventListToArrayList(eventsFromServerJSON, globalVariables.GetCurrentLocation());
-                globalVariables.SetHomeEvents(eventObjectOnly);
+                ArrayList<EventsObject> eventObjectOnly = NetworkUtilities.eventListToArrayList(eventsFromServerJSON, initInSplash.globalVariables.GetCurrentLocation());
+                initInSplash.globalVariables.SetHomeEvents(eventObjectOnly);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -154,9 +138,10 @@ public class Splash extends Activity {
         @Override //GetEventsAsyncTask class
         protected void onPostExecute(String lenghtOfFile) {
             // do stuff after posting data
-            if(NetworkUtilities.onlineException==false && NetworkUtilities.serverException==false) { //connection works properly
-                Intent i = new Intent(this.context, MainActivity.class);
-                this.context.startActivity(i);
+            if(NetworkUtilities.onlineException==false && NetworkUtilities.serverException==false && this.nextActivity!=null) { //connection works properly
+
+                this.nextActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                this.context.startActivity(this.nextActivity );
                 ((Activity) this.context).finish();
                 Log.d("successful", "successful");
             }
@@ -167,7 +152,12 @@ public class Splash extends Activity {
         }
     }
 
-    public class GetUserEventsAsyncTask extends AsyncTask<String, Integer, String> {
+    public static class GetUserEventsAsyncTask extends AsyncTask<String, Integer, String> {
+        private Context context;
+        public GetUserEventsAsyncTask(Context cntx){
+            this.context = cntx;
+        }
+
         ArrayList<EventUserObject> userEventsObjects;
 
         @Override
@@ -203,7 +193,7 @@ public class Splash extends Activity {
                 eventsFromServerJSON = JSONUserInfo.getJSONArray(Constants.EVENT_ENTRIES);//Todo:update what i get
 
 
-                userEventsObjects =  NetworkUtilities.allUserEvents(JSONUserInfo, globalVariables.GetCurrentLocation());
+                userEventsObjects =  NetworkUtilities.allUserEvents(JSONUserInfo, initInSplash.globalVariables.GetCurrentLocation());
                 Set<String> userEvents = new HashSet<>();
                 for(EventUserObject eUObject : userEventsObjects ){
                     String eventId = eUObject.GetId(); //currentObject.getString(Constants.EVENT_ID);
@@ -234,7 +224,7 @@ public class Splash extends Activity {
                 Log.d("successful", "successful");
             }
             else {
-                InternetErrorGenericToast(getApplicationContext(), NetworkUtilities.onlineException, NetworkUtilities.serverException);
+                InternetErrorGenericToast(this.context, NetworkUtilities.onlineException, NetworkUtilities.serverException);
             }
         }
 
@@ -244,14 +234,14 @@ public class Splash extends Activity {
             super.onProgressUpdate(values);
         }
     }
-    public class GetUsersImages extends AsyncTask<String, Integer, String> {
+    public static class GetUsersImages extends AsyncTask<String, Integer, String> {
         public static final String TAG = "GetUsersImages";
 
         Bitmap imageBitmap;
         ArrayList<Bitmap> usersImages;
         Context thisContext;
 
-        GetUsersImages(Context thisCon){
+        public GetUsersImages(Context thisCon){
             thisContext = thisCon;
 
         }
@@ -323,12 +313,12 @@ public class Splash extends Activity {
                     super.onPostExecute(lenghtOfFile);
 
                 }
-                globalVariables.SetUsersList(usersList);
-                globalVariables.SetUsersImagesMap(userToImage);
+                initInSplash.globalVariables.SetUsersList(usersList);
+                initInSplash.globalVariables.SetUsersImagesMap(userToImage);
                 Log.d(TAG, "getUsersImages.successful" + userToImage.toString());
             }
             else {
-                InternetErrorGenericToast(getApplicationContext(), NetworkUtilities.onlineException ,NetworkUtilities.serverException );
+                InternetErrorGenericToast(this.thisContext, NetworkUtilities.onlineException ,NetworkUtilities.serverException );
             }
         }
 

@@ -41,6 +41,7 @@ import android.widget.ToggleButton;
 
 import com.inc.playground.playground.utils.Constants;
 import com.inc.playground.playground.utils.EventUserObject;
+import com.inc.playground.playground.utils.InitGlobalVariables;
 import com.inc.playground.playground.utils.NetworkUtilities;
 import com.inc.playground.playground.utils.User;
 import com.melnykov.fab.FloatingActionButton;
@@ -91,7 +92,7 @@ public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefre
 
         this.globalVariables = ((GlobalVariables) getActivity().getApplication());
         eventSize = Math.min(Constants.maxEvents, this.globalVariables.GetHomeEvents().size());
-        homeEvents = this.globalVariables.GetHomeEvents().subList(0,eventSize);
+        homeEvents = this.globalVariables.GetHomeEvents().subList(0, eventSize);
         if(getActivity().getIntent().getStringExtra("parent") != null && getActivity().getIntent().getStringExtra("parent").equals("filter"))
         {
             homeEvents = (ArrayList<EventsObject>) getActivity().getIntent().getSerializableExtra("events");
@@ -511,7 +512,8 @@ public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefre
                 findViewById(R.id.swipe_refresh_layout);
 
         swipeRefreshLayout.setRefreshing(true);
-        Splash.GetEventsAsyncTask getEventsAsyncTask = new Splash.GetEventsAsyncTask(this.getContext());
+        Intent i = new Intent(this.getActivity(), MainActivity.class);
+        Splash.GetEventsAsyncTask getEventsAsyncTask = new Splash.GetEventsAsyncTask(this.getContext(),i);
         getEventsAsyncTask.execute();
 
         swipeRefreshLayout.setRefreshing(false);

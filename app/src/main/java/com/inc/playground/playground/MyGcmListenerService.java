@@ -28,6 +28,7 @@ import android.util.Log;
 
 import com.google.android.gms.gcm.GcmListenerService;
 import com.inc.playground.playground.utils.Constants;
+import com.inc.playground.playground.utils.InitGlobalVariables;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -115,34 +116,19 @@ public class MyGcmListenerService extends GcmListenerService {
         NotificationObject curNotification = new NotificationObject();
         curNotification.setDescription(message);
         curNotification.setTitle(title);
+        curNotification.setInputJson(inputJson);
 
         Intent intent = new Intent(this, MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        Intent iv;
+        Intent iv = new Intent();
         // if cancel event
-        if( ! title.contains("canceled"))
+        if(title.contains("requested"))
         {
-            JSONArray eventsFromServerJSON = new JSONArray();
-            try {
-                eventsFromServerJSON = inputJson.getJSONArray("more");
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            iv = new Intent(MyGcmListenerService.this,EventInfo.class);
-
-
-            try {
-                curEvent = eventListToArrayList(eventsFromServerJSON, globalVariables.GetCurrentLocation()).get(0);
-                curNotification.setEvent(curEvent);
-                iv.putExtra("eventObject",curEvent);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            iv.putExtra("parentActivity", Constants.createParentMode);
+            iv = new Intent(MyGcmListenerService.this,ApproveEventList.class);
         }
         else
         {
-            iv = new Intent(MyGcmListenerService.this,MainActivity.class);
+            iv = new Intent(MyGcmListenerService.this,NotificationsList.class);
         }
 
 
