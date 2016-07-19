@@ -35,6 +35,8 @@ public class GlobalVariables extends Application {
 
     private ArrayList<NotificationObject> notifications = new ArrayList<>();
 
+    private ArrayList<EventsObject> filterEvents;
+
     public HashMap<String, Double> GetCurrentLocation(){
         return this.currentLocation;
     }
@@ -93,7 +95,14 @@ public class GlobalVariables extends Application {
         return this.notifications;
     }
 
+    public ArrayList<EventsObject> getFilterEvents() {
+        return filterEvents;
+    }
 
+    public void setFilterEvents(ArrayList<EventsObject> filterEvents) {
+        this.filterEvents = new ArrayList<>();
+        this.filterEvents = filterEvents;
+    }
 
 
 

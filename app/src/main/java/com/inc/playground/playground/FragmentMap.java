@@ -51,7 +51,14 @@ public class FragmentMap extends Fragment {
         // latitude and longitude
 
         this.globalVariables = ((GlobalVariables) getActivity().getApplication());
-        homeEvents = this.globalVariables.GetHomeEvents();
+        if(globalVariables.getFilterEvents() != null && globalVariables.getFilterEvents().size() != 0 )
+        {
+            homeEvents = globalVariables.getFilterEvents();
+        }
+        else
+        {
+            homeEvents = this.globalVariables.GetHomeEvents();
+        }
         HashMap<String, Double> currentLocation = this.globalVariables.GetCurrentLocation();
         if (currentLocation!=null){
             double myLat = currentLocation.get(Constants.LOCATION_LAT);

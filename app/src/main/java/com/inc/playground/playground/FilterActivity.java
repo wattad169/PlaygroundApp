@@ -151,6 +151,7 @@ public class FilterActivity extends PreferenceActivity {
             }
         }
 
+        globalVariables.setFilterEvents(afterFilterEvents);
         Intent iv = new Intent(this, MainActivity.class);
         iv.putExtra("parent", "filter");
         iv.putExtra("events", afterFilterEvents);
@@ -190,41 +191,48 @@ public class FilterActivity extends PreferenceActivity {
         }
 
         if (distancePicker.getSummary() != null) {
-            if (isFiltred) {
                 if(distancePicker.getSummary().equals("Walking distance (up to 2 km)"))
                 {
                     if (!(Double.valueOf(curEvent.GetDistance()) < 2))
-                        afterFilterEvents.remove(curEvent);
+                    {
+                        if (isFiltred)
+                        {
+                            afterFilterEvents.remove(curEvent);
+                        }
+                        else
+                        {
+                            afterFilterEvents.add(curEvent);
+                        }
+                    }
                 }
                 else if(distancePicker.getSummary().equals("Local area (up to 10 km)"))
                 {
                     if (!(Double.valueOf(curEvent.GetDistance()) < 10))
-                        afterFilterEvents.remove(curEvent);
+                    {
+                        if (isFiltred)
+                        {
+                            afterFilterEvents.remove(curEvent);
+                        }
+                        else
+                        {
+                            afterFilterEvents.add(curEvent);
+                        }
+                    }
                 }
                 else if(distancePicker.getSummary().equals("Over 10 km"))
                 {
-                    if (!(Double.valueOf(curEvent.GetDistance()) > 10))
-                        afterFilterEvents.remove(curEvent);
+                    if (!(Double.valueOf(curEvent.GetDistance()) > 10)) {
+                        if (isFiltred) {
+                            afterFilterEvents.remove(curEvent);
+                        } else {
+                            afterFilterEvents.add(curEvent);
+                        }
+                    }
                 }
-
-            } else {
-                isFiltred = true;
-                if(distancePicker.getSummary().equals("Walking distance (up to 2 km)"))
+                if (! isFiltred)
                 {
-                    if (Double.valueOf(curEvent.GetDistance()) < 2)
-                        afterFilterEvents.add(curEvent);
+                    isFiltred = true;
                 }
-                else if(distancePicker.getSummary().equals("Local area (up to 10 km)"))
-                {
-                    if (Double.valueOf(curEvent.GetDistance()) < 10)
-                        afterFilterEvents.add(curEvent);
-                }
-                else if(distancePicker.getSummary().equals("Over 10 km"))
-                {
-                    if (Double.valueOf(curEvent.GetDistance()) > 10)
-                        afterFilterEvents.add(curEvent);
-                }
-            }
         }
 
         if (membersTxt.getSummary() != null && ( ! membersTxt.getSummary().equals("Looking for somebody's events?"))) {
@@ -238,13 +246,10 @@ public class FilterActivity extends PreferenceActivity {
                 if(curEvent.GetMembers().contains(memberID))
                     afterFilterEvents.add(curEvent);
             }
-
         }
         if (!isFiltred) {
             afterFilterEvents.add(curEvent);
         }
-
-
     }
 
     @Override
@@ -295,42 +300,5 @@ public class FilterActivity extends PreferenceActivity {
         }
     }
 
-    public void setPlayGroundActionBar() {
-        String userLoginId, userFullName, userEmail, userPhoto;
-        Bitmap imageBitmap = null;
-        GlobalVariables globalVariables;
-        final ActionBar actionBar = getActionBar();
-        final String MY_PREFS_NAME = "Login";
-        SharedPreferences prefs = getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
-        globalVariables = ((GlobalVariables) this.getApplication());
-        if (prefs.getString("userid", null) != null) {
-            userLoginId = prefs.getString("userid", null);
-            userFullName = prefs.getString("fullname", null);
-            userEmail = prefs.getString("emilid", null);
-            userPhoto = prefs.getString("picture", null);
-            actionBar.setCustomView(R.layout.actionbar_custom_view_home);
-            actionBar.setDisplayShowTitleEnabled(true);
-            actionBar.setDisplayShowCustomEnabled(true);
-            actionBar.setDisplayUseLogoEnabled(true);
-            actionBar.setDisplayShowHomeEnabled(true);
-            ImageView img_profile = (ImageView) findViewById(R.id.img_profile_action_bar);
-            imageBitmap = globalVariables.GetUserPictureBitMap();
-            if (imageBitmap == null) {
-                Log.i(TAG, "downloading");
-                try {
-                    imageBitmap = new DownloadImageBitmapTask().execute(userPhoto).get();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } catch (ExecutionException e) {
-                    e.printStackTrace();
-                }
-
-            } else {
-                Log.i(TAG, "Image found");
-            }
-            img_profile.setImageBitmap(imageBitmap);
-            globalVariables.SetUserPictureBitMap(imageBitmap); // Make the imageBitMap global to all activities to avoid downloading twice
-        }
-    }
 
 }
