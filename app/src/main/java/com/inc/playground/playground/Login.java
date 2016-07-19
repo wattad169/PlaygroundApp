@@ -782,7 +782,7 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
 
 				responseJSONUserInfo = new JSONObject(responseStringUserInfo);
 				ServerJSONUserInfo = responseJSONUserInfo.getJSONObject(Constants.RESPONSE_MESSAGE);//.getJSONObject(Constants.EVENT_ENTRIES);//problem
-				createdCount = ServerJSONUserInfo.getString("createdCount");
+				createdCount = ServerJSONUserInfo.getString("created_count");
 				eventsTableJSONArr = ServerJSONUserInfo.getJSONArray(Constants.EVENT_ENTRIES);//Todo:update what i get
 
 //				ArrayList<EventsObject> userEventsObjectsOld = NetworkUtilities. eventListToArrayList(eventsTableJSONArr, globalVariables.GetCurrentLocation());

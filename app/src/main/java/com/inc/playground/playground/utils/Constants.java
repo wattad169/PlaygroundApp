@@ -125,7 +125,7 @@ public class Constants {
 
     public static final String NOTIFICATIONS_TOKEN = "notifications_token";
 
-    public static final String CREATED_COUNT = "createdCount";
+    public static final String CREATED_COUNT = "created_count";
 
     public static final String IS_PUBLIC = "is_public";// 1/0 indicate that the creator do /don't need to approve join requests
 

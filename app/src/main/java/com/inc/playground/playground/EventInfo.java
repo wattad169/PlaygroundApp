@@ -795,7 +795,7 @@ public class EventInfo extends FragmentActivity {
                 ArrayList<EventUserObject> memeberEvents = NetworkUtilities.eventUserListToArrayList(eventEntries, globalVariables.GetCurrentLocation(), "eventsEntries");
 
                 iv.putExtra("name", userInfoFroServer.getString("fullname"));
-                iv.putExtra("createdNumOfEvents",userInfoFroServer.getString("createdCount"));
+                iv.putExtra("createdNumOfEvents",userInfoFroServer.getString("created_count"));
                 iv.putExtra("photoUrl", photoUrl);
                 iv.putExtra("userEventsObjects", memeberEvents);//for profile
                 startActivity(iv);

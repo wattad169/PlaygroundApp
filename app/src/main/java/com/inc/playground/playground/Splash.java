@@ -199,7 +199,7 @@ public class Splash extends Activity {
             try {
                 responseJSON = new JSONObject(responseString);
                 JSONUserInfo = responseJSON.getJSONObject(Constants.RESPONSE_MESSAGE);
-                String createdCount = JSONUserInfo.getString("createdCount");
+                String createdCount = JSONUserInfo.getString("created_count");
                 eventsFromServerJSON = JSONUserInfo.getJSONArray(Constants.EVENT_ENTRIES);//Todo:update what i get
 
 
