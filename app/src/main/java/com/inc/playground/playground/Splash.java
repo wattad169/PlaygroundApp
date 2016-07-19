@@ -48,8 +48,6 @@ import com.inc.playground.playground.utils.InitGlobalVariables;
 public class Splash extends Activity {
     private static final String TAG = "Splash: ";
     public static final String MY_PREFS_NAME = "Login";
-
-    public static User currentUser;
     private BroadcastReceiver mRegistrationBroadcastReceiver;
     private TextView mInformationTextView;
 
@@ -124,8 +122,8 @@ public class Splash extends Activity {
             try {
                 responseJSON = new JSONObject(allEventsResponseString);
                 eventsFromServerJSON = responseJSON.getJSONArray(Constants.RESPONSE_MESSAGE);//does that need change? (UserobjectEvents?)
-                ArrayList<EventsObject> eventObjectOnly = NetworkUtilities.eventListToArrayList(eventsFromServerJSON, initInSplash.globalVariables.GetCurrentLocation());
-                initInSplash.globalVariables.SetHomeEvents(eventObjectOnly);
+                ArrayList<EventsObject> eventObjectOnly = NetworkUtilities.eventListToArrayList(eventsFromServerJSON, InitGlobalVariables.globalVariables.GetCurrentLocation());
+                InitGlobalVariables.globalVariables.SetHomeEvents(eventObjectOnly);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -172,7 +170,7 @@ public class Splash extends Activity {
                 JSONObject cred = new JSONObject();
                 try {
                     cred.put(NetworkUtilities.TOKEN,"StubToken");
-                    cred.put(NetworkUtilities.USER_ID,currentUser.GetUserId());
+                    cred.put(NetworkUtilities.USER_ID,InitGlobalVariables.currentUser.GetUserId());
                 } catch (JSONException e) {
                     Log.i(TAG, e.toString());
                 }
@@ -193,15 +191,15 @@ public class Splash extends Activity {
                 eventsFromServerJSON = JSONUserInfo.getJSONArray(Constants.EVENT_ENTRIES);//Todo:update what i get
 
 
-                userEventsObjects =  NetworkUtilities.allUserEvents(JSONUserInfo, initInSplash.globalVariables.GetCurrentLocation());
+                userEventsObjects =  NetworkUtilities.allUserEvents(JSONUserInfo, InitGlobalVariables.globalVariables.GetCurrentLocation());
                 Set<String> userEvents = new HashSet<>();
                 for(EventUserObject eUObject : userEventsObjects ){
                     String eventId = eUObject.GetId(); //currentObject.getString(Constants.EVENT_ID);
                     userEvents.add(eventId);//TODO: need to update the other types of events?
                 }
-                currentUser.setUserEventsObjects(userEventsObjects);
-                currentUser.SetUserEvents(userEvents);
-                currentUser.setCreatedNumOfEvents(created_count);
+                InitGlobalVariables.currentUser.setUserEventsObjects(userEventsObjects);
+                InitGlobalVariables.currentUser.SetUserEvents(userEvents);
+                InitGlobalVariables.currentUser.setCreatedNumOfEvents(created_count);
 
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -313,8 +311,8 @@ public class Splash extends Activity {
                     super.onPostExecute(lenghtOfFile);
 
                 }
-                initInSplash.globalVariables.SetUsersList(usersList);
-                initInSplash.globalVariables.SetUsersImagesMap(userToImage);
+                InitGlobalVariables.globalVariables.SetUsersList(usersList);
+                InitGlobalVariables.globalVariables.SetUsersImagesMap(userToImage);
                 Log.d(TAG, "getUsersImages.successful" + userToImage.toString());
             }
             else {

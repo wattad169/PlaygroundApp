@@ -41,6 +41,8 @@ public class ApproveEventList extends FragmentActivity implements SwipeRefreshLa
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.approve_event_list);
+        Intent i = null;
+        new InitGlobalVariables(this,i).init();
         this.globalVariables = ((GlobalVariables) getApplication());
         notifications = globalVariables.GetNotifications();
 
@@ -194,8 +196,7 @@ public class ApproveEventList extends FragmentActivity implements SwipeRefreshLa
                 findViewById(R.id.swipe_refresh_layout);
 
         swipeRefreshLayout.setRefreshing(true);
-        Intent i = null;
-        new InitGlobalVariables(this,i).init();
+
 //        Splash.GetEventsAsyncTask getEventsAsyncTask = new Splash.GetEventsAsyncTask(ApproveEventList.this);
 //        getEventsAsyncTask.execute();
         NotificationsAdapter notificationsAdapter = new NotificationsAdapter(ApproveEventList.this,notifications);
