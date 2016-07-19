@@ -791,8 +791,8 @@ public class EventInfo extends FragmentActivity {
                         com.inc.playground.playground.upLeft3StripesButton.
                                 MyProfile.class);
 
-                JSONArray eventEntries = userInfoFroServer.getJSONArray("eventsEntries");
-                ArrayList<EventUserObject> memeberEvents = NetworkUtilities.eventUserListToArrayList(eventEntries, globalVariables.GetCurrentLocation(), "eventsEntries");
+                JSONArray eventEntries = userInfoFroServer.getJSONArray(Constants.EVENT_ENTRIES);
+                ArrayList<EventUserObject> memeberEvents = NetworkUtilities.eventUserListToArrayList(eventEntries, globalVariables.GetCurrentLocation(), Constants.EVENT_ENTRIES);
 
                 iv.putExtra("name", userInfoFroServer.getString("fullname"));
                 iv.putExtra("createdNumOfEvents",userInfoFroServer.getString("created_count"));

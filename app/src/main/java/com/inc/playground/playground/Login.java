@@ -767,12 +767,11 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
 			JSONObject ServerJSONUserInfo;
 			JSONObject responseJSONUserInfo;
 			try {
-//				responseJSON = new JSONObject(responseString);
-//				eventsFromServerJSON = responseJSON.getJSONArray(Constants.RESPONSE_MESSAGE);
-				Set<String> userEvents = new HashSet<>();
-
+//
 				responseJSONUserInfo = new JSONObject(responseStringUserInfo);
 				ServerJSONUserInfo = responseJSONUserInfo.getJSONObject(Constants.RESPONSE_MESSAGE);//.getJSONObject(Constants.EVENT_ENTRIES);//problem
+				Set<String> userEvents = new HashSet<>();
+
 				created_count = ServerJSONUserInfo.getString("created_count");
 				ArrayList<EventUserObject> userEventsObjects =  NetworkUtilities.allUserEvents(ServerJSONUserInfo, globalVariables.GetCurrentLocation());
 
