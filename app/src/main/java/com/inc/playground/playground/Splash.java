@@ -9,14 +9,18 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.drawable.ColorDrawable;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Looper;
 import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.inc.playground.playground.utils.Constants;
 import com.inc.playground.playground.utils.DownloadImageBitmapTask;
@@ -31,6 +35,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.EventObject;
 import java.util.HashMap;
@@ -46,10 +53,10 @@ public class Splash extends Activity {
     private BroadcastReceiver mRegistrationBroadcastReceiver;
     private TextView mInformationTextView;
 
-    JSONArray getAllUsersResponse;
     HashMap<String,Bitmap> userToImage = new HashMap<String,Bitmap>();
     ArrayList<UserImageEntry> usersList = new ArrayList<UserImageEntry>() ;
     private boolean isReceiverRegistered;
+        JSONArray getAllUsersResponse;
 
 
     @Override
@@ -76,14 +83,13 @@ public class Splash extends Activity {
             // Create server call
             GetUserEventsAsyncTask taskUserEvents = new GetUserEventsAsyncTask();
             taskUserEvents.execute();
+            //call to GetEventsAsyncTask and GetUsersImages from: onPostExcute (to handle internet connecetions)
         }
-        // Get events from server
-
         globalVariables.InitGPS(Splash.this);
         globalVariables.SetCurrentLocation(Utils.getMyLocation(globalVariables.GetGPS()));
-        // Create server call
-        GetEventsAsyncTask tsakEvents = new GetEventsAsyncTask(this);
-        tsakEvents.execute();
+
+        //server calls
+        new GetEventsAsyncTask(this).execute();
         new GetUsersImages(this).execute();
 
     }
@@ -139,23 +145,30 @@ public class Splash extends Activity {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+            catch (NullPointerException nullPoitExc) {/* if responseString was null*/
+                Log.e(TAG, "responseString was null from 'get_all_events' call");
+            }
             return null;
         }
 
-        @Override
+        @Override //GetEventsAsyncTask class
         protected void onPostExecute(String lenghtOfFile) {
             // do stuff after posting data
-            Intent i = new Intent(this.context, MainActivity.class);
-            this.context.startActivity(i);
-            ((Activity)this.context).finish();
-            Log.d("successful", "successful");
+            if(NetworkUtilities.onlineException==false && NetworkUtilities.serverException==false) { //connection works properly
+                Intent i = new Intent(this.context, MainActivity.class);
+                this.context.startActivity(i);
+                ((Activity) this.context).finish();
+                Log.d("successful", "successful");
+            }
+            else{
+                InternetErrorGenericToast(this.context, NetworkUtilities.onlineException, NetworkUtilities.serverException);
+
+            }
         }
     }
 
     public class GetUserEventsAsyncTask extends AsyncTask<String, Integer, String> {
         ArrayList<EventUserObject> userEventsObjects;
-
-        ProgressBar bar;
 
         @Override
         protected void onPreExecute() {
@@ -184,7 +197,6 @@ public class Splash extends Activity {
             JSONArray eventsFromServerJSON;
             JSONObject responseJSON , JSONUserInfo;
             try {
-
                 responseJSON = new JSONObject(responseString);
                 JSONUserInfo = responseJSON.getJSONObject(Constants.RESPONSE_MESSAGE);
                 String createdCount = JSONUserInfo.getString("createdCount");
@@ -204,13 +216,27 @@ public class Splash extends Activity {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+            catch(NullPointerException nullPoitExc){/* if responseString was null*/
+                Log.e(TAG, "responseString was null from 'get_user_info' call");
+
+            }
+            catch(Exception e){
+                e.printStackTrace();
+                Log.e(TAG, "exception that we don't know");
+            }
             return null;
         }
 
-        @Override
+        @Override //GetUserEventsAsyncTask
         protected void onPostExecute(String lenghtOfFile) {
-            super.onPostExecute(lenghtOfFile);
-            Log.d("successful", "successful");
+            //internt work properly
+            if(NetworkUtilities.onlineException==false && NetworkUtilities.serverException==false) {
+                super.onPostExecute(lenghtOfFile);
+                Log.d("successful", "successful");
+            }
+            else {
+                InternetErrorGenericToast(getApplicationContext(), NetworkUtilities.onlineException, NetworkUtilities.serverException);
+            }
         }
 
 
@@ -255,45 +281,56 @@ public class Splash extends Activity {
             }
             // Convert string received from server to JSON array
             JSONArray eventsFromServerJSON = null;
-            JSONObject responseJSON= null;
+            JSONObject responseJSON = null;
             try {
                 responseJSON = new JSONObject(responseString);
                 getAllUsersResponse = responseJSON.getJSONArray(Constants.RESPONSE_MESSAGE);
 
             } catch (JSONException e) {
                 e.printStackTrace();
+            } catch (NullPointerException nullPoitExc) {/* if responseString was null*/
+                Log.e(TAG, "responseString was null from 'get_all_users' call");
             }
             return null;
         }
 
-        @Override
+        @Override //GetUsersImages class
         protected void onPostExecute(String lenghtOfFile) {
-            // do stuff after posting data
-            for(int i=0;i<getAllUsersResponse.length();i++)
-            {
-                try {
 
-                    JSONObject currentObject = (JSONObject) getAllUsersResponse.get(i);
-                    String fullname = currentObject.getString(Constants.FULLNAME);
+            if(NetworkUtilities.onlineException==false && NetworkUtilities.serverException==false) {//internet work properly
+                // do stuff after posting data
+                for(int i=0;i<getAllUsersResponse.length();i++)
+                {
+                    try {
 
-                    Bitmap currentImage = new DownloadImageBitmapTask().execute(currentObject.getString(Constants.PHOTO_URL)).get();
-                    String userId = currentObject.getString(Constants.ID);
-                    UserImageEntry currentUser = new UserImageEntry(fullname,currentImage,userId) ;
-                    usersList.add(currentUser);
-                    userToImage.put(fullname, currentImage);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } catch (ExecutionException e) {
-                    e.printStackTrace();
-                } catch (JSONException e) {
-                    e.printStackTrace();
+                        JSONObject currentObject = (JSONObject) getAllUsersResponse.get(i);
+                        String fullname = currentObject.getString(Constants.FULLNAME);
+
+                        Bitmap currentImage = new DownloadImageBitmapTask().execute(currentObject.getString(Constants.PHOTO_URL)).get();
+                        String userId = currentObject.getString(Constants.ID);
+                        UserImageEntry currentUser = new UserImageEntry(fullname,currentImage,userId) ;
+                        usersList.add(currentUser);
+                        userToImage.put(fullname, currentImage);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    } catch (ExecutionException e) {
+                        e.printStackTrace();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    catch(NullPointerException e){
+                        e.printStackTrace();
+                    }
+                    super.onPostExecute(lenghtOfFile);
+
                 }
-                super.onPostExecute(lenghtOfFile);
-
+                globalVariables.SetUsersList(usersList);
+                globalVariables.SetUsersImagesMap(userToImage);
+                Log.d(TAG, "getUsersImages.successful" + userToImage.toString());
             }
-            globalVariables.SetUsersList(usersList);
-            globalVariables.SetUsersImagesMap(userToImage);
-            Log.d(TAG, "getUsersImages.successful" + userToImage.toString());
+            else {
+                InternetErrorGenericToast(getApplicationContext(), NetworkUtilities.onlineException ,NetworkUtilities.serverException );
+            }
         }
 
 
@@ -315,5 +352,44 @@ public class Splash extends Activity {
         isReceiverRegistered = false;
         super.onPause();
     }
+
+
+    /**
+     * present appropriate Toast message for internet/Server error
+     * @param context
+     * @param onlineException
+     * @param serverException
+     */
+    public static void InternetErrorGenericToast(Context context , boolean onlineException,boolean serverException ){
+        if(onlineException){//==true
+            InternetErrorToast(context);
+        }
+        else if(serverException){
+            serverErrorToast(context);
+        }
+    }
+
+        /**
+         * Present Toast message in case the user has internet connection problems
+         * @param context
+         */
+    public static void InternetErrorToast(Context context){
+        String text = "Can't connect to PlayGround service. Please check your internet connection";
+        Toast toast = Toast.makeText(context,text,Toast.LENGTH_LONG);
+        toast.show();
+    }
+
+    /**
+     * Present Toast message in case we have error in server
+     * @param context
+     */
+    public static void serverErrorToast(Context context){
+        String text = "Can't connect to PlayGround service at the moment. Sorry .Please try again later";
+        Toast toast = Toast.makeText(context,text,Toast.LENGTH_LONG);
+        toast.show();
+    }
+
+
+
 }
 

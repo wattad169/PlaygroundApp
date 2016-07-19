@@ -56,7 +56,6 @@ public class ApproveEventList extends FragmentActivity implements SwipeRefreshLa
         }
         @Override
         protected String doInBackground(Integer... params) {
-            // TODO Auto-generated method stub
             return null;
         }
 
@@ -93,7 +92,6 @@ public class ApproveEventList extends FragmentActivity implements SwipeRefreshLa
 
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        // TODO Auto-generated method stub
                         Intent intent = new Intent(ApproveEventList.this, EventInfo.class);
                         intent.putExtra("eventObject", notifications.get(position).getEvent());
                         startActivity(intent);

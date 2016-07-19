@@ -64,10 +64,13 @@ public class MyGcmListenerService extends GcmListenerService {
         try{
             responseJSON = new JSONObject(eventToDisplay);
             sendNotification(message,title,responseJSON);
-
-        } catch (JSONException e) {
+        }
+        catch (JSONException e) {
             e.printStackTrace();
             }
+        catch(NullPointerException nPoitExc){
+            nPoitExc.printStackTrace();
+        }
 //        }
 
         if (from.startsWith("/topics/")) {
