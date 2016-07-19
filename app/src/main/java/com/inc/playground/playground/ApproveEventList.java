@@ -24,6 +24,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.inc.playground.playground.utils.InitGlobalVariables;
+
 import java.util.ArrayList;
 
 /**
@@ -192,8 +194,10 @@ public class ApproveEventList extends FragmentActivity implements SwipeRefreshLa
                 findViewById(R.id.swipe_refresh_layout);
 
         swipeRefreshLayout.setRefreshing(true);
-        Splash.GetEventsAsyncTask getEventsAsyncTask = new Splash.GetEventsAsyncTask(ApproveEventList.this);
-        getEventsAsyncTask.execute();
+        Intent i = null;
+        new InitGlobalVariables(this,i).init();
+//        Splash.GetEventsAsyncTask getEventsAsyncTask = new Splash.GetEventsAsyncTask(ApproveEventList.this);
+//        getEventsAsyncTask.execute();
         NotificationsAdapter notificationsAdapter = new NotificationsAdapter(ApproveEventList.this,notifications);
 
         notificationsAdapter.notifyDataSetChanged();

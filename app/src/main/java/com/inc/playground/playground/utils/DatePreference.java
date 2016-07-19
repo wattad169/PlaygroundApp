@@ -60,6 +60,13 @@ public class DatePreference extends DialogPreference {
     protected void onBindDialogView(View v) {
         super.onBindDialogView(v);
 
+        Date date = new Date();
+        SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
+        String formatted = format1.format(date);
+        dateval = formatted;
+        lastYear = getYear(dateval);
+        lastMonth = getMonth(dateval)-1;
+        lastDate = getDate(dateval);
         picker.updateDate(lastYear, lastMonth , lastDate);
     }
 

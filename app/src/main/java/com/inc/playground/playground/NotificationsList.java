@@ -29,10 +29,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import com.inc.playground.playground.utils.InitGlobalVariables;
 import com.melnykov.fab.FloatingActionButton;
 import com.melnykov.fab.ScrollDirectionListener;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+
 import java.util.ArrayList;
+
+import static com.inc.playground.playground.utils.NetworkUtilities.eventListToArrayList;
 
 /**
  * Created by lina on 7/10/2016.
@@ -42,12 +48,15 @@ public class NotificationsList extends FragmentActivity implements SwipeRefreshL
     private ListView notifications_list; //ListView listView;
     private ArrayList<NotificationObject> notifications;
     private GlobalVariables globalVariables;
-
+    EventsObject curEvent = new EventsObject();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.notification_list);
+        Intent i = null;
+        new InitGlobalVariables(this,i).init();
+
         this.globalVariables = ((GlobalVariables) getApplication());
         notifications = globalVariables.GetNotifications();
 
@@ -183,6 +192,10 @@ public class NotificationsList extends FragmentActivity implements SwipeRefreshL
                 view = inflater.inflate(R.layout.notification_item, null);
             }
 
+
+
+
+
             TextView eventName =(TextView) view.findViewById(R.id.event_nameTxt);
             TextView notificationDescription = (TextView) view.findViewById(R.id.notification_descriptionTxt);
 
@@ -202,12 +215,29 @@ public class NotificationsList extends FragmentActivity implements SwipeRefreshL
             }
             else
             {
-                eventName.setText(data.get(position).getEvent().GetName());
+
+                JSONArray eventsFromServerJSON = new JSONArray();
+                try {
+                    eventsFromServerJSON = data.get(position).getInputJson().getJSONArray("more");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                try {
+                    curEvent = eventListToArrayList(eventsFromServerJSON, globalVariables.GetCurrentLocation()).get(0);
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+
+
+                eventName.setText(curEvent.GetName());
                 view.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         Intent intent = new Intent(NotificationsList.this, EventInfo.class);
-                        intent.putExtra("eventObject", data.get(position).getEvent());
+                        intent.putExtra("eventObject", curEvent);
                         startActivity(intent);
                         notifications.remove(data.get(position));
                     }

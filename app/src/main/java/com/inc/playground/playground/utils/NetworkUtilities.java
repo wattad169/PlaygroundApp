@@ -267,6 +267,7 @@ final public class NetworkUtilities {
         currentEvent.SetCreatorId(jsonObject.getString(Constants.CREATED_BY));
         currentEvent.setIsPublic(jsonObject.getString(Constants.IS_PUBLIC));
         // find distance
+        Log.d(TAG,currentLocation.toString());
         double currentLon  = currentLocation.get(Constants.LOCATION_LON);
         double  currentLat= currentLocation.get(Constants.LOCATION_LAT);
         String eventLon  = jsonObject.getJSONObject("location").getString(Constants.LOCATION_LON);
