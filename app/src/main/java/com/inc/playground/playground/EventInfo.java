@@ -18,6 +18,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.CalendarContract;
 import android.support.v4.app.FragmentActivity;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
@@ -61,6 +62,7 @@ import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -258,13 +260,17 @@ public class EventInfo extends FragmentActivity {
                                 break;
                             case R.id.share_calendar:
                                 Calendar cal = Calendar.getInstance();
+                                int date[] = parseDate(currentEvent.GetDate());
+                                int startTime[] = parseHour(currentEvent.GetStartTime());
+                                int endTime[] = parseHour(currentEvent.GetEndTime());
+                                cal.set(date[0] ,date[1],date[2],startTime[0],startTime[1] );
                                 Intent intent = new Intent(Intent.ACTION_EDIT);
                                 intent.setType("vnd.android.cursor.item/event");
-                                intent.putExtra("beginTime", cal.getTimeInMillis());
-                                intent.putExtra("allDay", true);
-                                intent.putExtra("rrule", "FREQ=YEARLY");
-                                intent.putExtra("endTime", cal.getTimeInMillis() + 60 * 60 * 1000);
-                                intent.putExtra("title", "A Test Event from android app");
+                                intent.putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, cal.getTimeInMillis());
+                                cal.set(date[0], date[1], date[2], endTime[0], endTime[1]);
+                                intent.putExtra(CalendarContract.EXTRA_EVENT_END_TIME, cal.getTimeInMillis());
+                                intent.putExtra(CalendarContract.EXTRA_EVENT_ALL_DAY, false);
+                                intent.putExtra("title", currentEvent.GetName());
                                 startActivity(intent);
                                 break;
                         }
@@ -864,6 +870,34 @@ public class EventInfo extends FragmentActivity {
         Window window = dialog.getWindow();
         window.setLayout(800, 420);
     }
+    /**
+     * input: e.g : "2016-07-19"
+     * @param date
+     * @return int[year, month ,day]
+     */
+    public static int[] parseDate(String date){
+        int firstUnderScore  = date.indexOf("-");
+        int secondUnderScore = date.indexOf("-",firstUnderScore+1 );
+        int dateArr[]= new int[3];
+        dateArr[0] = Integer.parseInt(date.substring(0 ,firstUnderScore ));
+        dateArr[1] = Integer.parseInt(date.substring(firstUnderScore+1 ,secondUnderScore ))-1;//month act weird - need decrement
+        dateArr[2] = Integer.parseInt(date.substring(secondUnderScore+1 ,date.length()));
+        return dateArr;
+    }
+
+    /**
+     * input: e.g : "19:55"
+     * @param hour
+     * @return int[hour(24), min]
+     */
+    public static int[] parseHour(String hour){
+        int colonIndex  = hour.indexOf(":");
+        int hourArr[]= new int[2];
+        hourArr[0] = Integer.parseInt(hour.substring(0, colonIndex));
+        hourArr[1] = Integer.parseInt(hour.substring(colonIndex+1 ,hour.length()));
+        return hourArr;
+    }
 }
+
 
 
