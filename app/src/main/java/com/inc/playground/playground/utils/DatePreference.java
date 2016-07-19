@@ -94,6 +94,7 @@ public class DatePreference extends DialogPreference {
 
     @Override
     protected void onSetInitialValue(boolean restoreValue, Object defaultValue) {
+        super.onSetInitialValue(restoreValue, defaultValue);
         dateval = null;
 
         if (restoreValue) {

@@ -101,16 +101,28 @@ public class NotificationsList extends FragmentActivity implements SwipeRefreshL
                                             }
                     );*/
 
+
                     notifications_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
                         @Override
                         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                             // TODO Auto-generated method stub
-                            Intent intent = new Intent(NotificationsList.this, EventInfo.class);
-                            intent.putExtra("eventObject", notifications.get(position).getEvent());
-                            startActivity(intent);
-                            finish();
-                            notifications.remove(notifications.get(position));
+                            if(! notifications.get(position).getTitle().contains("canceled"))
+                            {
+                                Intent intent = new Intent(NotificationsList.this, EventInfo.class);
+                                intent.putExtra("eventObject", notifications.get(position).getEvent());
+                                startActivity(intent);
+                                finish();
+                                notifications.remove(notifications.get(position));
+                            }
+                            else
+                            {
+                                Intent intent = new Intent(NotificationsList.this, MainActivity.class);
+                                startActivity(intent);
+                                finish();
+                                notifications.remove(notifications.get(position));
+                            }
+
 
                         }
                     });
@@ -174,18 +186,38 @@ public class NotificationsList extends FragmentActivity implements SwipeRefreshL
             TextView eventName =(TextView) view.findViewById(R.id.event_nameTxt);
             TextView notificationDescription = (TextView) view.findViewById(R.id.notification_descriptionTxt);
 
-            eventName.setText(data.get(position).getEvent().GetName());
+
+            if(data.get(position).getTitle().contains("canceled"))
+            {
+                eventName.setText(data.get(position).getTitle());
+                view.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(NotificationsList.this, MainActivity.class);
+                        startActivity(intent);
+                        notifications.remove(data.get(position));
+                    }
+                });
+
+            }
+            else
+            {
+                eventName.setText(data.get(position).getEvent().GetName());
+                view.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(NotificationsList.this, EventInfo.class);
+                        intent.putExtra("eventObject", data.get(position).getEvent());
+                        startActivity(intent);
+                        notifications.remove(data.get(position));
+                    }
+                });
+            }
+
             notificationDescription.setText(data.get(position).getDescription());
 
-            view.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent = new Intent(NotificationsList.this, EventInfo.class);
-                    intent.putExtra("eventObject", data.get(position).getEvent());
-                    startActivity(intent);
-                    notifications.remove(data.get(position));
-                }
-            });
+
+
 
             return view;
         }
@@ -199,12 +231,6 @@ public class NotificationsList extends FragmentActivity implements SwipeRefreshL
                 findViewById(R.id.swipe_refresh_layout);
 
         swipeRefreshLayout.setRefreshing(true);
-        Splash.GetEventsAsyncTask getEventsAsyncTask = new Splash.GetEventsAsyncTask(NotificationsList.this);
-        getEventsAsyncTask.execute();
-        NotificationsAdapter notificationsAdapter = new NotificationsAdapter(NotificationsList.this,notifications);
-
-        notificationsAdapter.notifyDataSetChanged();
-        notifications_list.setAdapter(notificationsAdapter);
 
         swipeRefreshLayout.setRefreshing(false);
 

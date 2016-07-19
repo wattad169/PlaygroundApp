@@ -56,21 +56,27 @@ public class MyGcmListenerService extends GcmListenerService {
         String message = data.getString("message");
         String title = data.getString("title");
         JSONObject responseJSON = null;
-        String eventToDisplay = data.getString("more");
+        if(! title.contains("canceled"))
+        {
+            String eventToDisplay = data.getString("more");
+            try{
+                responseJSON = new JSONObject(eventToDisplay);
+            }
+            catch (JSONException e) {
+                e.printStackTrace();
+            }
+            catch(NullPointerException nPoitExc){
+                nPoitExc.printStackTrace();
+            }
+            Log.d(TAG, "more: " + eventToDisplay);
+        }
+
         Log.d(TAG, "From: " + from);
         Log.d(TAG, "Message: " + message);
-        Log.d(TAG, "more: " + eventToDisplay);
+        sendNotification(message, title, responseJSON);
+
 //        if(eventToDisplay!=null){
-        try{
-            responseJSON = new JSONObject(eventToDisplay);
-            sendNotification(message,title,responseJSON);
-        }
-        catch (JSONException e) {
-            e.printStackTrace();
-            }
-        catch(NullPointerException nPoitExc){
-            nPoitExc.printStackTrace();
-        }
+
 //        }
 
         if (from.startsWith("/topics/")) {
@@ -112,18 +118,19 @@ public class MyGcmListenerService extends GcmListenerService {
 
         Intent intent = new Intent(this, MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-
+        Intent iv;
         // if cancel event
-        JSONArray eventsFromServerJSON = new JSONArray();
-        try {
-            eventsFromServerJSON = inputJson.getJSONArray("more");
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        Intent iv = new Intent(MyGcmListenerService.this,EventInfo.class);
-
-        if(! title.contains("cancelled"))
+        if( ! title.contains("canceled"))
         {
+            JSONArray eventsFromServerJSON = new JSONArray();
+            try {
+                eventsFromServerJSON = inputJson.getJSONArray("more");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            iv = new Intent(MyGcmListenerService.this,EventInfo.class);
+
+
             try {
                 curEvent = eventListToArrayList(eventsFromServerJSON, globalVariables.GetCurrentLocation()).get(0);
                 curNotification.setEvent(curEvent);
@@ -133,6 +140,12 @@ public class MyGcmListenerService extends GcmListenerService {
             }
             iv.putExtra("parentActivity", Constants.createParentMode);
         }
+        else
+        {
+            iv = new Intent(MyGcmListenerService.this,MainActivity.class);
+        }
+
+
         notificationList.add(curNotification);
         globalVariables.SetNotifications(notificationList);
 
