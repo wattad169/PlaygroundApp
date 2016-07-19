@@ -7,10 +7,7 @@ import android.content.Intent;
 import android.content.IntentSender.SendIntentException;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -22,8 +19,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -47,12 +42,10 @@ import org.json.JSONObject;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.EventObject;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -61,8 +54,6 @@ import com.inc.playground.playground.utils.EventUserObject;
 import com.inc.playground.playground.utils.Logingetset;
 import com.inc.playground.playground.utils.NetworkUtilities;
 
-import com.inc.playground.playground.Register;
-import com.inc.playground.playground.Review;
 import com.inc.playground.playground.utils.User;
 
 
@@ -95,7 +86,7 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
 	View v;
 	public static GlobalVariables globalVariables;
 	public User currentUser;
-	public String createdCount;
+	public String created_count;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -264,7 +255,7 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
                         user2 = email_id;
                         fullimage = "https://storage.googleapis.com/sports-bucket/Source/1965583_10204825358656748_4079077085336938408_o.jpg";
                         //TODO:Upload user image instead
-						createdCount = resonseMessage.getString(Constants.CREATED_COUNT);
+						created_count = resonseMessage.getString(Constants.CREATED_COUNT);
 
                     }
                     else if(method.equals("facebook")){
@@ -782,11 +773,7 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
 
 				responseJSONUserInfo = new JSONObject(responseStringUserInfo);
 				ServerJSONUserInfo = responseJSONUserInfo.getJSONObject(Constants.RESPONSE_MESSAGE);//.getJSONObject(Constants.EVENT_ENTRIES);//problem
-				createdCount = ServerJSONUserInfo.getString("created_count");
-				eventsTableJSONArr = ServerJSONUserInfo.getJSONArray(Constants.EVENT_ENTRIES);//Todo:update what i get
-
-//				ArrayList<EventsObject> userEventsObjectsOld = NetworkUtilities. eventListToArrayList(eventsTableJSONArr, globalVariables.GetCurrentLocation());
-
+				created_count = ServerJSONUserInfo.getString("created_count");
 				ArrayList<EventUserObject> userEventsObjects =  NetworkUtilities.allUserEvents(ServerJSONUserInfo, globalVariables.GetCurrentLocation());
 
 				for(EventUserObject eUObject : userEventsObjects ){
@@ -795,7 +782,7 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
 				}
 				currentUser.SetUserEvents(userEvents);
 				currentUser.setUserEventsObjects(userEventsObjects);
-				currentUser.setCreatedNumOfEvents(createdCount);
+				currentUser.setCreatedNumOfEvents(created_count);
 
 			} catch (JSONException e) {
 				e.printStackTrace();

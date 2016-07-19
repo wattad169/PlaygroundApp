@@ -109,7 +109,7 @@ public class MyProfile extends Activity {
         //set name
         TextView user_profile_name = (TextView) findViewById(R.id.user_profile_name);
         user_profile_name.setText(bundle.getString("name").replace("%20","  "));//name should be as facebook?
-        //set createdCount
+        //set created_count
         TextView createdCount_textView = (TextView) findViewById(R.id.countCreateTxt);
         createdCount_textView.setText(createdCount_textView.getText()+
                 (bundle.getString("createdNumOfEvents")));

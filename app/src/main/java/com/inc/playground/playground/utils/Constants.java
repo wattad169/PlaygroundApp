@@ -69,7 +69,7 @@ public class Constants {
 
     public final static String CREATED_BY = "created_by";
 
-    public final static String EVENT_ENTRIES = "eventsEntries";
+    public final static String EVENT_ENTRIES = "events_entries";
 
 
 

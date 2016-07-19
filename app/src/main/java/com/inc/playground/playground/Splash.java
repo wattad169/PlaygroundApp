@@ -199,7 +199,7 @@ public class Splash extends Activity {
             try {
                 responseJSON = new JSONObject(responseString);
                 JSONUserInfo = responseJSON.getJSONObject(Constants.RESPONSE_MESSAGE);
-                String createdCount = JSONUserInfo.getString("created_count");
+                String created_count = JSONUserInfo.getString("created_count");
                 eventsFromServerJSON = JSONUserInfo.getJSONArray(Constants.EVENT_ENTRIES);//Todo:update what i get
 
 
@@ -211,14 +211,13 @@ public class Splash extends Activity {
                 }
                 currentUser.setUserEventsObjects(userEventsObjects);
                 currentUser.SetUserEvents(userEvents);
-                currentUser.setCreatedNumOfEvents(createdCount);
+                currentUser.setCreatedNumOfEvents(created_count);
 
             } catch (JSONException e) {
                 e.printStackTrace();
             }
             catch(NullPointerException nullPoitExc){/* if responseString was null*/
                 Log.e(TAG, "responseString was null from 'get_user_info' call");
-
             }
             catch(Exception e){
                 e.printStackTrace();
