@@ -1,6 +1,7 @@
 package com.inc.playground.playground;
 
 import android.app.ActionBar;
+import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
@@ -19,6 +20,7 @@ import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.CalendarContract;
+import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
@@ -300,11 +302,36 @@ public class EventInfo extends FragmentActivity {
                             switch (item.getItemId()) {
                                 case R.id.edit_event_id:
                                     Intent intent = new Intent(EventInfo.this, EditEvent.class);
-                                    intent.putExtra("eventObject",currentEvent);
+                                    intent.putExtra("eventObject", currentEvent);
                                     startActivity(intent);
                                     break;
                                 case R.id.cancel_event_id:
 
+                                    //dialog (cance/ok)
+                                    final Dialog alertDialog = new Dialog(EventInfo.this);
+                                    alertDialog.setContentView(R.layout.cancel_event_dialog);
+                                    alertDialog.setTitle("Cancel event");
+                                    alertDialog.findViewById(R.id.cancelEvent_ok_btn).setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            //toast
+                                            String text = "Event was canceled";
+                                            Toast toast = Toast.makeText(getApplicationContext(), text, Toast.LENGTH_LONG);
+                                            toast.show();
+                                            //cancel event
+                                            String eventTask = "cancel_event";
+                                            new HandleEventTask(currentEvent, eventTask).execute((Void) null);
+                                            finish();
+                                        }
+                                    });
+
+                                    alertDialog.findViewById(R.id.cancelEvent_cancel_btn).setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            alertDialog.dismiss();
+                                        }
+                                    });
+                                    alertDialog.show();
                                     break;
                                 case R.id.join_requests:
 
@@ -449,7 +476,6 @@ public class EventInfo extends FragmentActivity {
         googleMap.animateCamera(cu);
 
     }
-
     public void onPlayClick(View v) {
         ToggleButton x = (ToggleButton) v;
         /*user photo */
@@ -458,9 +484,7 @@ public class EventInfo extends FragmentActivity {
             assert (currentUser!=null);
             if(currentUser.GetUserId().equals(currentEvent.GetCreatorId())) {//cancel event
                 //toast
-                String text = "Event was canceled";
-                Toast toast = Toast.makeText(getApplicationContext(),text,Toast.LENGTH_LONG);
-                toast.show();
+                toastEventCancel(getApplicationContext());//toast
                 eventTask = "cancel_event";
                 viewPlay.setText("cancel");
                 viewPlay.setTextColor(Color.parseColor("#D0D0D0"));
@@ -478,7 +502,16 @@ public class EventInfo extends FragmentActivity {
             }
         }
         else {//join event
-            eventTask = "join_event";
+
+            //private event
+            if (currentEvent.getIsPublic().equals("0")) {
+                eventTask = "request_join_event";
+                x.setChecked(true); //change icon to waiting
+                viewPlay.setText("Waiting");//for approval
+                //Todo: change icon to question mark
+            }
+            //public event
+            else { eventTask = "join_event";}
             x.setChecked(true);
             viewPlay.setText("Playing");
             viewPlay.setTextColor(Color.parseColor("#104E8B"));
@@ -532,7 +565,8 @@ public class EventInfo extends FragmentActivity {
         public HandleEventTask(EventsObject currentEvent,String eventTask) {
             this.currentEvent = currentEvent;
             this.eventTask = eventTask;
-            assert(eventTask.equals("join_event") || eventTask.equals("leave_event")||eventTask.equals("cancel_event") );
+            assert(eventTask.equals("join_event") || eventTask.equals("leave_event")||
+                    eventTask.equals("cancel_event")||eventTask.equals("request_join_event") );
         }
 
         protected void onPreExecute() {}
@@ -896,6 +930,12 @@ public class EventInfo extends FragmentActivity {
         hourArr[0] = Integer.parseInt(hour.substring(0, colonIndex));
         hourArr[1] = Integer.parseInt(hour.substring(colonIndex+1 ,hour.length()));
         return hourArr;
+    }
+
+    public static void toastEventCancel(Context c){
+        String text = "Event was canceled";
+        Toast toast = Toast.makeText(c,text,Toast.LENGTH_LONG);
+        toast.show();
     }
 }
 

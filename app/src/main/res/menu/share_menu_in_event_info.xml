@@ -12,9 +12,9 @@
         android:icon="@drawable/share_calendar"
         android:title="Add to calendar"/>
 
-    <item
-        android:id="@+id/share_whatsapp"
-        android:icon="@drawable/share_whatsapp"
-        android:title="Send in whatapp"/>
+    <!--<item-->
+        <!--android:id="@+id/share_whatsapp"-->
+        <!--android:icon="@drawable/share_whatsapp"-->
+        <!--android:title="Send in whatapp"/>-->
 
 </menu>
