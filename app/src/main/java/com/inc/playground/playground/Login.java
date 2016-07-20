@@ -50,7 +50,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.inc.playground.playground.utils.Constants;
-import com.inc.playground.playground.utils.EventUserObject;
 import com.inc.playground.playground.utils.Logingetset;
 import com.inc.playground.playground.utils.NetworkUtilities;
 
@@ -87,6 +86,7 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
 	public static GlobalVariables globalVariables;
 	public User currentUser;
 	public String created_count;
+	public JSONArray jsonArrayFavourites;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -738,25 +738,28 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
 				responseStringUserInfo = "";
 			}
 			// Convert string received from server to JSON array
-			JSONArray eventsTableJSONArr;
-//			JSONObject responseJSON=null;
-			JSONObject ServerJSONUserInfo;
-			JSONObject responseJSONUserInfo;
+			JSONObject responseJSON , JSONUserInfo;
 			try {
-//
-				responseJSONUserInfo = new JSONObject(responseStringUserInfo);
-				ServerJSONUserInfo = responseJSONUserInfo.getJSONObject(Constants.RESPONSE_MESSAGE);//.getJSONObject(Constants.EVENT_ENTRIES);//problem
-				Set<String> userEvents = new HashSet<>();
+				responseJSON = new JSONObject(responseStringUserInfo);
+				JSONUserInfo = responseJSON.getJSONObject(Constants.RESPONSE_MESSAGE);//.getJSONObject(Constants.EVENT_ENTRIES);//problem
+				created_count = JSONUserInfo.getString("created_count");
 
-				created_count = ServerJSONUserInfo.getString("created_count");
-				ArrayList<EventUserObject> userEventsObjects =  NetworkUtilities.allUserEvents(ServerJSONUserInfo, globalVariables.GetCurrentLocation());
-
-				for(EventUserObject eUObject : userEventsObjects ){
-					String eventId = eUObject.GetId(); //currentObject.getString(Constants.EVENT_ID);
-					userEvents.add(eventId);//TODO: need to update the other types of events?
+				Set<String> favourites = new HashSet<>();
+				jsonArrayFavourites = JSONUserInfo.getJSONArray("favourites");
+				for(int i=0; i<jsonArrayFavourites.length();i++){
+					favourites.add(jsonArrayFavourites.getString(i));
 				}
+
+				//list in order of events, events_wait4approval, events_decline
+				ArrayList<ArrayList<EventsObject>> allEvents = Splash.eventsTypesfromJson(responseStringUserInfo, globalVariables.GetCurrentLocation());
+				ArrayList<EventsObject> events  = allEvents.get(0);
+				ArrayList<EventsObject> events_wait4approval = allEvents.get(1);
+				ArrayList<EventsObject> events_decline = allEvents.get(2);
+				Set<String> userEvents = User.extractAllEventIds(events ,events_wait4approval, events_decline );
+
+				currentUser.setFavouritesId(favourites);
 				currentUser.SetUserEvents(userEvents);
-				currentUser.setUserEventsObjects(userEventsObjects);
+				currentUser.set3eventTypes(events, events_wait4approval, events_decline);
 				currentUser.setCreatedNumOfEvents(created_count);
 
 			} catch (JSONException e) {

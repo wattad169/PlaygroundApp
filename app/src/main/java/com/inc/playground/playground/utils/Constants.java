@@ -44,6 +44,8 @@ public class Constants {
 
     public static final String EVENT_NAME = "name";
 
+    public static final String STATUS = "status";
+
     public static final String EVENT_LOCATION_CORD = "location";
 
     public static final String LOCATION_LAT = "lat";

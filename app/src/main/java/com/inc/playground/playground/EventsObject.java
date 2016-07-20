@@ -20,7 +20,6 @@ public class EventsObject implements Serializable ,EventsObjectInterface {
 
     String isPublic;//1 indicate public, 0 indicate that members need approval
     ArrayList<String> members;
-
     ArrayList<User> approveList =  new ArrayList<>();;
 
     // TODO ADD EVENT MEMBERS (A LIST CONTAINING USERS)

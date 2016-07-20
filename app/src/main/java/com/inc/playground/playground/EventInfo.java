@@ -20,7 +20,6 @@ import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.CalendarContract;
-import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
@@ -51,8 +50,8 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.inc.playground.playground.utils.Constants;
 import com.inc.playground.playground.utils.CustomMarker;
 import com.inc.playground.playground.utils.DownloadImageBitmapTask;
-import com.inc.playground.playground.utils.EventUserObject;
 import com.inc.playground.playground.utils.GPSTracker;
+import com.inc.playground.playground.utils.InitGlobalVariables;
 import com.inc.playground.playground.utils.NetworkUtilities;
 import com.inc.playground.playground.utils.User;
 
@@ -64,7 +63,6 @@ import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -218,7 +216,8 @@ public class EventInfo extends FragmentActivity {
             if (!userEvents.isEmpty()) {
                 if (userEvents.contains(currentEvent.GetId())) {//play in the event
                     if(currentUser.GetUserId().equals(currentEvent.GetCreatorId())){//creator
-                        playButton.setChecked(true);//Todo change the tringle to other picture for manager
+//                        playButton.setChecked(true);//Todo change the tringle to other picture for manager - lina?
+                        playButton.setVisibility(View.INVISIBLE);
                         playButton.setTextColor(Color.parseColor("#000000"));
                         viewPlay.setText("Hosting");
                         viewPlay.setTextColor(Color.parseColor("#000000"));
@@ -320,9 +319,7 @@ public class EventInfo extends FragmentActivity {
                                         @Override
                                         public void onClick(View v) {
                                             //toast
-                                            String text = "Event was canceled";
-                                            Toast toast = Toast.makeText(getApplicationContext(), text, Toast.LENGTH_LONG);
-                                            toast.show();
+                                            toastGeneral(getApplicationContext(), "Event was canceled", Toast.LENGTH_SHORT);
                                             //cancel event
                                             String eventTask = "cancel_event";
                                             new HandleEventTask(currentEvent, eventTask).execute((Void) null);
@@ -489,7 +486,7 @@ public class EventInfo extends FragmentActivity {
             assert (currentUser!=null);
             if(currentUser.GetUserId().equals(currentEvent.GetCreatorId())) {//cancel event
                 //toast
-                toastEventCancel(getApplicationContext());//toast
+                toastGeneral(getApplicationContext(), "Event was canceled", Toast.LENGTH_SHORT);
                 eventTask = "cancel_event";
                 viewPlay.setText("cancel");
                 viewPlay.setTextColor(Color.parseColor("#D0D0D0"));
@@ -497,6 +494,7 @@ public class EventInfo extends FragmentActivity {
             }
             else{ //leave_event
                 eventTask = "leave_event";
+                toastGeneral(getApplicationContext(),"You left the event", Toast.LENGTH_SHORT);
                 x.setChecked(false);
                 viewPlay.setText("Play");
                 viewPlay.setTextColor(Color.parseColor("#D0D0D0"));
@@ -505,57 +503,71 @@ public class EventInfo extends FragmentActivity {
                 userEvents.remove(currentEvent.GetId());//remove current event from userEvents
                 viewCurrentSize.setText(Integer.toString(membersList.getChildCount()));
             }
-        }
-        else {//join event
+        } else {//join event
 
             //private event
             if (currentEvent.getIsPublic().equals("0")) {
                 eventTask = "request_join_event";
                 x.setChecked(true); //change icon to waiting
                 viewPlay.setText("Waiting");//for approval
+                toastGeneral(getApplicationContext(), "Waiting for event manager approvel", Toast.LENGTH_SHORT);
                 //Todo: change icon to question mark
+
+                //update global user events list - for join
+                //Todo : update to events_wait4approval idan
+//                currentUser.getUserEventsObjects().add(currentEvent);
+//                currentUser.SetUserEvents(userEvents);
+//                globalVariables.SetCurrentUser(currentUser);
+
             }
             //public event
-            else { eventTask = "join_event";}
-            x.setChecked(true);
-            viewPlay.setText("Playing");
-            viewPlay.setTextColor(Color.parseColor("#104E8B"));
-            //add member picture
-            ImageView member = new ImageView(this);
-            member.setImageResource(R.drawable.pg_time);
-            Bitmap currentImgae = getRoundedShape(globalVariables.GetUserPictureBitMap());
-            member.setImageBitmap(currentImgae);
-            member.setId(membersImagesUrls.length() + 1);
-            urlList.add(currentUser.getPhotoUrl());
-            membersList.addView(member);
-            //add for this new member listener
-            member.setOnClickListener(new View.OnClickListener() {
-                                          @Override
-                                          public void onClick(View v) {
-                                              // new changes
-                                              new EventPhotoUserListener(currentUser.getPhotoUrl()).execute();
+            else {
+                eventTask = "join_event";
+                x.setChecked(true);
+                viewPlay.setText("Playing");
+                viewPlay.setTextColor(Color.parseColor("#104E8B"));
+                toastGeneral(getApplicationContext(), "You joined the event !" , Toast.LENGTH_SHORT);
+                //add member picture
+                ImageView member = new ImageView(this);
+                member.setImageResource(R.drawable.pg_time);
+                Bitmap currentImgae = getRoundedShape(globalVariables.GetUserPictureBitMap());
+                member.setImageBitmap(currentImgae);
+                member.setId(membersImagesUrls.length() + 1);
+                urlList.add(currentUser.getPhotoUrl());
+                membersList.addView(member);
+                //add for this new member listener
+                member.setOnClickListener(new View.OnClickListener() {
+                                              @Override
+                                              public void onClick(View v) {
+                                                  // new changes
+                                                  new EventPhotoUserListener(currentUser.getPhotoUrl()).execute();
+                                              }
                                           }
-                                      }
 
-            );
-            viewCurrentSize.setText(Integer.toString(membersImagesUrls.length() + 1));
+                );
+                viewCurrentSize.setText(Integer.toString(membersImagesUrls.length() + 1));
 
-            //set status ("game on!" or not)
-            if (Integer.valueOf((String) viewCurrentSize.getText()) == Integer.valueOf((String) viewMinSize.getText())) {
-                viewStatus.setVisibility(View.VISIBLE);
-                statusImg.setVisibility(View.VISIBLE);
-                //            mainLayout.setBackgroundColor(Color.parseColor("#98fb98"));
+                //set status ("game on!" or not)
+                if (Integer.valueOf((String) viewCurrentSize.getText()) == Integer.valueOf((String) viewMinSize.getText())) {
+                    viewStatus.setVisibility(View.VISIBLE);
+                    statusImg.setVisibility(View.VISIBLE);
+                    //            mainLayout.setBackgroundColor(Color.parseColor("#98fb98"));
+                }
+                if (Integer.valueOf((String) viewCurrentSize.getText()) == Integer.valueOf((String) viewMaxSize.getText())) {
+                    //TODO : set not clickable for join to event -> only for leave
+
+                }
+                if (userEvents == null) userEvents = new HashSet<>();
+                userEvents.add(currentEvent.GetId());
             }
-            if (Integer.valueOf((String) viewCurrentSize.getText()) == Integer.valueOf((String) viewMaxSize.getText())) {
-                //TODO : set not clickable for join to event -> only for leave
+            //update global user events list - for join
+            //Todo : update
+//            currentUser.getUserEventsObjects().add(currentEvent);
+            currentUser.SetUserEvents(userEvents);
+            globalVariables.SetCurrentUser(currentUser);
 
-            }
-            if (userEvents == null) userEvents = new HashSet<>();
-            userEvents.add(currentEvent.GetId());
         }
 
-        currentUser.SetUserEvents(userEvents);
-        globalVariables.SetCurrentUser(currentUser);
         /*Server side update */
         handleEventTask = new HandleEventTask(currentEvent, eventTask);
         handleEventTask.execute((Void) null);
@@ -609,12 +621,10 @@ public class EventInfo extends FragmentActivity {
 
                 if (myObject != null && responseStatus != null) {
                     if (responseStatus.equals(Constants.RESPONSE_OK.toString())) {
-                        //Todo-Idan :cover the new eventTask that we have now: leave and cancel
+                        //all the todo happen in :  onPlayClick()
                         handleEventTask = null;
-                        //TODO YD Switch toggle button text to "playing"
                     } else {
                         handleEventTask= null;
-                        //TODO YD override toggle method -> not to switch text to "playing"
                     }
                 }
 
@@ -837,12 +847,20 @@ public class EventInfo extends FragmentActivity {
                                 MyProfile.class);
 
                 JSONArray eventEntries = userInfoFroServer.getJSONArray(Constants.EVENT_ENTRIES);
-                ArrayList<EventUserObject> memeberEvents = NetworkUtilities.eventUserListToArrayList(eventEntries, globalVariables.GetCurrentLocation(), Constants.EVENT_ENTRIES);
+
+                ArrayList<EventsObject> memeberEvents = NetworkUtilities.eventUserListToArrayList(eventEntries, globalVariables.GetCurrentLocation(), Constants.EVENT_ENTRIES);
+
+                ArrayList<ArrayList<EventsObject>> allEvents = Splash.eventsTypesfromJson(userProfileResponseStr, InitGlobalVariables.globalVariables.GetCurrentLocation());
+                ArrayList<EventsObject> events  = allEvents.get(0);
+                ArrayList<EventsObject> events_wait4approval = allEvents.get(1);
+                ArrayList<EventsObject> events_decline = allEvents.get(2);
+                iv.putExtra("events", events);
+                iv.putExtra("events_wait4approval", events_wait4approval);
+                iv.putExtra("events_decline", events_decline);
 
                 iv.putExtra("name", userInfoFroServer.getString("fullname"));
                 iv.putExtra("createdNumOfEvents",userInfoFroServer.getString("created_count"));
                 iv.putExtra("photoUrl", photoUrl);
-                iv.putExtra("userEventsObjects", memeberEvents);//for profile
                 startActivity(iv);
 //                finish();
 
@@ -852,7 +870,7 @@ public class EventInfo extends FragmentActivity {
             }
             return null;
         }
-        //Log.d("EVent info", "getMembersUrls.successful" + membersImagesUrls);
+        //Log.d("EVent info", "getMembersUrls.sucessful" + membersImagesUrls);
     }
 
     /**
@@ -937,8 +955,8 @@ public class EventInfo extends FragmentActivity {
         return hourArr;
     }
 
-    public static void toastEventCancel(Context c){
-        String text = "Event was canceled";
+
+    public static void toastGeneral(Context c, String text , int toastLength){
         Toast toast = Toast.makeText(c,text,Toast.LENGTH_LONG);
         toast.show();
     }

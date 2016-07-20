@@ -105,7 +105,9 @@ public class GlobalVariables extends Application {
     }
 
 
-
+    public enum EventStatus {//eventObject optional status
+        EXPIRED, OPEN ,LIVE
+    }
 
 
 }

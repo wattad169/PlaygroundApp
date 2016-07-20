@@ -30,7 +30,6 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.plus.model.people.Person;
 import com.inc.playground.playground.utils.DatePreference;
 import com.inc.playground.playground.utils.DownloadImageBitmapTask;
-import com.inc.playground.playground.utils.EventUserObject;
 import com.inc.playground.playground.utils.MembersDialog;
 
 import java.util.ArrayList;
@@ -132,8 +131,8 @@ public class FilterActivity extends PreferenceActivity {
         afterFilterEvents = new ArrayList<EventsObject>();
         if (myEventsOnly.isChecked()) {
             if (globalVariables.GetCurrentUser() != null) {
-                ArrayList<EventUserObject> beforeFilterEvents = this.globalVariables.GetCurrentUser().getUserEventsObjects();
-                for (EventUserObject curEvent : beforeFilterEvents) {
+                ArrayList<EventsObject> beforeFilterEvents = this.globalVariables.GetCurrentUser().getEvents();
+                for (EventsObject curEvent : beforeFilterEvents) {
                     doFilter(afterFilterEvents, curEvent);
                 }
             } else {
@@ -144,7 +143,7 @@ public class FilterActivity extends PreferenceActivity {
                 finish();
             }
         } else {
-            afterFilterEvents = new ArrayList<EventsObject>();
+            afterFilterEvents = new ArrayList<>();
             ArrayList<EventsObject> beforeFilterEvents = this.globalVariables.GetHomeEvents();
             for (EventsObject curEvent : beforeFilterEvents) {
                 doFilter(afterFilterEvents, curEvent);

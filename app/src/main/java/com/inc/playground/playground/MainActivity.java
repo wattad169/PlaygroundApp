@@ -66,7 +66,6 @@ import com.facebook.android.Facebook;
 import com.facebook.android.FacebookError;
 import com.facebook.android.Util;
 import com.inc.playground.playground.upLeft3StripesButton.MyProfile;
-import com.inc.playground.playground.utils.Constants;
 import com.inc.playground.playground.utils.DownloadImageBitmapTask;
 import com.inc.playground.playground.utils.User;
 
@@ -298,7 +297,11 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
                     //for my profile
                     iv.putExtra("name", currentUser.getName());
                     iv.putExtra("createdNumOfEvents", currentUser.getCreatedNumOfEvents());
-                    iv.putExtra("userEventsObjects", currentUser.getUserEventsObjects());//ArrayList<EventsObject>
+                    //pass events
+                    iv.putExtra("events", currentUser.getEvents());
+                    iv.putExtra("events_wait4approval", currentUser.getEvents_wait4approval());
+                    iv.putExtra("events_decline", currentUser.getEvents_decline());
+
                     iv.putExtra("photoUrl", currentUser.getPhotoUrl());
                     startActivity(iv);
                 }
@@ -422,7 +425,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
                 case 0:
                     // The first section of the app is the most interesting -- it offers
                     // a launchpad into the other demonstrations in this example application.
-                    return new FragmentList(null, Constants.maxEvents);
+                    return new FragmentList();
                 case 1:
                     return new FragmentMap();
                 //idan 20.5

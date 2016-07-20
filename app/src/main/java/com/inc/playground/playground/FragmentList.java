@@ -40,7 +40,7 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.inc.playground.playground.utils.Constants;
-import com.inc.playground.playground.utils.EventUserObject;
+import com.inc.playground.playground.utils.InitGlobalVariables;
 import com.inc.playground.playground.utils.NetworkUtilities;
 import com.inc.playground.playground.utils.User;
 import com.melnykov.fab.FloatingActionButton;
@@ -68,27 +68,18 @@ public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefre
     private SwipeRefreshLayout swipeRefreshLayout;
 
     private ListView events_list; //ListView listView;
-    private List<EventsObject> homeEvents;; //List<Movie> movieList;
+    private List<EventsObject> homeEvents;
     private GlobalVariables globalVariables;
     private HandleEventTask myEventsTask = null;
     public SharedPreferences prefs ;
     private ImageButton filterButton;
     private Boolean isOK = true;
-    private Boolean isMain = true;
     private String userLoginId;
     private User currentUser;
     private Set<String> userEvents;
     private EditText inputSearch;
     private int eventSize = 0;
-    private int maxSize;
 
-    public FragmentList(List<EventsObject> events, int length){
-        homeEvents = events;
-        maxSize = length;
-        if (events != null){
-            isMain = false;
-        }
-    }
 
     View rootView;
     @Override
@@ -100,10 +91,8 @@ public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefre
                 WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
         this.globalVariables = ((GlobalVariables) getActivity().getApplication());
-        if (homeEvents==null){
-            eventSize = Math.min(maxSize, this.globalVariables.GetHomeEvents().size());
-            homeEvents = this.globalVariables.GetHomeEvents().subList(0,eventSize);
-        }
+        eventSize = Math.min(Constants.maxEvents, this.globalVariables.GetHomeEvents().size());
+        homeEvents = this.globalVariables.GetHomeEvents().subList(0, eventSize);
         if(getActivity().getIntent().getStringExtra("parent") != null && getActivity().getIntent().getStringExtra("parent").equals("filter"))
         {
             homeEvents = (ArrayList<EventsObject>) getActivity().getIntent().getSerializableExtra("events");
@@ -249,10 +238,6 @@ public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefre
 
                     //swipe listener
                     swipeRefreshLayout.setOnRefreshListener(FragmentList.this);
-                    if (!isMain){
-                        swipeRefreshLayout.setRefreshing(false);
-                        swipeRefreshLayout.setEnabled(false);
-                    }
                     /*swipeRefreshLayout.post(new Runnable() {
                                                 @Override
                                                 public void run() {
@@ -388,17 +373,21 @@ public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefre
                         }
                         else { //leave event
                             eventTask = "leave_event";
+                            EventInfo.toastGeneral(getContext(),"You left the event", Toast.LENGTH_SHORT);
                             playTxt.setText("Play");//Todo  update eventInfo
                             curplayButton.setTextColor(Color.parseColor("#D0D0D0"));//how to set triangle gray?
                             playTxt.setTextColor(Color.parseColor("#D0D0D0"));
                         }
                     }
                     else { //join event
+                        //Todo if private
+                        //Todo if public
                         //curplayButton.setClickable(true);
                         eventTask = "join_event";
                         playTxt.setText("Playing");
-                        curplayButton.setTextColor  (Color.parseColor("#104E8B"));//how to set triangle blue?
+                        curplayButton.setTextColor(Color.parseColor("#104E8B"));//how to set triangle blue?
                         playTxt.setTextColor(Color.parseColor("#104E8B"));
+                        EventInfo.toastGeneral(getContext(), "You joined the event!", Toast.LENGTH_SHORT);
                     }
                     /*Server side update */
                     myEventsTask = new HandleEventTask(data.get(position), eventTask);
@@ -484,18 +473,26 @@ public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefre
                 }
                 if (myObject != null && responseStatus != null) {
                     if (responseStatus.equals(Constants.RESPONSE_OK.toString())) {
-                        myEventsTask = null;
                         isOK = true;
-                        if(eventTask.equals("join_event")) userEvents.add(currentEvent.GetId());
-                        else if (eventTask.equals("leave_event")) userEvents.remove(currentEvent.GetId());
-                        //userEvents include events if the user is the creator?
+                        if(eventTask.equals("join_event")) {
+                            userEvents.add(currentEvent.GetId());
+                            //update also array<eventsObject>
+                        }
+                        else if (eventTask.equals("leave_event")) {
+                            userEvents.remove(currentEvent.GetId());
+                        //update also array<eventsObject>
+                        }
+                        else if(eventTask.equals("request_join_event")){
+                            userEvents.add(currentEvent.GetId());
+                            //update also array<eventsObject>
+                        }
                         currentUser.SetUserEvents(userEvents);
-                        //TODO YD Switch toggle button text to "playing"
+                        //currentUser.Set() update also array<eventsObject>
                     } else {
-                        myEventsTask = null;
                         isOK = false;
                         //TODO YD override toggle method -> not to switch text to "playing"
                     }
+                    myEventsTask = null;
                 }
             }
             else

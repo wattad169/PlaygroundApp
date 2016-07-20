@@ -84,6 +84,8 @@ public class MyProfile extends FragmentActivity {
     /*Yarden and lina variables:*/
     ListView events_list; //ListView listView;
     ArrayList<EventsObject> homeEvents;
+    ArrayList<EventsObject> homeEvents_wait4approval;
+    ArrayList<EventsObject> homeEvents_decline;
 
     public SharedPreferences prefs;
     String userLoginId;
@@ -113,7 +115,7 @@ public class MyProfile extends FragmentActivity {
         //yarden, lina, i am tring to put loading spinner when we move to this screen (spinner)
         super.onCreate(savedInstanceState);
 //        spinner = (ProgressBar)findViewById(R.id.progressBar);
-        // spinner.setVisibility(View.VISIBLE);
+       // spinner.setVisibility(View.VISIBLE);
         setContentView(R.layout.profile);
         currentUser = globalVariables.GetCurrentUser();
         if (currentUser != null) { // the user is login
@@ -155,11 +157,15 @@ public class MyProfile extends FragmentActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        //yarden this is all of the user events
+        homeEvents = (ArrayList<EventsObject>) bundle.getSerializable("events");
+        homeEvents_wait4approval = (ArrayList<EventsObject>) bundle.getSerializable("events_wait4approval");
+        homeEvents_decline= (ArrayList<EventsObject>) bundle.getSerializable("events_decline");
         //prefs = this.getSharedPreferences("Login", this.MODE_PRIVATE);
         //userLoginId = prefs.getString("userid", null);
 
 //        new getList().execute();
-        // spinner.setVisibility(View.INVISIBLE);
+       // spinner.setVisibility(View.INVISIBLE);
 
 
         // The activity is about to become visible.
@@ -196,12 +202,16 @@ public class MyProfile extends FragmentActivity {
             /*copied with change from list_fragment*/
         View rootView = inflater.inflate(R.layout.profile, container, false);
 
+        currentUser = globalVariables.GetCurrentUser();
+        homeEvents = (ArrayList<EventsObject>) bundle.getSerializable("userEventsObjects") ;
         prefs = this.getSharedPreferences("Login", this.MODE_PRIVATE);
         userLoginId = prefs.getString("userid", null);
         //final String MY_PREFS_NAME = "Login";
         SharedPreferences prefs = this.getSharedPreferences("Login", 0);
-
-//        new getList().execute();
+        if (currentUser != null) { // the user is login
+            userEvents = currentUser.GetUserEvents();
+        }
+        new getList().execute();
         return rootView;
 
     }
@@ -489,6 +499,18 @@ public class MyProfile extends FragmentActivity {
         }
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

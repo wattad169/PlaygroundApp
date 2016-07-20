@@ -250,11 +250,12 @@ final public class NetworkUtilities {
      * @return
      * @throws JSONException
      */
-    public static EventUserObject fillEventObject(JSONObject jsonObject ,HashMap<String, Double> currentLocation) throws JSONException {
+    public static EventsObject fillEventObject(JSONObject jsonObject ,HashMap<String, Double> currentLocation) throws JSONException {
         String eventId = jsonObject.getString(Constants.EVENT_ID);
-        EventUserObject currentEvent = new EventUserObject();
+        EventsObject currentEvent = new EventsObject();
 
         currentEvent.SetId(eventId);
+        currentEvent.SetStatus(Constants.STATUS);
         currentEvent.SetName(jsonObject.getString(Constants.EVENT_NAME));
         currentEvent.SetFormattedLocation(jsonObject.getString(Constants.EVENT_LOCATION));
         currentEvent.SetType(jsonObject.getString(Constants.EVENT_TYPE));
@@ -268,8 +269,8 @@ final public class NetworkUtilities {
         currentEvent.setIsPublic(jsonObject.getString(Constants.IS_PUBLIC));
         // find distance
         Log.d(TAG,currentLocation.toString());
-        double currentLon  = currentLocation.get(Constants.LOCATION_LON);
-        double  currentLat= currentLocation.get(Constants.LOCATION_LAT);
+        double currentLon = currentLocation.get(Constants.LOCATION_LON);
+        double currentLat = currentLocation.get(Constants.LOCATION_LAT);
         String eventLon  = jsonObject.getJSONObject("location").getString(Constants.LOCATION_LON);
         String eventLat = jsonObject.getJSONObject("location").getString(Constants.LOCATION_LAT);
         currentEvent.SetPosition(eventLat, eventLon);
@@ -304,8 +305,6 @@ final public class NetworkUtilities {
         return events;
     }
 
-
-
     /**
      *
      * @param jsonInput
@@ -314,46 +313,18 @@ final public class NetworkUtilities {
      * @return
      * @throws JSONException
      */
-    public static ArrayList<EventUserObject> eventUserListToArrayList(JSONArray jsonInput,HashMap<String, Double> currentLocation ,String whichEventTable ) throws JSONException {
-        assert( whichEventTable.equals(Constants.EVENTS_WAIT4APPROVAL)||
-                whichEventTable.equals(Constants.EVENTS_DECLINE) ||
-                whichEventTable.equals(Constants.EVENT_ENTRIES));
-        ArrayList<EventUserObject> events = new ArrayList<EventUserObject>();
+    public static ArrayList<EventsObject> eventUserListToArrayList(JSONArray jsonInput,HashMap<String, Double> currentLocation ,String whichEventTable ) throws JSONException {
+        assert(whichEventTable.equals((whichEventTable.equals(Constants.EVENTS_WAIT4APPROVAL))||( whichEventTable.equals(Constants.EVENTS_DECLINE))||whichEventTable.equals(Constants.EVENT_ENTRIES)));
+        ArrayList<EventsObject> events = new ArrayList<>();
         Log.i("testi",String.valueOf(jsonInput.length()));
         for(int i=0 ; i<jsonInput.length();i++){
             //Fill the EventObject with data from the JSON
             JSONObject currentObject = (JSONObject) jsonInput.get(i);
-            EventUserObject currentEvent = fillEventObject(currentObject , currentLocation);
-            currentEvent.setEventUserStatus(whichEventTable);
+            EventsObject currentEvent = fillEventObject(currentObject , currentLocation);
             // add event ArrayList<EventUserObject>
-            events.add(currentEvent);
+//            events.add(currentEvent);
         }
         return events;
-    }
-
-    /**
-     *
-     * @param jsonObject
-     * @param currentLocation
-     * @return ArrayList<EventUserObject> - all the events types of the login user
-     * @throws JSONException
-     */
-    public static ArrayList<EventUserObject> allUserEvents(JSONObject jsonObject,HashMap<String, Double> currentLocation) throws JSONException {
-        ArrayList<EventUserObject> eventsUserObject = new ArrayList<EventUserObject>();
-        String[] values= {Constants.EVENT_ENTRIES,"events_decline","events_wait4approval"};
-        ArrayList<EventUserObject> eventsList;
-        JSONArray jsonArray;
-        String whichTable;
-        for(int i=0;i<values.length; i++){
-            whichTable = values[i];
-            jsonArray = jsonObject.getJSONArray(whichTable);//need to check null?
-            eventsList = eventUserListToArrayList(jsonArray ,currentLocation , whichTable );
-            if(eventsList!=null) {
-                eventsUserObject.addAll(eventsList);
-            }
-            eventsList.clear();
-        }
-        return eventsUserObject;
     }
 
 }
