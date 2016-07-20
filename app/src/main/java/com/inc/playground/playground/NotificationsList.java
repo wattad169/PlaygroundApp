@@ -192,10 +192,6 @@ public class NotificationsList extends FragmentActivity implements SwipeRefreshL
                 view = inflater.inflate(R.layout.notification_item, null);
             }
 
-
-
-
-
             TextView eventName =(TextView) view.findViewById(R.id.event_nameTxt);
             TextView notificationDescription = (TextView) view.findViewById(R.id.notification_descriptionTxt);
 
@@ -225,19 +221,19 @@ public class NotificationsList extends FragmentActivity implements SwipeRefreshL
 
                 try {
                     curEvent = eventListToArrayList(eventsFromServerJSON, globalVariables.GetCurrentLocation()).get(0);
-
+                    data.get(position).setEvent(curEvent);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
 
-
-
                 eventName.setText(curEvent.GetName());
+
                 view.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         Intent intent = new Intent(NotificationsList.this, EventInfo.class);
-                        intent.putExtra("eventObject", curEvent);
+                        intent.putExtra("eventObject", data.get(position).getEvent());
+                        intent.putExtra("parentActivity","NotificationList");
                         startActivity(intent);
                         notifications.remove(data.get(position));
                     }

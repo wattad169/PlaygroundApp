@@ -115,6 +115,8 @@ public class EventInfo extends FragmentActivity {
     ScrollView mainLayout;
     public ArrayList<String> urlList = new ArrayList<>(); //saves the url of members by order
 
+    public String parentActivity; // lina add
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -125,6 +127,9 @@ public class EventInfo extends FragmentActivity {
 
         setPlayGroundActionBar();
         Intent intent = getIntent();
+
+        parentActivity = intent.getStringExtra("parentActivity");
+        if(parentActivity == null) parentActivity = " ";
         currentEvent = (EventsObject) intent.getSerializableExtra("eventObject");
         currentUser = globalVariables.GetCurrentUser();
         viewName = (TextView) findViewById(R.id.event_name);
@@ -936,6 +941,24 @@ public class EventInfo extends FragmentActivity {
         String text = "Event was canceled";
         Toast toast = Toast.makeText(c,text,Toast.LENGTH_LONG);
         toast.show();
+    }
+
+    @Override
+    public void onBackPressed()
+    {
+        if(parentActivity.equals("NotificationList"))
+        {
+            Intent iv = new Intent(this,NotificationsList.class);
+            startActivity(iv);
+            finish();
+        }
+        else
+        {
+            Intent iv = new Intent(this,MainActivity.class);
+            startActivity(iv);
+            finish();
+        }
+
     }
 }
 

@@ -117,6 +117,8 @@ public class MyGcmListenerService extends GcmListenerService {
         curNotification.setDescription(message);
         curNotification.setTitle(title);
         curNotification.setInputJson(inputJson);
+        notificationList.add(curNotification);
+        globalVariables.SetNotifications(notificationList);
 
         Intent intent = new Intent(this, MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -130,10 +132,6 @@ public class MyGcmListenerService extends GcmListenerService {
         {
             iv = new Intent(MyGcmListenerService.this,NotificationsList.class);
         }
-
-
-        notificationList.add(curNotification);
-        globalVariables.SetNotifications(notificationList);
 
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, iv,
                 PendingIntent.FLAG_ONE_SHOT);
