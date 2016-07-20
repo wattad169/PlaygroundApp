@@ -66,6 +66,7 @@ import com.facebook.android.Facebook;
 import com.facebook.android.FacebookError;
 import com.facebook.android.Util;
 import com.inc.playground.playground.upLeft3StripesButton.MyProfile;
+import com.inc.playground.playground.utils.Constants;
 import com.inc.playground.playground.utils.DownloadImageBitmapTask;
 import com.inc.playground.playground.utils.User;
 
@@ -421,7 +422,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
                 case 0:
                     // The first section of the app is the most interesting -- it offers
                     // a launchpad into the other demonstrations in this example application.
-                    return new FragmentList();
+                    return new FragmentList(null, Constants.maxEvents);
                 case 1:
                     return new FragmentMap();
                 //idan 20.5

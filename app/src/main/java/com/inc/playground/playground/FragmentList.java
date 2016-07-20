@@ -41,7 +41,6 @@ import android.widget.ToggleButton;
 
 import com.inc.playground.playground.utils.Constants;
 import com.inc.playground.playground.utils.EventUserObject;
-import com.inc.playground.playground.utils.InitGlobalVariables;
 import com.inc.playground.playground.utils.NetworkUtilities;
 import com.inc.playground.playground.utils.User;
 import com.melnykov.fab.FloatingActionButton;
@@ -75,11 +74,21 @@ public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefre
     public SharedPreferences prefs ;
     private ImageButton filterButton;
     private Boolean isOK = true;
+    private Boolean isMain = true;
     private String userLoginId;
     private User currentUser;
     private Set<String> userEvents;
     private EditText inputSearch;
     private int eventSize = 0;
+    private int maxSize;
+
+    public FragmentList(List<EventsObject> events, int length){
+        homeEvents = events;
+        maxSize = length;
+        if (events != null){
+            isMain = false;
+        }
+    }
 
     View rootView;
     @Override
@@ -91,8 +100,10 @@ public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefre
                 WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
         this.globalVariables = ((GlobalVariables) getActivity().getApplication());
-        eventSize = Math.min(Constants.maxEvents, this.globalVariables.GetHomeEvents().size());
-        homeEvents = this.globalVariables.GetHomeEvents().subList(0, eventSize);
+        if (homeEvents==null){
+            eventSize = Math.min(maxSize, this.globalVariables.GetHomeEvents().size());
+            homeEvents = this.globalVariables.GetHomeEvents().subList(0,eventSize);
+        }
         if(getActivity().getIntent().getStringExtra("parent") != null && getActivity().getIntent().getStringExtra("parent").equals("filter"))
         {
             homeEvents = (ArrayList<EventsObject>) getActivity().getIntent().getSerializableExtra("events");
@@ -238,6 +249,10 @@ public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefre
 
                     //swipe listener
                     swipeRefreshLayout.setOnRefreshListener(FragmentList.this);
+                    if (!isMain){
+                        swipeRefreshLayout.setRefreshing(false);
+                        swipeRefreshLayout.setEnabled(false);
+                    }
                     /*swipeRefreshLayout.post(new Runnable() {
                                                 @Override
                                                 public void run() {
@@ -512,8 +527,7 @@ public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefre
                 findViewById(R.id.swipe_refresh_layout);
 
         swipeRefreshLayout.setRefreshing(true);
-        Intent i = new Intent(this.getActivity(), MainActivity.class);
-        Splash.GetEventsAsyncTask getEventsAsyncTask = new Splash.GetEventsAsyncTask(this.getContext(),i);
+        Splash.GetEventsAsyncTask getEventsAsyncTask = new Splash.GetEventsAsyncTask(this.getContext());
         getEventsAsyncTask.execute();
 
         swipeRefreshLayout.setRefreshing(false);
