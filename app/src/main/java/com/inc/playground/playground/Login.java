@@ -61,7 +61,7 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
 	private static final String TAG = "MainActivity";
 	String Error, user2;
 	String key, id, method;
-	Button btn_loginfb, btn_logingoogle;
+	Button btn_loginfb;
 	ArrayList<Logingetset> login;
 	String imagefb,facebook_id;
 	public static final String MY_PREFS_NAME = "Login";
@@ -137,30 +137,6 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
 				editor.putString("delete", "" + prodel);
 				editor.commit();
 				loginToFacebook();
-//				Log.d("name123", "" + name);
-//				Log.d("email123", "" + "http://graph.facebook.com/" + imagefb + "/picture");
-
-				// logoutFromFacebook();
-
-			}
-		});
-		btn_logingoogle = (Button) findViewById(R.id.btn_google);
-		btn_logingoogle.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View arg0) {
-				// TODO Auto-generated method stub
-				//mGoogleApiClient.connect();
-				String prodel = "new";
-				SharedPreferences.Editor editor = getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE).edit();
-				editor.putString("delete", "" + prodel);
-				editor.commit();
-				method = "google";
-				signInWithGplus();
-
-				Log.d("personname", "" + personname);
-				Log.d("personemail", "" + personemail);
-
 			}
 		});
 	}

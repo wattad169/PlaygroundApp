@@ -35,7 +35,8 @@
         <ScrollView
             android:id="@+id/scroll"
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent" >
+            android:layout_height="fill_parent"
+            android:layout_alignParentStart="false">
 
             <RelativeLayout
                 android:id="@+id/rel_scroll"
@@ -44,65 +45,17 @@
 
                 <Button
                     android:id="@+id/btn_fb"
-                    android:layout_width="fill_parent"
+                    android:layout_width="300dp"
                     android:layout_height="50dp"
-                    android:layout_marginLeft="5dp"
-                    android:layout_marginRight="5dp"
-                    android:layout_marginTop="10dp"
                     android:background="@drawable/fb_btn"
                     android:text="Login With Facebook"
-                    android:textColor="#fff" />
-
-                <Button
-                    android:id="@+id/btn_google"
-                    android:layout_width="fill_parent"
-                    android:layout_height="50dp"
-                    android:layout_below="@+id/btn_fb"
-                    android:layout_marginLeft="5dp"
-                    android:layout_marginRight="5dp"
-                    android:layout_marginTop="5dp"
-                    android:background="@drawable/google_btn"
-                    android:text="Login With Google+"
-                    android:textColor="#fff" /><![CDATA[
-
-                TextView
-                    android:id="@+id/txt_or"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/btn_google"
-                    android:layout_centerHorizontal="true"
-                    android:layout_marginTop="10dp"
-                    android:text="@string/or_text"
-                    android:textColor="#000"
-                    android:textSize="20dp" />
-
-
-
-
-                TextView
-                    android:id="@+id/txt_or1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/btn_login"
-                    android:layout_centerHorizontal="true"
-                    android:layout_marginTop="10dp"
-                    android:text="@string/or_text"
-                    android:textColor="#000"
-                    android:textSize="20dp" />
-
-                Button
-                    android:id="@+id/btn_register"
-                    android:layout_width="fill_parent"
-                    android:layout_height="50dp"
-                    android:layout_below="@+id/txt_or1"
-                    android:layout_marginLeft="5dp"
-                    android:layout_marginRight="5dp"
-                    android:layout_marginTop="10dp"
-                    android:background="@drawable/login_btn"
-                    android:text="@string/btn_register1"
                     android:textColor="#fff"
-                    android:textSize="20dp" />
-            ]]>
+                    android:foregroundGravity="center_vertical|center|center_horizontal"
+                    android:gravity="center_vertical|center|center_horizontal"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_marginTop="100dp"
+                    android:layout_marginLeft="30dp" />
             </RelativeLayout>
         </ScrollView>
     </RelativeLayout>

@@ -527,7 +527,8 @@ public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefre
                 findViewById(R.id.swipe_refresh_layout);
 
         swipeRefreshLayout.setRefreshing(true);
-        Splash.GetEventsAsyncTask getEventsAsyncTask = new Splash.GetEventsAsyncTask(this.getContext());
+        Intent i = new Intent(this.getActivity(), MainActivity.class);
+        Splash.GetEventsAsyncTask getEventsAsyncTask = new Splash.GetEventsAsyncTask(this.getContext(),i);
         getEventsAsyncTask.execute();
 
         swipeRefreshLayout.setRefreshing(false);
