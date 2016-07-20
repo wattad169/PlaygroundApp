@@ -5,6 +5,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
+import com.inc.playground.playground.utils.Constants;
+
 public class TabsPagerAdapter extends FragmentPagerAdapter {
 
     public TabsPagerAdapter(FragmentManager fm) {
@@ -23,7 +25,7 @@ public class TabsPagerAdapter extends FragmentPagerAdapter {
                 return new FragmentMap();
             case 2:
                 // List fragment activity
-                return new FragmentList();
+                return new FragmentList(null, Constants.maxEvents);
         }
 
         return null;

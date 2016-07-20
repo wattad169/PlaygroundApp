@@ -68,18 +68,27 @@ public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefre
     private SwipeRefreshLayout swipeRefreshLayout;
 
     private ListView events_list; //ListView listView;
-    private List<EventsObject> homeEvents;
+    private List<EventsObject> homeEvents;; //List<Movie> movieList;
     private GlobalVariables globalVariables;
     private HandleEventTask myEventsTask = null;
     public SharedPreferences prefs ;
     private ImageButton filterButton;
     private Boolean isOK = true;
+    private Boolean isMain = true;
     private String userLoginId;
     private User currentUser;
     private Set<String> userEvents;
     private EditText inputSearch;
     private int eventSize = 0;
+    private int maxSize;
 
+    public FragmentList(List<EventsObject> events, int length){
+        homeEvents = events;
+        maxSize = length;
+        if (events != null){
+            isMain = false;
+        }
+    }
 
     View rootView;
     @Override
@@ -91,8 +100,10 @@ public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefre
                 WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
         this.globalVariables = ((GlobalVariables) getActivity().getApplication());
-        eventSize = Math.min(Constants.maxEvents, this.globalVariables.GetHomeEvents().size());
-        homeEvents = this.globalVariables.GetHomeEvents().subList(0, eventSize);
+        if (homeEvents==null){
+            eventSize = Math.min(maxSize, this.globalVariables.GetHomeEvents().size());
+            homeEvents = this.globalVariables.GetHomeEvents().subList(0,eventSize);
+        }
         if(getActivity().getIntent().getStringExtra("parent") != null && getActivity().getIntent().getStringExtra("parent").equals("filter"))
         {
             homeEvents = (ArrayList<EventsObject>) getActivity().getIntent().getSerializableExtra("events");
@@ -238,6 +249,10 @@ public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefre
 
                     //swipe listener
                     swipeRefreshLayout.setOnRefreshListener(FragmentList.this);
+                    if (!isMain){
+                        swipeRefreshLayout.setRefreshing(false);
+                        swipeRefreshLayout.setEnabled(false);
+                    }
                     /*swipeRefreshLayout.post(new Runnable() {
                                                 @Override
                                                 public void run() {

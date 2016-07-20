@@ -209,197 +209,197 @@ public class MyProfile extends FragmentActivity {
         //final String MY_PREFS_NAME = "Login";
         SharedPreferences prefs = this.getSharedPreferences("Login", 0);
         if (currentUser != null) { // the user is login
-            userEvents = currentUser.GetUserEvents();
+            userEvents = currentUser.getEvents();
         }
         new getList().execute();
         return rootView;
 
     }
 
-//    private class getList extends AsyncTask<String, Integer, Integer> {
-//
-//        @Override
-//        protected void onPreExecute() {
-//            // TODO ?
-//            super.onPreExecute();
-//        }
-//
-//        @Override
-//        protected Integer doInBackground(String... params) {
-//            // TODO Auto-generated method stub
-//            return null;
-//        }
-//
-//        @Override
-//        protected void onPostExecute(Integer result) {
-//
-//            //            if (progressDialog.isShowing()) {
-//            //                progressDialog.dismiss();
-//            events_list = (ListView) findViewById(R.id.my_events_list);
-//
-////            SwipeRefreshLayout swipeRefreshLayout = (SwipeRefreshLayout)
-////                    findViewById(R.id.swipe_refresh_layout);
-//
-//
-//            if (homeEvents != null) {
-//                if (homeEvents.size() == 0) {// If no events are found
-//                    //Toast.makeText(getApplicationContext(), "No Events Found", Toast.LENGTH_LONG).show();
-//                    events_list.setVisibility(View.INVISIBLE);
-//                } else {
-//                    // Display events
-//                    events_list.setVisibility(View.VISIBLE);
-//                    HomeEventsAdapter homeEventsAdapter = new HomeEventsAdapter(MyProfile.this, homeEvents);//homeEvents= globalVariable.currentuserevents
-//                    homeEventsAdapter.notifyDataSetChanged();
-//                    events_list.setAdapter(homeEventsAdapter);
-//
-//                    //swipe listener
-//                    //swipeRefreshLayout.setOnRefreshListener(FragmentList.this);
-//                        /*swipeRefreshLayout.post(new Runnable() {
-//                                                    @Override
-//                                                    public void run() {
-//                                                        swipeRefreshLayout.setRefreshing(true);
-//
-//                                                        //fetchMovies();
-//                                                    }
-//                                                }
-//                        );*/
-//
-//
-//                    events_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//
-//                        @Override
-//                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//                            // TODO Auto-generated method stub
-//                            Intent intent = new Intent(getApplicationContext(), EventInfo.class);
-//                            intent.putExtra("eventObject", homeEvents.get(position));
-//                            startActivity(intent);
-////                            finish();
-//
-//                        }
-//                    });
-//                }
-//            }
-//        }
-//
-//
-//    }
+    private class getList extends AsyncTask<String, Integer, Integer> {
+
+        @Override
+        protected void onPreExecute() {
+            // TODO ?
+            super.onPreExecute();
+        }
+
+        @Override
+        protected Integer doInBackground(String... params) {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Integer result) {
+
+            //            if (progressDialog.isShowing()) {
+            //                progressDialog.dismiss();
+            events_list = (ListView) findViewById(R.id.my_events_list);
+
+//            SwipeRefreshLayout swipeRefreshLayout = (SwipeRefreshLayout)
+//                    findViewById(R.id.swipe_refresh_layout);
 
 
-//    public class HomeEventsAdapter extends BaseAdapter {
-//
-//        private Activity activity;
-//        private ArrayList<EventsObject> data;
-//        private LayoutInflater inflater = null;
-//
-//        public HomeEventsAdapter(Activity activity, ArrayList<EventsObject> homeEvents) {
-//            this.activity = activity;
-//            this.data = homeEvents;
-//            inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-//        }
-//
-//        @Override
-//        public int getCount() {
-//            return data.size();
-//        }
-//
-//        @Override
-//        public Object getItem(int position) {
-//            return position;
-//        }
-//
-//        @Override
-//        public long getItemId(int position) {
-//            return position;
-//        }
-//
-//        @Override
-//        public View getView(final int position, View convertView, ViewGroup parent) {
-//            View view = convertView;
-//
-//
-//            if (convertView == null) {
-//                view = inflater.inflate(R.layout.fragment_list_item, null);
-//                if (position % 2 == 0) {
-//                    view.setBackground(getResources().getDrawable(R.drawable.pg_cell_first));
-//                } else {
-//                    view.setBackground(getResources().getDrawable(R.drawable.pg_cell_first_b));
-//                }
-//            }
-//            Typeface fontText = Typeface.createFromAsset(getAssets(), "sansation.ttf");
-//            Typeface fontText2 = Typeface.createFromAsset(getAssets(), "kimberly.ttf");
-//            Typeface fontText3 = Typeface.createFromAsset(getAssets(), "crayon.ttf");
-//            // update type icon according to event type
-//            String uri = "@drawable/pg_" + data.get(position).GetType() + "_icon";
-//            int imageResource = getResources().getIdentifier(uri, null, getPackageName());
-//            ImageView typeImg = (ImageView) view.findViewById(R.id.type_img);
-//            Drawable typeDrawable = getResources().getDrawable(imageResource);
-//            typeImg.setImageDrawable(typeDrawable);
-//
-//            TextView eventName = (TextView) view.findViewById(R.id.event_name);
-//            eventName.setText(data.get(position).GetName());
-////            eventName.setTypeface(fontText);
-//
-//            TextView formattedLocation = (TextView) view.findViewById(R.id.formatted_loctaion_txt);
-//            formattedLocation.setText(data.get(position).GetFormattedLocation());
-////            formattedLocation.setTypeface(fontText3);
-//
-//            TextView eventDate = (TextView) view.findViewById(R.id.date_txt);
-//            eventDate.setText(data.get(position).GetDate());
-////            eventDate.setTypeface(fontText3);
-//
-//            TextView starTime = (TextView) view.findViewById(R.id.start_time_txt);
-//            starTime.setText(data.get(position).GetStartTime());
-////            startTime.setTypeface(fontText3);
-//
-//            TextView eventDistance = (TextView) view.findViewById(R.id.distance_txt);
-//            eventDistance.setText(data.get(position).GetDistance());
-////            eventDistance.setTypeface(fontText3);
-//
-//            TextView kmTxt = (TextView) view.findViewById(R.id.kmTxt);
-////            kmTxt.setTypeface(fontText3);
-//
-//            final TextView playTxt = (TextView) view.findViewById(R.id.play_txt);
-//            playTxt.setVisibility(View.INVISIBLE);
-//
-//
-//            /*view.setOnClickListener(new View.OnClickListener() {
+            if (homeEvents != null) {
+                if (homeEvents.size() == 0) {// If no events are found
+                    //Toast.makeText(getApplicationContext(), "No Events Found", Toast.LENGTH_LONG).show();
+                    events_list.setVisibility(View.INVISIBLE);
+                } else {
+                    // Display events
+                    events_list.setVisibility(View.VISIBLE);
+                    HomeEventsAdapter homeEventsAdapter = new HomeEventsAdapter(MyProfile.this, homeEvents);//homeEvents= globalVariable.currentuserevents
+                    homeEventsAdapter.notifyDataSetChanged();
+                    events_list.setAdapter(homeEventsAdapter);
+
+                    //swipe listener
+                    //swipeRefreshLayout.setOnRefreshListener(FragmentList.this);
+                        /*swipeRefreshLayout.post(new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        swipeRefreshLayout.setRefreshing(true);
+
+                                                        //fetchMovies();
+                                                    }
+                                                }
+                        );*/
+
+
+                    events_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+                        @Override
+                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                            // TODO Auto-generated method stub
+                            Intent intent = new Intent(getApplicationContext(), EventInfo.class);
+                            intent.putExtra("eventObject", homeEvents.get(position));
+                            startActivity(intent);
+//                            finish();
+
+                        }
+                    });
+                }
+            }
+        }
+
+
+    }
+
+
+    public class HomeEventsAdapter extends BaseAdapter {
+
+        private Activity activity;
+        private ArrayList<EventsObject> data;
+        private LayoutInflater inflater = null;
+
+        public HomeEventsAdapter(Activity activity, ArrayList<EventsObject> homeEvents) {
+            this.activity = activity;
+            this.data = homeEvents;
+            inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        }
+
+        @Override
+        public int getCount() {
+            return data.size();
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return position;
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
+
+        @Override
+        public View getView(final int position, View convertView, ViewGroup parent) {
+            View view = convertView;
+
+
+            if (convertView == null) {
+                view = inflater.inflate(R.layout.fragment_list_item, null);
+                if (position % 2 == 0) {
+                    view.setBackground(getResources().getDrawable(R.drawable.pg_cell_first));
+                } else {
+                    view.setBackground(getResources().getDrawable(R.drawable.pg_cell_first_b));
+                }
+            }
+            Typeface fontText = Typeface.createFromAsset(getAssets(), "sansation.ttf");
+            Typeface fontText2 = Typeface.createFromAsset(getAssets(), "kimberly.ttf");
+            Typeface fontText3 = Typeface.createFromAsset(getAssets(), "crayon.ttf");
+            // update type icon according to event type
+            String uri = "@drawable/pg_" + data.get(position).GetType() + "_icon";
+            int imageResource = getResources().getIdentifier(uri, null, getPackageName());
+            ImageView typeImg = (ImageView) view.findViewById(R.id.type_img);
+            Drawable typeDrawable = getResources().getDrawable(imageResource);
+            typeImg.setImageDrawable(typeDrawable);
+
+            TextView eventName = (TextView) view.findViewById(R.id.event_name);
+            eventName.setText(data.get(position).GetName());
+//            eventName.setTypeface(fontText);
+
+            TextView formattedLocation = (TextView) view.findViewById(R.id.formatted_loctaion_txt);
+            formattedLocation.setText(data.get(position).GetFormattedLocation());
+//            formattedLocation.setTypeface(fontText3);
+
+            TextView eventDate = (TextView) view.findViewById(R.id.date_txt);
+            eventDate.setText(data.get(position).GetDate());
+//            eventDate.setTypeface(fontText3);
+
+            TextView starTime = (TextView) view.findViewById(R.id.start_time_txt);
+            starTime.setText(data.get(position).GetStartTime());
+//            startTime.setTypeface(fontText3);
+
+            TextView eventDistance = (TextView) view.findViewById(R.id.distance_txt);
+            eventDistance.setText(data.get(position).GetDistance());
+//            eventDistance.setTypeface(fontText3);
+
+            TextView kmTxt = (TextView) view.findViewById(R.id.kmTxt);
+//            kmTxt.setTypeface(fontText3);
+
+            final TextView playTxt = (TextView) view.findViewById(R.id.play_txt);
+            playTxt.setVisibility(View.INVISIBLE);
+
+
+            /*view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    Intent intent = new Intent(getApplicationContext(), EventInfo.class);
+                    intent.putExtra("eventObject", data.get(position));
+                    startActivity(intent);
+                    finish();
+                }
+            });*/
+
+            ToggleButton playButton = (ToggleButton) view.findViewById(R.id.join);
+            playButton.setVisibility(View.INVISIBLE);
+//            playButton.setOnClickListener(new View.OnClickListener() {
 //                @Override
 //                public void onClick(View v) {
-//
-//                    Intent intent = new Intent(getApplicationContext(), EventInfo.class);
-//                    intent.putExtra("eventObject", data.get(position));
-//                    startActivity(intent);
-//                    finish();
-//                }
-//            });*/
-//
-//            ToggleButton playButton = (ToggleButton) view.findViewById(R.id.join);
-//            playButton.setVisibility(View.INVISIBLE);
-////            playButton.setOnClickListener(new View.OnClickListener() {
-////                @Override
-////                public void onClick(View v) {
-////                    ToggleButton curplayButton = (ToggleButton) v;
-//////                    if(curplayButton.isChecked())//leave event
-//////                    {
-//////                        LeaveEventTask = new LeaveHandleEventTask(data.get(position));
-//////                        LeaveEventTask.execute((Void) null);
-//////                    playTxt.setText("Play");
-//////                    playTxt.setTextColor(Color.parseColor("#1874cd"));
-//////                    }
-//////                    else
-//////                    {
-////                    myEventsTask = new handleEventTask(data.get(position));
-////                    myEventsTask.execute((Void) null);
-////                    curplayButton.setClickable(false);
-////                    playTxt.setText("Playing");
-////                    playTxt.setTextColor(Color.parseColor("#00ced1"));
-//////                    }
-////                }});
-//
-//            return view;
-//
-//        }
-//    }
+//                    ToggleButton curplayButton = (ToggleButton) v;
+////                    if(curplayButton.isChecked())//leave event
+////                    {
+////                        LeaveEventTask = new LeaveHandleEventTask(data.get(position));
+////                        LeaveEventTask.execute((Void) null);
+////                    playTxt.setText("Play");
+////                    playTxt.setTextColor(Color.parseColor("#1874cd"));
+////                    }
+////                    else
+////                    {
+//                    myEventsTask = new handleEventTask(data.get(position));
+//                    myEventsTask.execute((Void) null);
+//                    curplayButton.setClickable(false);
+//                    playTxt.setText("Playing");
+//                    playTxt.setTextColor(Color.parseColor("#00ced1"));
+////                    }
+//                }});
+
+            return view;
+
+        }
+    }
 
     public void onBackPressed()
     {
