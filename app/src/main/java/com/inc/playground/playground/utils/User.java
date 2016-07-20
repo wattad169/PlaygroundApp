@@ -5,6 +5,7 @@ import com.inc.playground.playground.EventsObject;
 
 import java.util.ArrayList;
 import java.util.EventObject;
+import java.util.HashSet;
 import java.util.Set;
 
 public class User {
@@ -86,6 +87,7 @@ public class User {
 
 	public void SetUserEvents(Set <String> userEvents) {
 		//can someone add detail here? what the string include? the name of the event?
+		this.userEvents = new HashSet<>();
 		this.userEvents = userEvents;
 
 	}

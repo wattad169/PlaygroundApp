@@ -113,7 +113,7 @@ public class MyProfile extends FragmentActivity {
         //yarden, lina, i am tring to put loading spinner when we move to this screen (spinner)
         super.onCreate(savedInstanceState);
 //        spinner = (ProgressBar)findViewById(R.id.progressBar);
-       // spinner.setVisibility(View.VISIBLE);
+        // spinner.setVisibility(View.VISIBLE);
         setContentView(R.layout.profile);
         currentUser = globalVariables.GetCurrentUser();
         if (currentUser != null) { // the user is login
@@ -159,7 +159,7 @@ public class MyProfile extends FragmentActivity {
         //userLoginId = prefs.getString("userid", null);
 
 //        new getList().execute();
-       // spinner.setVisibility(View.INVISIBLE);
+        // spinner.setVisibility(View.INVISIBLE);
 
 
         // The activity is about to become visible.
@@ -489,18 +489,6 @@ public class MyProfile extends FragmentActivity {
         }
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

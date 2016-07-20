@@ -315,8 +315,8 @@ final public class NetworkUtilities {
      * @throws JSONException
      */
     public static ArrayList<EventUserObject> eventUserListToArrayList(JSONArray jsonInput,HashMap<String, Double> currentLocation ,String whichEventTable ) throws JSONException {
-        assert(whichEventTable.equals(Constants.EVENTS_EDITED) || whichEventTable.equals(Constants.EVENTS_WAIT4APPROVAL)||
-                whichEventTable.equals(Constants.EVENTS_DECLINE) || whichEventTable.equals(Constants.EVENTS_HISTORY) ||
+        assert( whichEventTable.equals(Constants.EVENTS_WAIT4APPROVAL)||
+                whichEventTable.equals(Constants.EVENTS_DECLINE) ||
                 whichEventTable.equals(Constants.EVENT_ENTRIES));
         ArrayList<EventUserObject> events = new ArrayList<EventUserObject>();
         Log.i("testi",String.valueOf(jsonInput.length()));
@@ -340,7 +340,7 @@ final public class NetworkUtilities {
      */
     public static ArrayList<EventUserObject> allUserEvents(JSONObject jsonObject,HashMap<String, Double> currentLocation) throws JSONException {
         ArrayList<EventUserObject> eventsUserObject = new ArrayList<EventUserObject>();
-        String[] values= {Constants.EVENT_ENTRIES,"events_edited","events_decline","events_wait4approval","events_history"};
+        String[] values= {Constants.EVENT_ENTRIES,"events_decline","events_wait4approval"};
         ArrayList<EventUserObject> eventsList;
         JSONArray jsonArray;
         String whichTable;
