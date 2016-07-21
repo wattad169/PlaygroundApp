@@ -110,7 +110,8 @@ public class NotificationsList extends FragmentActivity implements SwipeRefreshL
                         @Override
                         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                             // TODO Auto-generated method stub
-                            if(! notifications.get(position).getTitle().contains("canceled"))
+                            if(! notifications.get(position).getTitle().contains("canceled") ||
+                                    ! notifications.get(position).getTitle().contains("declined"))
                             {
                                 Intent intent = new Intent(NotificationsList.this, EventInfo.class);
                                 intent.putExtra("eventObject", notifications.get(position).getEvent());
@@ -188,7 +189,7 @@ public class NotificationsList extends FragmentActivity implements SwipeRefreshL
 
             TextView eventName =(TextView) view.findViewById(R.id.approveId_txt);
 
-            if(data.get(position).getTitle().contains("canceled"))
+            if(data.get(position).getTitle().contains("canceled") || data.get(position).getTitle().contains("declined"))
             {
                 eventName.setText(data.get(position).getTitle());
                 view.setOnClickListener(new View.OnClickListener() {

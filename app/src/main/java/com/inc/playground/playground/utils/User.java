@@ -21,6 +21,13 @@ public class User {
 
     Set<String> userEvents;//do we really need it?
 
+
+
+    Set<String> userWaitingForApproveIds;
+
+
+
+    Set<String> userDeclinedIds;
     //represents event status for the user
     ArrayList<EventsObject> events = new ArrayList<>() ;
     ArrayList<EventsObject> events_wait4approval = new ArrayList<>();
@@ -28,6 +35,22 @@ public class User {
 
     Set<String> favouritesId;//new feature!
 
+
+    public Set<String> getUserDeclinedIds() {
+        return userDeclinedIds;
+    }
+
+    public void setUserDeclinedIds(Set<String> userDeclinedIds) {
+        this.userDeclinedIds = userDeclinedIds;
+    }
+
+    public Set<String> getUserWaitingForApproveIds() {
+        return userWaitingForApproveIds;
+    }
+
+    public void setUserWaitingForApproveIds(Set<String> userWaitingForApproveIds) {
+        this.userWaitingForApproveIds = userWaitingForApproveIds;
+    }
     public ArrayList<EventsObject> getEvents() {
         return events;
     }
@@ -165,7 +188,7 @@ public class User {
                                ArrayList<EventsObject> events_decline, String eventId  ){
         for(EventsObject e : events){
             if(e.GetId().equals(eventId)){
-                return Constants.EVENTS;
+                return Constants.EVENTS_EDITED;
             }
         }
         for(EventsObject e : events_wait4approval){
@@ -245,23 +268,16 @@ public class User {
     /**
      *
      * @param events
-     * @param events_wait4approval
-     * @param events_decline
+
      * @return the Hashset<String> of all event ids
      */
-    public static Set<String> extractAllEventIds(ArrayList<EventsObject> events,ArrayList<EventsObject> events_wait4approval ,
-                                          ArrayList<EventsObject> events_decline ){
+    public static Set<String> extractAllEventIds(ArrayList<EventsObject> events){
 
         Set<String> eventIds = new HashSet<>();
         for(EventsObject e : events){
             eventIds.add( e.GetId());
         }
-        for(EventsObject e : events_wait4approval){
-            eventIds.add(e.GetId());
-        }
-        for(EventsObject e : events_decline){
-            eventIds.add(e.GetId());
-        }
+
         return eventIds;
     }
 

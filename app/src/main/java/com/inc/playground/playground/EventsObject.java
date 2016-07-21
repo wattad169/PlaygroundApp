@@ -8,6 +8,7 @@ import com.inc.playground.playground.utils.User;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 
 /**
@@ -110,6 +111,18 @@ public class EventsObject implements Serializable ,EventsObjectInterface {
     public void setApproveList(ArrayList<String> approveList) {
         this.approveList = new ArrayList<>();
         this.approveList = approveList;
+    }
+
+    public static Comparator<EventsObject> getCompByName()
+    {
+        Comparator comp = new Comparator<EventsObject>(){
+            @Override
+            public int compare(EventsObject s1, EventsObject s2)
+            {
+                return Float.compare(Float.parseFloat(s1.GetDistance()),(Float.parseFloat(s2.GetDistance())));
+            }
+        };
+        return comp;
     }
 
 

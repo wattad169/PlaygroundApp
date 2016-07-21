@@ -88,6 +88,19 @@
             android:layout_marginLeft="7dp"
             android:layout_marginTop="7dp" />
 
+        <ImageView
+            android:id="@+id/img_status"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:background="@drawable/event_accepted_tentative_origin"
+            android:layout_alignParentBottom="false"
+            android:paddingTop="60dp"
+            android:paddingLeft="40dp"
+            android:layout_marginTop="7dp"
+            android:layout_alignLeft="@+id/join"
+            android:layout_alignBottom="@+id/event_name"
+             />
+
         <ToggleButton
             android:layout_width="65dp"
             android:layout_height="65dp"
@@ -160,6 +173,7 @@
             android:layout_marginTop="-15dp"
             android:textStyle="bold"
             android:textColor="#D0D0D0" />
+
     </RelativeLayout>
 
 

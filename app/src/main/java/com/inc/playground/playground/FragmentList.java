@@ -1,6 +1,7 @@
 package com.inc.playground.playground;
 
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.ActivityOptions;
 import android.app.ProgressDialog;
@@ -30,7 +31,9 @@ import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
@@ -38,6 +41,7 @@ import android.widget.ToggleButton;
 import com.inc.playground.playground.utils.Constants;
 import com.inc.playground.playground.utils.NetworkUtilities;
 import com.inc.playground.playground.utils.User;
+import com.inc.playground.playground.utils.UserImageEntry;
 import com.melnykov.fab.FloatingActionButton;
 import com.melnykov.fab.ScrollDirectionListener;
 
@@ -47,6 +51,7 @@ import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -153,7 +158,9 @@ public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefre
                 @Override
                 public void onTextChanged(CharSequence cs, int arg1, int arg2, int arg3) {
                     if (cs.toString().equals("")) {
+                        Collections.sort(homeEvents, EventsObject.getCompByName());
                         HomeEventsAdapter homeEventsAdapter = new HomeEventsAdapter(getActivity(), homeEvents);//homeEvents= globalVariable.currentuserevents
+
                         homeEventsAdapter.notifyDataSetChanged();
                         events_list.setAdapter(homeEventsAdapter);
                     } else {
@@ -166,6 +173,7 @@ public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefre
                                 }
                             }
                         }
+                        Collections.sort(tempArrayList, EventsObject.getCompByName());
                         HomeEventsAdapter homeEventsAdapter = new HomeEventsAdapter(getActivity(), tempArrayList);//homeEvents= globalVariable.currentuserevents
                         homeEventsAdapter.notifyDataSetChanged();
                         events_list.setAdapter(homeEventsAdapter);
@@ -232,9 +240,12 @@ public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefre
                     getActivity().finish();
                 }
             });
-            if (prefs.getString("userid", null) != null) {
+            if (prefs.getString("userid", null) != null && isMain) {
                 fab.setVisibility(View.VISIBLE);
 
+            }
+            else{
+                fab.setVisibility(View.INVISIBLE);
             }
 
             if (homeEvents != null) {
@@ -244,8 +255,11 @@ public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefre
                 } else {
                     // Display events
                     events_list.setVisibility(View.VISIBLE);
+//                    Collections.sort(homeEvents, );
+                    Collections.sort(homeEvents, EventsObject.getCompByName());
                     HomeEventsAdapter homeEventsAdapter = new HomeEventsAdapter(getActivity(), homeEvents);//homeEvents= globalVariable.currentuserevents
                     homeEventsAdapter.notifyDataSetChanged();
+
                     events_list.setAdapter(homeEventsAdapter);
 
                     //swipe listener
@@ -337,7 +351,7 @@ public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefre
 
             // update type icon according to event type
             String uri = "@drawable/pg_" + data.get(position).GetType() + "_icon";
-            int imageResource = getResources().getIdentifier(uri, null, getActivity().getPackageName());
+            final int imageResource = getResources().getIdentifier(uri, null, getActivity().getPackageName());
             ImageView typeImg = (ImageView) view.findViewById(R.id.type_img);
             Drawable typeDrawable = getResources().getDrawable(imageResource);
             typeImg.setImageDrawable(typeDrawable);
@@ -359,13 +373,25 @@ public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefre
             eventDistance.setText(data.get(position).GetDistance());
 
             final TextView playTxt = (TextView) view.findViewById(R.id.play_txt);
+
+            final ImageView imageStatus = (ImageView) view.findViewById(R.id.img_status);
+            imageStatus.setVisibility(view.INVISIBLE);
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     if (prefs.getString("userid", null) == null) {
                         Toast toast = Toast.makeText(getContext(), "Please log in to see more", Toast.LENGTH_LONG);
                         toast.show();
-                    } else {
+                    }
+                    else if(data.get(position).getIsPublic().equals("0") &&
+                            !myEvents.contains(data.get(position).GetId())){
+
+                        Toast toast = Toast.makeText(getContext(), "These is a private event, you need to be a member to see event info", Toast.LENGTH_LONG);
+                        toast.show();
+
+                    }
+
+                    else {
                         Intent intent = new Intent(getActivity().getApplicationContext(), EventInfo.class);
                         intent.putExtra("eventObject", data.get(position));
                         startActivity(intent);
@@ -374,88 +400,144 @@ public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefre
                 }
             });
 
-            ToggleButton playButton = (ToggleButton) view.findViewById(R.id.join);
-            playButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    ToggleButton curplayButton = (ToggleButton) v;
-                    String eventTask = null;
-                    if (!curplayButton.isChecked()) {
-                        assert (currentUser != null);
-                        if (currentUser.GetUserId().equals(data.get(position).GetCreatorId())) {//cancel event
-                            eventTask = "cancel_event";
-                            playTxt.setText("cancel");
-                            assert (2 < 1); //not supposed to get here
-                        } else { //leave event
-                            eventTask = "leave_event";
-                            EventInfo.toastGeneral(getContext(), "You left the event", Toast.LENGTH_SHORT);
-                            playTxt.setText("Play");//Todo  update eventInfo
-                            curplayButton.setTextColor(Color.parseColor("#D0D0D0"));//how to set triangle gray?
-                            playTxt.setTextColor(Color.parseColor("#D0D0D0"));
-                            //update
-                            currentUser.removeSpecificEventById(data.get(position).GetId());
-                            globalVariables.SetCurrentUser(currentUser);
+            final ToggleButton playButton = (ToggleButton) view.findViewById(R.id.join);
+            if(prefs.getString("userid", null) != null) {
+                playButton.setOnClickListener(new View.OnClickListener() {
+                  @Override
+                  public void onClick(View v) {
+                      ToggleButton curplayButton = (ToggleButton) v;
+                      String eventTask = null;
 
-                        }
-                    } else { //join event
-                        //private event
-                        if (data.get(position).getIsPublic().equals("0")) {
-                            eventTask = "request_join_event";
-                            playTxt.setText("Waiting");
-                            EventInfo.toastGeneral(getContext(), "Wait for approval", Toast.LENGTH_SHORT);
-                            playTxt.setTextColor(Color.parseColor("#104E8B"));
-                            //update
-                            ArrayList<EventsObject> temp = currentUser.getEvents_wait4approval();
-                            temp.add(data.get(position));
-                            currentUser.setEvents_wait4approval(temp);
-                            globalVariables.SetCurrentUser(currentUser);
-                            //todo : insert icon ?
-                        } else {//public event
-                            //curplayButton.setClickable(true);
-                            eventTask = "join_event";
-                            playTxt.setText("Playing");
-                            curplayButton.setTextColor(Color.parseColor("#104E8B"));//how to set triangle blue?
-                            playTxt.setTextColor(Color.parseColor("#104E8B"));
-                            EventInfo.toastGeneral(getContext(), "You joined the event!", Toast.LENGTH_SHORT);
-                            //update
-                            ArrayList<EventsObject> temp = currentUser.getEvents();
-                            temp.add(data.get(position));
-                            currentUser.setEvents(temp);
-                            globalVariables.SetCurrentUser(currentUser);
-                        }
-                    }
-                    /*Server side update */
-                    myEventsTask = new HandleEventTask(data.get(position), eventTask);
-                    myEventsTask.execute((Void) null);
-                    //curplayButton.setChecked(!curplayButton.isChecked());
-                }
-            });
+                      if (!curplayButton.isChecked()) {
+                          assert (currentUser != null);
+                          if (currentUser.GetUserId().equals(data.get(position).GetCreatorId())) {//cancel event
+                              eventTask = "cancel_event";
+                              playTxt.setText("cancel");
+                              assert (2 < 1); //not supposed to get here
+                          } else { //leave event
+                              eventTask = "leave_event";
+                              EventInfo.toastGeneral(getContext(), "You left the event", Toast.LENGTH_SHORT);
+                              playTxt.setText("Play");//Todo  update eventInfo
+                              curplayButton.setTextColor(Color.parseColor("#D0D0D0"));//how to set triangle gray?
+                              playTxt.setTextColor(Color.parseColor("#D0D0D0"));
+                              //update
+                              currentUser.removeSpecificEventById(data.get(position).GetId());
+                              globalVariables.SetCurrentUser(currentUser);
+                              imageStatus.setVisibility(View.INVISIBLE);
+
+
+                          }
+                      } else { //join event
+                          //private event
+                          if (data.get(position).getIsPublic().equals("0")) {
+                              eventTask = "request_join_event";
+
+                              playTxt.setText("Waiting");
+                              EventInfo.toastGeneral(getContext(), "Wait for approval", Toast.LENGTH_SHORT);
+                              playTxt.setTextColor(Color.parseColor("#104E8B"));
+                              //update
+                              ArrayList<EventsObject> temp = currentUser.getEvents_wait4approval();
+                              temp.add(data.get(position));
+                              currentUser.setEvents_wait4approval(temp);
+
+                              Set<String> waitingTemp = currentUser.getUserWaitingForApproveIds();
+                              waitingTemp.add(data.get(position).GetId());
+                              currentUser.setUserWaitingForApproveIds(waitingTemp);
+                              globalVariables.SetCurrentUser(currentUser);
+
+                              playButton.setVisibility(View.INVISIBLE);
+                              playTxt.setText("");
+                              imageStatus.setBackgroundResource(R.drawable.event_accepted_tentative_origin);
+                              imageStatus.setVisibility(View.VISIBLE);
+                              //todo : insert icon ?
+                          } else {//public event
+                              //curplayButton.setClickable(true);
+                              eventTask = "join_event";
+                              playTxt.setText("Playing");
+                              curplayButton.setTextColor(Color.parseColor("#104E8B"));//how to set triangle blue?
+                              playTxt.setTextColor(Color.parseColor("#104E8B"));
+                              EventInfo.toastGeneral(getContext(), "You joined the event!", Toast.LENGTH_SHORT);
+                              //update
+                              ArrayList<EventsObject> temp = currentUser.getEvents();
+                              temp.add(data.get(position));
+                              currentUser.setEvents(temp);
+                              globalVariables.SetCurrentUser(currentUser);
+                              imageStatus.setBackgroundResource(R.drawable.event_accepted);
+                              imageStatus.setVisibility(View.VISIBLE);
+                          }
+                      }
+/*Server side update */
+                      myEventsTask = new HandleEventTask(data.get(position), eventTask);
+                      myEventsTask.execute((Void) null);
+                      //curplayButton.setChecked(!curplayButton.isChecked());
+                  }
+
+
+              }
+
+                );
+            }
+            else{
+                playButton.setVisibility(View.INVISIBLE);
+                playTxt.setText("");
+            }
 
             //TODO check if userLoginId is on members event
             if (currentUser != null && myEvents != null) {
-                if (!myEvents.isEmpty()) {
-                    if (myEvents.contains(data.get(position).GetId())) {
-                        //playButton.setClickable(false);
-                        if (currentUser.GetUserId().equals(data.get(position).GetCreatorId())) {//cancel event
-                            //it's the creator
-                            playButton.setVisibility(View.INVISIBLE);
-                            playTxt.setText("Boss");
-                            playTxt.setTextColor(Color.parseColor("#000000"));
-                            //not allowed to cancel from here
-                        } else {
-                            playButton.setChecked(true);
-                            playTxt.setText("Playing");
-                            playTxt.setTextColor(Color.parseColor("#104E8B"));
-                        }
-                    } else {// if user dont play
+
+                if (currentUser.GetUserId().equals(data.get(position).GetCreatorId())) {//cancel event
+                    //it's the creator
+                    playButton.setVisibility(View.INVISIBLE);
+                    playTxt.setText("Boss");
+                    playTxt.setTextColor(Color.parseColor("#000000"));
+                    //not allowed to cancel from here
+                }
+                else if (myEvents.contains(data.get(position).GetId())) {
+                    //playButton.setClickable(false);
+
+                        playButton.setVisibility(View.VISIBLE);
+                        playButton.setChecked(true);
+                        playTxt.setText("Playing");
+                        playTxt.setTextColor(Color.parseColor("#104E8B"));
+                        imageStatus.setBackgroundResource(R.drawable.event_accepted);
+                        imageStatus.setVisibility(View.VISIBLE);
+
+                } else {// if user dont play
+
+                    if(currentUser.getUserWaitingForApproveIds().contains(data.get(position).GetId())){
+                        playButton.setVisibility(View.INVISIBLE);
+                        playTxt.setText("");
+                        imageStatus.setBackgroundResource(R.drawable.event_accepted_tentative_origin);
+                        imageStatus.setVisibility(view.VISIBLE);
+
+                    }
+                    else if(currentUser.getUserDeclinedIds().contains(data.get(position).GetId())){
+                        playButton.setVisibility(View.INVISIBLE);
+                        playTxt.setText("");
+                        imageStatus.setBackgroundResource(R.drawable.event_declined);
+                        imageStatus.setVisibility(view.VISIBLE);
+                    }
+                    else if(data.get(position).GetMembers().size() == Integer.parseInt(data.get(position).getMaxSize())){
+                        playButton.setVisibility(View.INVISIBLE);
+                        playTxt.setText("FULL");
+                        playTxt.setTextColor(Color.parseColor("#ffff0000"));
+
+
+                    }
+                    else{
+                        playButton.setVisibility(View.VISIBLE);
                         playButton.setChecked(false);
                         playTxt.setText("Play");
                         playTxt.setTextColor(Color.parseColor("#D0D0D0"));
                     }
+
                 }
+
             }
             return view;
         }
+
+
     }
 
     public class HandleEventTask extends AsyncTask<Void, Void, String> {
@@ -517,7 +599,7 @@ public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefre
                             myEvents.remove(currentEvent.GetId());
                             //update also array<eventsObject>
                         } else if (eventTask.equals("request_join_event")) {
-                            myEvents.add(currentEvent.GetId());
+//                            myEvents.add(currentEvent.GetId());
                             //update also array<eventsObject>
                         }
                         currentUser.SetUserEvents(myEvents);

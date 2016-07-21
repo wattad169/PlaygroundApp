@@ -50,6 +50,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.inc.playground.playground.utils.Constants;
+import com.inc.playground.playground.utils.InitGlobalVariables;
 import com.inc.playground.playground.utils.Logingetset;
 import com.inc.playground.playground.utils.NetworkUtilities;
 
@@ -751,16 +752,20 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
 				}
 
 				//list in order of events, events_wait4approval, events_decline
-				ArrayList<ArrayList<EventsObject>> allEvents = Splash.eventsTypesfromJson(responseStringUserInfo, globalVariables.GetCurrentLocation());
+				ArrayList<ArrayList<EventsObject>> allEvents = Splash.eventsTypesfromJson(responseStringUserInfo, InitGlobalVariables.globalVariables.GetCurrentLocation());
 				ArrayList<EventsObject> events  = allEvents.get(0);
 				ArrayList<EventsObject> events_wait4approval = allEvents.get(1);
 				ArrayList<EventsObject> events_decline = allEvents.get(2);
-				Set<String> userEvents = User.extractAllEventIds(events ,events_wait4approval, events_decline );
-
-				currentUser.setFavouritesId(favourites);
-				currentUser.SetUserEvents(userEvents);
+				//update global
 				currentUser.set3eventTypes(events, events_wait4approval, events_decline);
+				Set<String> userEvents = User.extractAllEventIds(events);
+				Set<String> userWaitingForApprove = User.extractAllEventIds(events_wait4approval);
+				Set<String> userDeclined = User.extractAllEventIds(events_decline);
+				currentUser.SetUserEvents(userEvents);
 				currentUser.setCreatedNumOfEvents(created_count);
+				currentUser.setFavouritesId(favourites);
+				currentUser.setUserWaitingForApproveIds(userWaitingForApprove);
+				currentUser.setUserDeclinedIds(userDeclined);
 
 			} catch (JSONException e) {
 				e.printStackTrace();

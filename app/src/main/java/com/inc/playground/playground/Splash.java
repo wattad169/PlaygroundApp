@@ -197,11 +197,14 @@ public class Splash extends Activity {
                 ArrayList<EventsObject> events_decline = allEvents.get(2);
                 //update global
                 InitGlobalVariables.currentUser.set3eventTypes(events, events_wait4approval, events_decline);
-                Set<String> userEvents = User.extractAllEventIds(events, events_wait4approval, events_decline);
+                Set<String> userEvents = User.extractAllEventIds(events);
+                Set<String> userWaitingForApprove = User.extractAllEventIds(events_wait4approval);
+                Set<String> userDeclined = User.extractAllEventIds(events_decline);
                 InitGlobalVariables.currentUser.SetUserEvents(userEvents);
                 InitGlobalVariables.currentUser.setCreatedNumOfEvents(created_count);
                 InitGlobalVariables.currentUser.setFavouritesId(favourites);
-
+                InitGlobalVariables.currentUser.setUserWaitingForApproveIds(userWaitingForApprove);
+                InitGlobalVariables.currentUser.setUserDeclinedIds(userDeclined);
 
             } catch (JSONException e) {
                 e.printStackTrace();
