@@ -143,5 +143,7 @@ public class Constants {
 
     public static final String EVENTS_HISTORY = "events_history";
 
+    public static final String SUBSCRIBE_BIT = "subscribe_bit";
+
 
 }

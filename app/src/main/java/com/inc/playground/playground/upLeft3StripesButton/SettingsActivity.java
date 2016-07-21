@@ -3,6 +3,7 @@ package com.inc.playground.playground.upLeft3StripesButton;
 
 import android.annotation.TargetApi;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -10,6 +11,7 @@ import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
@@ -17,6 +19,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
@@ -24,16 +27,37 @@ import android.app.ActionBar;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.preference.RingtonePreference;
+import android.preference.SwitchPreference;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.text.SpannableString;
 import android.text.TextUtils;
+import android.text.style.ForegroundColorSpan;
+import android.text.style.RelativeSizeSpan;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.Window;
+import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.Toast;
 
 import com.inc.playground.playground.AddEvent;
+import com.inc.playground.playground.EventInfo;
+import com.inc.playground.playground.FragmentList;
 import com.inc.playground.playground.GlobalVariables;
 import com.inc.playground.playground.MainActivity;
 import com.inc.playground.playground.R;
+import com.inc.playground.playground.utils.Constants;
 import com.inc.playground.playground.utils.DownloadImageBitmapTask;
+import com.inc.playground.playground.utils.NetworkUtilities;
+import com.melnykov.fab.FloatingActionButton;
+import com.melnykov.fab.ScrollDirectionListener;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.InputStream;
 import java.util.List;
@@ -141,6 +165,20 @@ public class SettingsActivity extends PreferenceActivity {
         super.onCreate(savedInstanceState);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LOCKED);
         setPlayGroundActionBar();
+        SwitchPreference switchPreference = (SwitchPreference) findPreference("notifications_new_message");
+        switchPreference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+
+            @Override
+            public boolean onPreferenceChange(Preference preference,
+                                              Object newValue) {
+                boolean switched = ((SwitchPreference) preference)
+                        .isChecked();
+                new UpdateNotificaionSetting(switched).execute();
+                return true;
+            }
+
+        });
+
     }
 
     /**
@@ -331,4 +369,65 @@ public class SettingsActivity extends PreferenceActivity {
             return super.onOptionsItemSelected(item);
         }
     }
+    private void initProgressDialog(ProgressDialog dialog)
+    {
+        String message = "Loading ...";
+        SpannableString spanMessage = new SpannableString(message);
+        spanMessage.setSpan(new RelativeSizeSpan(1.2f),0,spanMessage.length(),0);
+        spanMessage.setSpan(new ForegroundColorSpan(Color.parseColor("#104e8b")), 0, spanMessage.length(), 0);
+        dialog.setTitle("Please wait");
+        dialog.setMessage(spanMessage);
+        dialog.setIcon(R.drawable.pg_loading);
+        dialog.show();
+        Window window = dialog.getWindow();
+        window.setLayout(800, 420);
+    }
+
+    private class UpdateNotificaionSetting extends AsyncTask<Integer, Integer,String> { // params , progress, result
+        private boolean userPref;
+        private UpdateNotificaionSetting(boolean userPrefInput){
+            this.userPref= userPrefInput;
+        }
+        private ProgressDialog dialog = new ProgressDialog(SettingsActivity.this);
+
+        @Override
+        protected void onPreExecute() {
+            initProgressDialog(dialog);
+        }
+        @Override
+        protected String doInBackground(Integer... params) {
+            String responseString;
+            try {
+                JSONObject cred = new JSONObject();
+                String userToken = "StubToken";//TODO Replace with real token
+                try {
+                    int userPrefInt = (this.userPref) ? 1 : 0;
+                    cred.put(NetworkUtilities.TOKEN, userToken);
+                    cred.put(Constants.SUBSCRIBE_BIT, userPrefInt);
+                } catch (JSONException e) {
+                    Log.i(TAG, e.toString());
+                }
+                responseString = NetworkUtilities.doPost(cred, NetworkUtilities.BASE_URL + "/subscribe_for_notificaions/");
+
+            } catch (Exception ex) {
+                Log.e(TAG, "getMembersUrls.doInBackground: failed to doPost");
+                Log.i(TAG, ex.toString());
+                responseString = "";
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+
+
+        }
+
+        @Override
+        protected void onProgressUpdate(Integer... values) {
+            super.onProgressUpdate(values);
+        }
+    }
+
 }
