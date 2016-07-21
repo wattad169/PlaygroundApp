@@ -38,7 +38,6 @@ import com.inc.playground.playground.AddEvent;
 import com.inc.playground.playground.EventInfo;
 import com.inc.playground.playground.EventsObject;
 import com.inc.playground.playground.FragmentList;
-import com.inc.playground.playground.FragmentMap;
 import com.inc.playground.playground.GlobalVariables;
 import com.inc.playground.playground.Login;
 import com.inc.playground.playground.MainActivity;
@@ -84,8 +83,6 @@ public class MyProfile extends FragmentActivity {
     /*Yarden and lina variables:*/
     ListView events_list; //ListView listView;
     ArrayList<EventsObject> homeEvents;
-    ArrayList<EventsObject> homeEvents_wait4approval;
-    ArrayList<EventsObject> homeEvents_decline;
 
     public SharedPreferences prefs;
     String userLoginId;
@@ -101,6 +98,7 @@ public class MyProfile extends FragmentActivity {
     @Override
 
     protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
         globalVariables = ((GlobalVariables) this.getApplication());//critical !
         bundle = getIntent().getExtras();
@@ -113,17 +111,15 @@ public class MyProfile extends FragmentActivity {
 
 
         //yarden, lina, i am tring to put loading spinner when we move to this screen (spinner)
-        super.onCreate(savedInstanceState);
 //        spinner = (ProgressBar)findViewById(R.id.progressBar);
-       // spinner.setVisibility(View.VISIBLE);
+        // spinner.setVisibility(View.VISIBLE);
         setContentView(R.layout.profile);
         currentUser = globalVariables.GetCurrentUser();
         if (currentUser != null) { // the user is login
-            userEvents = (ArrayList<EventsObject>) bundle.getSerializable("userEventsObjects") ;
+            userEvents = (ArrayList<EventsObject>) bundle.getSerializable("events") ;
+
         }
-        mCustomPagerAdapter = new FragmentPagerAdapter(userEvents);
-        mViewPager = (ViewPager) findViewById(R.id.pager);
-        mViewPager.setAdapter(mCustomPagerAdapter);
+
         //set name
         TextView user_profile_name = (TextView) findViewById(R.id.user_profile_name);
         user_profile_name.setText(bundle.getString("name").replace("%20","  "));//name should be as facebook?
@@ -152,20 +148,18 @@ public class MyProfile extends FragmentActivity {
         user_profile_photo.setImageBitmap(imageBitmap);
         /*Error setting url - need fix */
         //user_profile_photo.setImageBitmap(getBitmapFromURL("https://www.facebook.com/photo.php?fbid=10153556040874658&set=a.429615654657.232270.798789657&type=3&theater"));
-
+        mViewPager = (ViewPager) findViewById(R.id.pager);
+        mCustomPagerAdapter = new FragmentPagerAdapter(userEvents);
+        mViewPager.setAdapter(mCustomPagerAdapter);
     }
     @Override
     protected void onStart() {
         super.onStart();
-        //yarden this is all of the user events
-        homeEvents = (ArrayList<EventsObject>) bundle.getSerializable("events");
-        homeEvents_wait4approval = (ArrayList<EventsObject>) bundle.getSerializable("events_wait4approval");
-        homeEvents_decline= (ArrayList<EventsObject>) bundle.getSerializable("events_decline");
         //prefs = this.getSharedPreferences("Login", this.MODE_PRIVATE);
         //userLoginId = prefs.getString("userid", null);
 
 //        new getList().execute();
-       // spinner.setVisibility(View.INVISIBLE);
+        // spinner.setVisibility(View.INVISIBLE);
 
 
         // The activity is about to become visible.
@@ -202,204 +196,200 @@ public class MyProfile extends FragmentActivity {
             /*copied with change from list_fragment*/
         View rootView = inflater.inflate(R.layout.profile, container, false);
 
-        currentUser = globalVariables.GetCurrentUser();
-        homeEvents = (ArrayList<EventsObject>) bundle.getSerializable("userEventsObjects") ;
         prefs = this.getSharedPreferences("Login", this.MODE_PRIVATE);
         userLoginId = prefs.getString("userid", null);
         //final String MY_PREFS_NAME = "Login";
         SharedPreferences prefs = this.getSharedPreferences("Login", 0);
-        if (currentUser != null) { // the user is login
-            userEvents = currentUser.getEvents();
-        }
-        new getList().execute();
+
+//        new getList().execute();
         return rootView;
 
     }
 
-    private class getList extends AsyncTask<String, Integer, Integer> {
-
-        @Override
-        protected void onPreExecute() {
-            // TODO ?
-            super.onPreExecute();
-        }
-
-        @Override
-        protected Integer doInBackground(String... params) {
-            // TODO Auto-generated method stub
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Integer result) {
-
-            //            if (progressDialog.isShowing()) {
-            //                progressDialog.dismiss();
-            events_list = (ListView) findViewById(R.id.my_events_list);
-
-//            SwipeRefreshLayout swipeRefreshLayout = (SwipeRefreshLayout)
-//                    findViewById(R.id.swipe_refresh_layout);
-
-
-            if (homeEvents != null) {
-                if (homeEvents.size() == 0) {// If no events are found
-                    //Toast.makeText(getApplicationContext(), "No Events Found", Toast.LENGTH_LONG).show();
-                    events_list.setVisibility(View.INVISIBLE);
-                } else {
-                    // Display events
-                    events_list.setVisibility(View.VISIBLE);
-                    HomeEventsAdapter homeEventsAdapter = new HomeEventsAdapter(MyProfile.this, homeEvents);//homeEvents= globalVariable.currentuserevents
-                    homeEventsAdapter.notifyDataSetChanged();
-                    events_list.setAdapter(homeEventsAdapter);
-
-                    //swipe listener
-                    //swipeRefreshLayout.setOnRefreshListener(FragmentList.this);
-                        /*swipeRefreshLayout.post(new Runnable() {
-                                                    @Override
-                                                    public void run() {
-                                                        swipeRefreshLayout.setRefreshing(true);
-
-                                                        //fetchMovies();
-                                                    }
-                                                }
-                        );*/
-
-
-                    events_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
-                        @Override
-                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                            // TODO Auto-generated method stub
-                            Intent intent = new Intent(getApplicationContext(), EventInfo.class);
-                            intent.putExtra("eventObject", homeEvents.get(position));
-                            startActivity(intent);
-//                            finish();
-
-                        }
-                    });
-                }
-            }
-        }
-
-
-    }
-
-
-    public class HomeEventsAdapter extends BaseAdapter {
-
-        private Activity activity;
-        private ArrayList<EventsObject> data;
-        private LayoutInflater inflater = null;
-
-        public HomeEventsAdapter(Activity activity, ArrayList<EventsObject> homeEvents) {
-            this.activity = activity;
-            this.data = homeEvents;
-            inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        }
-
-        @Override
-        public int getCount() {
-            return data.size();
-        }
-
-        @Override
-        public Object getItem(int position) {
-            return position;
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return position;
-        }
-
-        @Override
-        public View getView(final int position, View convertView, ViewGroup parent) {
-            View view = convertView;
+//    private class getList extends AsyncTask<String, Integer, Integer> {
+//
+//        @Override
+//        protected void onPreExecute() {
+//            // TODO ?
+//            super.onPreExecute();
+//        }
+//
+//        @Override
+//        protected Integer doInBackground(String... params) {
+//            // TODO Auto-generated method stub
+//            return null;
+//        }
+//
+//        @Override
+//        protected void onPostExecute(Integer result) {
+//
+//            //            if (progressDialog.isShowing()) {
+//            //                progressDialog.dismiss();
+//            events_list = (ListView) findViewById(R.id.my_events_list);
+//
+////            SwipeRefreshLayout swipeRefreshLayout = (SwipeRefreshLayout)
+////                    findViewById(R.id.swipe_refresh_layout);
+//
+//
+//            if (homeEvents != null) {
+//                if (homeEvents.size() == 0) {// If no events are found
+//                    //Toast.makeText(getApplicationContext(), "No Events Found", Toast.LENGTH_LONG).show();
+//                    events_list.setVisibility(View.INVISIBLE);
+//                } else {
+//                    // Display events
+//                    events_list.setVisibility(View.VISIBLE);
+//                    HomeEventsAdapter homeEventsAdapter = new HomeEventsAdapter(MyProfile.this, homeEvents);//homeEvents= globalVariable.currentuserevents
+//                    homeEventsAdapter.notifyDataSetChanged();
+//                    events_list.setAdapter(homeEventsAdapter);
+//
+//                    //swipe listener
+//                    //swipeRefreshLayout.setOnRefreshListener(FragmentList.this);
+//                        /*swipeRefreshLayout.post(new Runnable() {
+//                                                    @Override
+//                                                    public void run() {
+//                                                        swipeRefreshLayout.setRefreshing(true);
+//
+//                                                        //fetchMovies();
+//                                                    }
+//                                                }
+//                        );*/
+//
+//
+//                    events_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//
+//                        @Override
+//                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//                            // TODO Auto-generated method stub
+//                            Intent intent = new Intent(getApplicationContext(), EventInfo.class);
+//                            intent.putExtra("eventObject", homeEvents.get(position));
+//                            startActivity(intent);
+////                            finish();
+//
+//                        }
+//                    });
+//                }
+//            }
+//        }
+//
+//
+//    }
 
 
-            if (convertView == null) {
-                view = inflater.inflate(R.layout.fragment_list_item, null);
-                if (position % 2 == 0) {
-                    view.setBackground(getResources().getDrawable(R.drawable.pg_cell_first));
-                } else {
-                    view.setBackground(getResources().getDrawable(R.drawable.pg_cell_first_b));
-                }
-            }
-            Typeface fontText = Typeface.createFromAsset(getAssets(), "sansation.ttf");
-            Typeface fontText2 = Typeface.createFromAsset(getAssets(), "kimberly.ttf");
-            Typeface fontText3 = Typeface.createFromAsset(getAssets(), "crayon.ttf");
-            // update type icon according to event type
-            String uri = "@drawable/pg_" + data.get(position).GetType() + "_icon";
-            int imageResource = getResources().getIdentifier(uri, null, getPackageName());
-            ImageView typeImg = (ImageView) view.findViewById(R.id.type_img);
-            Drawable typeDrawable = getResources().getDrawable(imageResource);
-            typeImg.setImageDrawable(typeDrawable);
-
-            TextView eventName = (TextView) view.findViewById(R.id.event_name);
-            eventName.setText(data.get(position).GetName());
-//            eventName.setTypeface(fontText);
-
-            TextView formattedLocation = (TextView) view.findViewById(R.id.formatted_loctaion_txt);
-            formattedLocation.setText(data.get(position).GetFormattedLocation());
-//            formattedLocation.setTypeface(fontText3);
-
-            TextView eventDate = (TextView) view.findViewById(R.id.date_txt);
-            eventDate.setText(data.get(position).GetDate());
-//            eventDate.setTypeface(fontText3);
-
-            TextView starTime = (TextView) view.findViewById(R.id.start_time_txt);
-            starTime.setText(data.get(position).GetStartTime());
-//            startTime.setTypeface(fontText3);
-
-            TextView eventDistance = (TextView) view.findViewById(R.id.distance_txt);
-            eventDistance.setText(data.get(position).GetDistance());
-//            eventDistance.setTypeface(fontText3);
-
-            TextView kmTxt = (TextView) view.findViewById(R.id.kmTxt);
-//            kmTxt.setTypeface(fontText3);
-
-            final TextView playTxt = (TextView) view.findViewById(R.id.play_txt);
-            playTxt.setVisibility(View.INVISIBLE);
-
-
-            /*view.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-
-                    Intent intent = new Intent(getApplicationContext(), EventInfo.class);
-                    intent.putExtra("eventObject", data.get(position));
-                    startActivity(intent);
-                    finish();
-                }
-            });*/
-
-            ToggleButton playButton = (ToggleButton) view.findViewById(R.id.join);
-            playButton.setVisibility(View.INVISIBLE);
-//            playButton.setOnClickListener(new View.OnClickListener() {
+//    public class HomeEventsAdapter extends BaseAdapter {
+//
+//        private Activity activity;
+//        private ArrayList<EventsObject> data;
+//        private LayoutInflater inflater = null;
+//
+//        public HomeEventsAdapter(Activity activity, ArrayList<EventsObject> homeEvents) {
+//            this.activity = activity;
+//            this.data = homeEvents;
+//            inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+//        }
+//
+//        @Override
+//        public int getCount() {
+//            return data.size();
+//        }
+//
+//        @Override
+//        public Object getItem(int position) {
+//            return position;
+//        }
+//
+//        @Override
+//        public long getItemId(int position) {
+//            return position;
+//        }
+//
+//        @Override
+//        public View getView(final int position, View convertView, ViewGroup parent) {
+//            View view = convertView;
+//
+//
+//            if (convertView == null) {
+//                view = inflater.inflate(R.layout.fragment_list_item, null);
+//                if (position % 2 == 0) {
+//                    view.setBackground(getResources().getDrawable(R.drawable.pg_cell_first));
+//                } else {
+//                    view.setBackground(getResources().getDrawable(R.drawable.pg_cell_first_b));
+//                }
+//            }
+//            Typeface fontText = Typeface.createFromAsset(getAssets(), "sansation.ttf");
+//            Typeface fontText2 = Typeface.createFromAsset(getAssets(), "kimberly.ttf");
+//            Typeface fontText3 = Typeface.createFromAsset(getAssets(), "crayon.ttf");
+//            // update type icon according to event type
+//            String uri = "@drawable/pg_" + data.get(position).GetType() + "_icon";
+//            int imageResource = getResources().getIdentifier(uri, null, getPackageName());
+//            ImageView typeImg = (ImageView) view.findViewById(R.id.type_img);
+//            Drawable typeDrawable = getResources().getDrawable(imageResource);
+//            typeImg.setImageDrawable(typeDrawable);
+//
+//            TextView eventName = (TextView) view.findViewById(R.id.event_name);
+//            eventName.setText(data.get(position).GetName());
+////            eventName.setTypeface(fontText);
+//
+//            TextView formattedLocation = (TextView) view.findViewById(R.id.formatted_loctaion_txt);
+//            formattedLocation.setText(data.get(position).GetFormattedLocation());
+////            formattedLocation.setTypeface(fontText3);
+//
+//            TextView eventDate = (TextView) view.findViewById(R.id.date_txt);
+//            eventDate.setText(data.get(position).GetDate());
+////            eventDate.setTypeface(fontText3);
+//
+//            TextView starTime = (TextView) view.findViewById(R.id.start_time_txt);
+//            starTime.setText(data.get(position).GetStartTime());
+////            startTime.setTypeface(fontText3);
+//
+//            TextView eventDistance = (TextView) view.findViewById(R.id.distance_txt);
+//            eventDistance.setText(data.get(position).GetDistance());
+////            eventDistance.setTypeface(fontText3);
+//
+//            TextView kmTxt = (TextView) view.findViewById(R.id.kmTxt);
+////            kmTxt.setTypeface(fontText3);
+//
+//            final TextView playTxt = (TextView) view.findViewById(R.id.play_txt);
+//            playTxt.setVisibility(View.INVISIBLE);
+//
+//
+//            /*view.setOnClickListener(new View.OnClickListener() {
 //                @Override
 //                public void onClick(View v) {
-//                    ToggleButton curplayButton = (ToggleButton) v;
-////                    if(curplayButton.isChecked())//leave event
-////                    {
-////                        LeaveEventTask = new LeaveHandleEventTask(data.get(position));
-////                        LeaveEventTask.execute((Void) null);
-////                    playTxt.setText("Play");
-////                    playTxt.setTextColor(Color.parseColor("#1874cd"));
-////                    }
-////                    else
-////                    {
-//                    myEventsTask = new handleEventTask(data.get(position));
-//                    myEventsTask.execute((Void) null);
-//                    curplayButton.setClickable(false);
-//                    playTxt.setText("Playing");
-//                    playTxt.setTextColor(Color.parseColor("#00ced1"));
-////                    }
-//                }});
-
-            return view;
-
-        }
-    }
+//
+//                    Intent intent = new Intent(getApplicationContext(), EventInfo.class);
+//                    intent.putExtra("eventObject", data.get(position));
+//                    startActivity(intent);
+//                    finish();
+//                }
+//            });*/
+//
+//            ToggleButton playButton = (ToggleButton) view.findViewById(R.id.join);
+//            playButton.setVisibility(View.INVISIBLE);
+////            playButton.setOnClickListener(new View.OnClickListener() {
+////                @Override
+////                public void onClick(View v) {
+////                    ToggleButton curplayButton = (ToggleButton) v;
+//////                    if(curplayButton.isChecked())//leave event
+//////                    {
+//////                        LeaveEventTask = new LeaveHandleEventTask(data.get(position));
+//////                        LeaveEventTask.execute((Void) null);
+//////                    playTxt.setText("Play");
+//////                    playTxt.setTextColor(Color.parseColor("#1874cd"));
+//////                    }
+//////                    else
+//////                    {
+////                    myEventsTask = new handleEventTask(data.get(position));
+////                    myEventsTask.execute((Void) null);
+////                    curplayButton.setClickable(false);
+////                    playTxt.setText("Playing");
+////                    playTxt.setTextColor(Color.parseColor("#00ced1"));
+//////                    }
+////                }});
+//
+//            return view;
+//
+//        }
+//    }
 
     public void onBackPressed()
     {
@@ -451,20 +441,18 @@ public class MyProfile extends FragmentActivity {
 
     public class FragmentPagerAdapter extends android.support.v4.app.FragmentPagerAdapter
     {
-        final int PAGE_COUNT = 2;
-        private ArrayList<EventsObject> userEvents;
+        final int PAGE_COUNT = 1 ;
+        //        private ArrayList<EventsObject> userEvents;
         private Set<EventsObject> userEventsSet;
         private final String[] PAGE_TITLES =
                 {
-                        "Upcoming Events",
-                        "Events History"
+                        "User Events",
                 };
 
         public FragmentPagerAdapter(ArrayList<EventsObject> currentEvents)
         {
             super(getSupportFragmentManager());
-            userEventsSet = new HashSet<EventsObject>(currentEvents);
-            userEvents = new ArrayList<EventsObject>(userEventsSet);
+//            userEvents = currentEvents;
         }
 
         @Override
@@ -483,15 +471,21 @@ public class MyProfile extends FragmentActivity {
             try {
                 switch (position) {
                     case 0:
-                        Thread.sleep(4000);
-                        return new FragmentList(userEvents, 0);
-                    case 1:
-                        Thread.sleep(1000);
-                        return new FragmentList(userEvents, 0); //TODO YD send the history events instead of user events
+                        FragmentList fragment1 = new FragmentList();
+                        Bundle args = new Bundle();
+                        args.putInt("len", userEvents.size());
+                        args.putSerializable("events", userEvents);
+                        args.putBoolean("isMain", false);
+                        Intent intent = getIntent();
+                        args.putSerializable("events", (ArrayList<EventsObject>) intent.getSerializableExtra("events"));
+                        args.putSerializable("events_wait4approval", (ArrayList<EventsObject>) intent.getSerializableExtra("events_wait4approval"));
+                        args.putSerializable("events_decline", (ArrayList<EventsObject>) intent.getSerializableExtra("events_decline"));
+                        fragment1.setArguments(args);
+                        return fragment1;
                     default:
                         return null;
                 }
-            } catch (InterruptedException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
                 return null;
             }
@@ -499,18 +493,3 @@ public class MyProfile extends FragmentActivity {
         }
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

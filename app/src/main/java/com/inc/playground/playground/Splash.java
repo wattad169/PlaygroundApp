@@ -110,7 +110,6 @@ public class Splash extends Activity {
                 //"get all events"
                 allEventsResponseString = NetworkUtilities.doPost(cred, NetworkUtilities.BASE_URL + "/get_all_events/");
 
-
             } catch (Exception ex) {
                 Log.e(TAG, "getUserEvents.doInBackground: failed to doPost");
                 Log.i(TAG, ex.toString());
