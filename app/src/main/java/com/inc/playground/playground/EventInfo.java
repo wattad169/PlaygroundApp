@@ -99,7 +99,7 @@ public class EventInfo extends FragmentActivity {
     //DahanLina
 
     EventsObject currentEvent;
-    TextView viewName, viewDateEvent, viewStartTime, viewEndTime, viewCurMembers, viewLocation, viewEventDescription, viewPlay, viewStatus;
+    TextView viewName, viewDateEvent, viewStartTime, viewEndTime, viewCurMembers, viewLocation, viewEventDescription, viewPlay, viewStatus, fullView;
     ImageView typeImg, statusImg;
     JSONArray membersImagesUrls;
     private HandleEventTask handleEventTask = null;
@@ -110,7 +110,7 @@ public class EventInfo extends FragmentActivity {
     ToggleButton playButton;
     Bitmap imageBitmap;
     int minSize,maxSize,currenctSize;
-    boolean falgForJoin;
+    boolean falgForJoin = true;
 
 
 
@@ -144,7 +144,7 @@ public class EventInfo extends FragmentActivity {
         typeImg = (ImageView) findViewById(R.id.type_img);
         playButton = (ToggleButton) findViewById(R.id.playing_btn);
         viewPlay = (TextView) findViewById(R.id.Play_txt);
-
+        fullView = (TextView) findViewById(R.id.fullTxt);
         moreButton = (ImageButton) findViewById(R.id.more_btn);
         shareButton = (ImageButton) findViewById(R.id.share_btn);
         viewStatus = (TextView) findViewById(R.id.statusTxt);
@@ -165,6 +165,7 @@ public class EventInfo extends FragmentActivity {
             // Ask user to enable GPS/network in settings
             gps.showSettingsAlert();
         }
+        fullView.setVisibility(View.INVISIBLE);
         setdata();
 
     }
@@ -246,6 +247,7 @@ public class EventInfo extends FragmentActivity {
                             viewPlay.setText("Declined");
                             viewPlay.setTextColor(Color.parseColor("#0xffff0000"));
                         }
+
                     }
                 }
             }
@@ -451,8 +453,13 @@ public class EventInfo extends FragmentActivity {
                 currenctSize = membersList.getChildCount();
                 viewCurMembers.setText(String.valueOf(currenctSize));
 
-                //update list
-                currentUser.removeSpecificEventById(currentEvent.GetId() );//remove current event from the specific record
+                //update set
+                Set<String> setEvents = currentUser.GetUserEvents();
+                setEvents.remove(currentEvent.GetId());
+                currentUser.SetUserEvents(setEvents);
+                // update list
+                currentUser.removeSpecificEventById(currentEvent.GetId());//remove current event from the specific record
+                //update global variables
                 globalVariables.SetCurrentUser(currentUser);
 
             }
@@ -529,9 +536,15 @@ public class EventInfo extends FragmentActivity {
                 //TODO : set not clickable for join to event -> only for leave
 
             }
+            //update set
+            Set<String> setEvents = currentUser.GetUserEvents();
+            setEvents.add(currentEvent.GetId());
+            currentUser.SetUserEvents(setEvents);
+            // update list
             ArrayList<EventsObject> temp2 = currentUser.getEvents();
             temp2.add(currentEvent);
             currentUser.setEvents(temp2);
+            //update global variables
             globalVariables.SetCurrentUser(currentUser);
         }
         else if (eventTask.equals("join_event") && !falgForJoin)
@@ -715,7 +728,13 @@ public class EventInfo extends FragmentActivity {
                 statusImg.setVisibility(View.VISIBLE);
             }
             if (currenctSize == maxSize) {
-                if(playButton.isChecked())
+                if(! User.eventsObjectContainEvent(currentUser.getEvents(), currentEvent.GetId()))
+                {
+                    playButton.setVisibility(View.INVISIBLE);
+                    viewPlay.setVisibility(View.INVISIBLE);
+                    fullView.setVisibility(View.VISIBLE);
+                }
+                else if(playButton.isChecked())
                 {
                     playButton.setClickable(true);
                 }
