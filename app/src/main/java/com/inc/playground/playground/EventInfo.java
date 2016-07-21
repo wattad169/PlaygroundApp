@@ -358,7 +358,11 @@ public class EventInfo extends FragmentActivity {
                                     alertDialog.show();
                                     break;
                                 case R.id.join_requests:
-
+                                    Intent approveIntent = new Intent(EventInfo.this, ApproveEventList.class);
+                                    approveIntent.putExtra("eventObject", currentEvent);
+                                    approveIntent.putExtra("parent","EventInfo");
+                                    startActivity(approveIntent);
+                                    finish();
                                     break;
                             }
                             return true;

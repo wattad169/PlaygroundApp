@@ -253,7 +253,7 @@ public class ApproveEventList extends FragmentActivity implements SwipeRefreshLa
                     rejectBtn.setVisibility(View.INVISIBLE);
                     requestMessage.setVisibility(View.VISIBLE);
                     requestMessage.setText("Request removed");
-                    globalVariables.updateEventInEvents(eventForApprove.GetId(),data.get(position));
+                    globalVariables.updateEventInEvents(eventForApprove.GetId(), data.get(position));
 
 
                 }
@@ -375,7 +375,6 @@ public class ApproveEventList extends FragmentActivity implements SwipeRefreshLa
             this.photoUrl = photoUrl;
 
         }
-
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -392,7 +391,7 @@ public class ApproveEventList extends FragmentActivity implements SwipeRefreshLa
                     cred.put(NetworkUtilities.PHOTO_URL, photoUrl);
                     userProfileResponseStr = NetworkUtilities.doPost(cred, NetworkUtilities.BASE_URL + "/get_user_by_photo/");
 
-                } catch (JSONException | UnsupportedEncodingException e) {
+                } catch (JSONException|UnsupportedEncodingException e) {
                 }
             } catch (Exception ex) {
                 userProfileResponseStr = "";
@@ -414,7 +413,7 @@ public class ApproveEventList extends FragmentActivity implements SwipeRefreshLa
                 ArrayList<EventsObject> memeberEvents = NetworkUtilities.eventUserListToArrayList(eventEntries, globalVariables.GetCurrentLocation(), Constants.EVENT_ENTRIES);
 
                 ArrayList<ArrayList<EventsObject>> allEvents = Splash.eventsTypesfromJson(userProfileResponseStr, InitGlobalVariables.globalVariables.GetCurrentLocation());
-                ArrayList<EventsObject> events = allEvents.get(0);
+                ArrayList<EventsObject> events  = allEvents.get(0);
                 ArrayList<EventsObject> events_wait4approval = allEvents.get(1);
                 ArrayList<EventsObject> events_decline = allEvents.get(2);
                 iv.putExtra("events", events);
@@ -422,13 +421,13 @@ public class ApproveEventList extends FragmentActivity implements SwipeRefreshLa
                 iv.putExtra("events_decline", events_decline);
 
                 iv.putExtra("name", userInfoFroServer.getString("fullname"));
-                iv.putExtra("createdNumOfEvents", userInfoFroServer.getString("created_count"));
+                iv.putExtra("createdNumOfEvents",userInfoFroServer.getString("created_count"));
                 iv.putExtra("photoUrl", photoUrl);
                 startActivity(iv);
 //                finish();
 
 
-            } catch (JSONException | NullPointerException e) {
+            } catch (JSONException|NullPointerException e) {
                 e.printStackTrace();
             }
             return null;
