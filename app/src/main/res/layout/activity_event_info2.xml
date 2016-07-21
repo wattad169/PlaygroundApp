@@ -204,38 +204,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:id="@+id/event_min_size"
-                android:layout_alignParentBottom="true"
-                android:layout_alignParentLeft="true"
-                android:layout_marginLeft="60dp"
-                android:textColor="#6791eb" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text="/"
-                android:id="@+id/textView2"
-                android:layout_alignParentBottom="false"
-                android:layout_toRightOf="@+id/event_min_size"
-                android:textStyle="bold"
-                android:layout_below="@+id/Play_txt"
-                android:layout_marginTop="1dp"
-                android:layout_marginLeft="3dp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:id="@+id/event_current_size"
-                android:layout_alignParentBottom="true"
-                android:layout_toRightOf="@+id/textView2"
-                android:layout_marginLeft="3dp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceSmall"
                 android:text="Play"
                 android:id="@+id/Play_txt"
                 android:layout_below="@+id/playing_btn"
@@ -250,21 +218,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text="/"
-                android:id="@+id/textView3"
-                android:textStyle="bold"
-                android:layout_alignParentBottom="true"
-                android:layout_toRightOf="@+id/event_current_size"
-                android:layout_alignTop="@+id/textView2"
-                android:layout_marginLeft="5dp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceSmall"
                 android:id="@+id/event_max_size"
-                android:layout_toRightOf="@+id/textView3"
-                android:layout_alignTop="@+id/event_current_size"
                 android:layout_marginLeft="2dp"
                 android:textColor="#6791eb" />
 
