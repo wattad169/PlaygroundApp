@@ -135,7 +135,7 @@ public class Constants {
 
     public static final String INVITEE = "invitee";
 
-    public static final String EVENTS_EDITED = "events_edited";//Todo : make sure we use those
+    public static final String EVENTS_EDITED = "events";//Todo : make sure we use those
 
     public static final String EVENTS_WAIT4APPROVAL = "events_wait4approval";
 
@@ -144,6 +144,9 @@ public class Constants {
     public static final String EVENTS_HISTORY = "events_history";
 
     public static final String SUBSCRIBE_BIT = "subscribe_bit";
+
+    public static final String APPROVE_LIST = "approve_list";
+
 
 
 }

@@ -183,7 +183,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         mDrawerLayout.setDrawerListener(mDrawerToggle);
 
         getActionBar().setDisplayHomeAsUpEnabled(true);
-                getActionBar().setHomeButtonEnabled(true);
+        getActionBar().setHomeButtonEnabled(true);
 
         // all linear layout from slider menu
 
@@ -195,7 +195,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
                 // TODO Auto-generated method stub
                 // new changes
                 Intent iv = new Intent(MainActivity.this,
-                                MainActivity.class);
+                        MainActivity.class);
                 startActivity(iv);
                 finish();
             }
@@ -224,26 +224,26 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
                         @Override
                         public void onClick(View v) {
 
-                    SharedPreferences prefs = getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
-                    SharedPreferences.Editor editor = prefs.edit();
-                    editor.clear();
-                    editor.commit();
-                    ImageView loginImg = (ImageView) findViewById(R.id.login_img);
-                    TextView loginTxt = (TextView) findViewById(R.id.login_txt);
-                    loginTxt.setText("Login");
-                    loginImg.setImageResource(R.drawable.pg_action_lock_open);
+                            SharedPreferences prefs = getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
+                            SharedPreferences.Editor editor = prefs.edit();
+                            editor.clear();
+                            editor.commit();
+                            ImageView loginImg = (ImageView) findViewById(R.id.login_img);
+                            TextView loginTxt = (TextView) findViewById(R.id.login_txt);
+                            loginTxt.setText("Login");
+                            loginImg.setImageResource(R.drawable.pg_action_lock_open);
 
-                    globalVariables = ((GlobalVariables) getApplication());
-                    globalVariables.SetCurrentUser(null);
-                    globalVariables.SetUserPictureBitMap(null);
-                    globalVariables.SetUsersList(null);
-                    globalVariables.SetUsersImagesMap(null);
+                            globalVariables = ((GlobalVariables) getApplication());
+                            globalVariables.SetCurrentUser(null);
+                            globalVariables.SetUserPictureBitMap(null);
+                            globalVariables.SetUsersList(null);
+                            globalVariables.SetUsersImagesMap(null);
 
                             Util.clearCookies(getApplicationContext());
 
-                    Intent iv = new Intent(MainActivity.this, MainActivity.class);
-                    startActivity(iv);
-                    finish();
+                            Intent iv = new Intent(MainActivity.this, MainActivity.class);
+                            startActivity(iv);
+                            finish();
                         }
                     });
 
@@ -258,10 +258,10 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
                     });
 
                     alertDialog.show();  //<-- See This!
-                        }
+                }
 
-                    }
-                });
+            }
+        });
 
         /*Setting button*/
         LinearLayout ll_Setting = (LinearLayout) findViewById(R.id.ll_settings);
@@ -305,6 +305,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 
                     iv.putExtra("photoUrl", currentUser.getPhotoUrl());
                     startActivity(iv);
+                    //
                 }
 
             }
@@ -340,7 +341,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
             ImageView logo_image = (ImageView) findViewById(R.id.img_profile_action_bar);
             logo_image.setBackgroundResource(R.drawable.pg_logo2);
             TextView userName = (TextView) findViewById(R.id.email);
-            userName.setText(userFullName.replace("%20","  "));
+            userName.setText(userFullName.replace("%20", "  "));
             ImageView img_profile = (ImageView) findViewById(R.id.profile_image);
             imageBitmap = globalVariables.GetUserPictureBitMap();
             if(imageBitmap==null){
@@ -426,7 +427,12 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
                 case 0:
                     // The first section of the app is the most interesting -- it offers
                     // a launchpad into the other demonstrations in this example application.
-                    return new FragmentList(null, Constants.maxEvents);
+                    FragmentList fragment1 = new FragmentList();
+                    Bundle args2 = new Bundle();
+                    args2.putInt("len", Constants.maxEvents);
+                    args2.putBoolean("isMain", true);
+                    fragment1.setArguments(args2);
+                    return fragment1;
                 case 1:
                     return new FragmentMap();
                 //idan 20.5
@@ -471,7 +477,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                Bundle savedInstanceState) {
+                                 Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_section_dummy, container, false);
             Bundle args = getArguments();
             ((TextView) rootView.findViewById(android.R.id.text1)).setText(

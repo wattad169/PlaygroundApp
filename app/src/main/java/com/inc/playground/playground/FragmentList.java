@@ -3,13 +3,11 @@ package com.inc.playground.playground;
 
 import android.app.Activity;
 import android.app.ActivityOptions;
-import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -33,14 +31,11 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.ProgressBar;
-import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.inc.playground.playground.utils.Constants;
-import com.inc.playground.playground.utils.InitGlobalVariables;
 import com.inc.playground.playground.utils.NetworkUtilities;
 import com.inc.playground.playground.utils.User;
 import com.melnykov.fab.FloatingActionButton;
@@ -51,138 +46,142 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.math.*;
 import java.util.Set;
 
 /**
  * Created by mostafawattad on 30/04/2016.
  */
 
-public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefreshListener{
+public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
     private SwipeRefreshLayout swipeRefreshLayout;
 
     private ListView events_list; //ListView listView;
-    private List<EventsObject> homeEvents;; //List<Movie> movieList;
+    private List<EventsObject> homeEvents; //these are the event that will be displayed in this view
+
+    private List<EventsObject> events;
+    private List<EventsObject> events_wait4approval;
+    private List<EventsObject> events_decline;
+
+
     private GlobalVariables globalVariables;
     private HandleEventTask myEventsTask = null;
-    public SharedPreferences prefs ;
+    public SharedPreferences prefs;
     private ImageButton filterButton;
     private Boolean isOK = true;
     private Boolean isMain = true;
     private String userLoginId;
     private User currentUser;
-    private Set<String> userEvents;
+    private Set<String> myEvents;
     private EditText inputSearch;
     private int eventSize = 0;
     private int maxSize;
 
-    public FragmentList(List<EventsObject> events, int length){
-        homeEvents = events;
-        maxSize = length;
-        if (events != null){
-            isMain = false;
-        }
-    }
-
     View rootView;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        rootView = inflater.inflate(R.layout.fragment_list, container, false);
+        this.globalVariables = ((GlobalVariables) getActivity().getApplication());
+        isMain = getArguments().getBoolean("isMain");
+        if (isMain) {
+            rootView = inflater.inflate(R.layout.fragment_list, container, false);
+            maxSize = getArguments().getInt("len");
+            eventSize = Math.min(maxSize, this.globalVariables.GetHomeEvents().size());
+            homeEvents = this.globalVariables.GetHomeEvents().subList(0, eventSize);
+        } else {
+            rootView = inflater.inflate(R.layout.fragment_list_profile, container, false);
+            homeEvents = (ArrayList<EventsObject>) getArguments().getSerializable("events");
+            events_wait4approval = (ArrayList<EventsObject>) getArguments().getSerializable("events_wait4approval");
+            events_decline = (ArrayList<EventsObject>) getArguments().getSerializable("events");
+        }
+
+
         // avoiding opening Keyboard automatically
         getActivity().getWindow().setSoftInputMode(
                 WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
-        this.globalVariables = ((GlobalVariables) getActivity().getApplication());
-        if (homeEvents==null){
-            eventSize = Math.min(maxSize, this.globalVariables.GetHomeEvents().size());
-            homeEvents = this.globalVariables.GetHomeEvents().subList(0,eventSize);
-        }
-        if(getActivity().getIntent().getStringExtra("parent") != null && getActivity().getIntent().getStringExtra("parent").equals("filter"))
-        {
+
+        if (getActivity().getIntent().getStringExtra("parent") != null && getActivity().getIntent().getStringExtra("parent").equals("filter")) {
             homeEvents = (ArrayList<EventsObject>) getActivity().getIntent().getSerializableExtra("events");
         }
 
-        prefs = getActivity().getSharedPreferences("Login",getActivity().MODE_PRIVATE);
+        prefs = getActivity().getSharedPreferences("Login", getActivity().MODE_PRIVATE);
         userLoginId = prefs.getString("userid", null);
         currentUser = globalVariables.GetCurrentUser();
         GlobalVariables globalVariables;
         final String MY_PREFS_NAME = "Login"; //idan question why we chose that name??
         SharedPreferences prefs = this.getActivity().getSharedPreferences(MY_PREFS_NAME, 0);
 
-        if(currentUser != null ) { // the user is login
-            userEvents = currentUser.GetUserEvents();
+        if (currentUser != null) { // the user is login
+            myEvents = currentUser.GetUserEvents();
         }
         filterButton = (ImageButton) rootView.findViewById(R.id.filter_button);
-        filterButton.setOnClickListener(new View.OnClickListener() {
+        if (filterButton != null) {
+            filterButton.setOnClickListener(new View.OnClickListener() {
 
-            @Override
-            public void onClick(View v) {
-                getActivity().finish();
-                Intent iv = new Intent(getActivity().getApplicationContext(),
-                        FilterActivity.class);
-                Bundle bndlanimation =
-                        ActivityOptions.makeCustomAnimation(getActivity(), R.anim.slide_down, R.anim.slide_up).toBundle();
-                startActivity(iv, bndlanimation);
-            }
-        });
+                @Override
+                public void onClick(View v) {
+                    getActivity().finish();
+                    Intent iv = new Intent(getActivity().getApplicationContext(),
+                            FilterActivity.class);
+                    Bundle bndlanimation =
+                            ActivityOptions.makeCustomAnimation(getActivity(), R.anim.slide_down, R.anim.slide_up).toBundle();
+                    startActivity(iv, bndlanimation);
+                }
+            });
 
-
-
+        }
         new getList().execute();
 
-        inputSearch = (EditText) rootView.findViewById(R.id.inputSearch);
 
         /**
          * Enabling Search Filter
          * */
-        inputSearch.addTextChangedListener(new TextWatcher() {
+        inputSearch = (EditText) rootView.findViewById(R.id.inputSearch);
+        if (inputSearch != null) {
+            inputSearch.addTextChangedListener(new TextWatcher() {
 
 
-            @Override
-            public void beforeTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {
+                @Override
+                public void beforeTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {
 
-            }
-
-            @Override
-            public void onTextChanged(CharSequence cs, int arg1, int arg2, int arg3) {
-                if(cs.toString().equals(""))
-                {
-                    HomeEventsAdapter homeEventsAdapter = new HomeEventsAdapter(getActivity(), homeEvents);//homeEvents= globalVariable.currentuserevents
-                    homeEventsAdapter.notifyDataSetChanged();
-                    events_list.setAdapter(homeEventsAdapter);
                 }
-                else
-                {
-                    int textlength = cs.length();
-                    ArrayList<EventsObject> tempArrayList = new ArrayList<EventsObject>();
-                    for(EventsObject c: homeEvents){
-                        if (textlength <= c.GetName().length()) {
-                            if (c.GetName().toLowerCase().contains(cs.toString().toLowerCase())) {
-                                tempArrayList.add(c);
+
+                @Override
+                public void onTextChanged(CharSequence cs, int arg1, int arg2, int arg3) {
+                    if (cs.toString().equals("")) {
+                        HomeEventsAdapter homeEventsAdapter = new HomeEventsAdapter(getActivity(), homeEvents);//homeEvents= globalVariable.currentuserevents
+                        homeEventsAdapter.notifyDataSetChanged();
+                        events_list.setAdapter(homeEventsAdapter);
+                    } else {
+                        int textlength = cs.length();
+                        ArrayList<EventsObject> tempArrayList = new ArrayList<EventsObject>();
+                        for (EventsObject c : homeEvents) {
+                            if (textlength <= c.GetName().length()) {
+                                if (c.GetName().toLowerCase().contains(cs.toString().toLowerCase())) {
+                                    tempArrayList.add(c);
+                                }
                             }
                         }
+                        HomeEventsAdapter homeEventsAdapter = new HomeEventsAdapter(getActivity(), tempArrayList);//homeEvents= globalVariable.currentuserevents
+                        homeEventsAdapter.notifyDataSetChanged();
+                        events_list.setAdapter(homeEventsAdapter);
                     }
-                    HomeEventsAdapter homeEventsAdapter = new HomeEventsAdapter(getActivity(), tempArrayList);//homeEvents= globalVariable.currentuserevents
-                    homeEventsAdapter.notifyDataSetChanged();
-                    events_list.setAdapter(homeEventsAdapter);
                 }
-            }
-            @Override
-            public void afterTextChanged(Editable arg0) {
-                // TODO Auto-generated method stub
-            }
-        });
+
+                @Override
+                public void afterTextChanged(Editable arg0) {
+                    // TODO Auto-generated method stub
+                }
+            });
+        }
         return rootView;
     }
 
-    private class getList extends AsyncTask<Integer, Integer,String> { // params , progress, result
+    private class getList extends AsyncTask<Integer, Integer, String> { // params , progress, result
 
         private ProgressDialog dialog = new ProgressDialog(FragmentList.this.getActivity());
 
@@ -190,6 +189,7 @@ public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefre
         protected void onPreExecute() {
             initProgressDialog(dialog);
         }
+
         @Override
         protected String doInBackground(Integer... params) {
             // TODO Auto-generated method stub
@@ -198,9 +198,10 @@ public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefre
 
         @Override
         protected void onPostExecute(String result) {
+
             events_list = (ListView) getActivity().findViewById(R.id.list_detail);
-            SwipeRefreshLayout swipeRefreshLayout =  (SwipeRefreshLayout)getActivity().
-            findViewById(R.id.swipe_refresh_layout);
+            SwipeRefreshLayout swipeRefreshLayout = (SwipeRefreshLayout) getActivity().
+                    findViewById(R.id.swipe_refresh_layout);
             FloatingActionButton fab = (FloatingActionButton) getActivity().findViewById(R.id.fab);
 
             fab.attachToListView(events_list, new ScrollDirectionListener() {
@@ -231,12 +232,12 @@ public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefre
                     getActivity().finish();
                 }
             });
-            if (prefs.getString("userid", null) != null){
+            if (prefs.getString("userid", null) != null) {
                 fab.setVisibility(View.VISIBLE);
 
             }
 
-            if (homeEvents !=  null) {
+            if (homeEvents != null) {
                 if (homeEvents.size() == 0) {// If no events are found
                     Toast.makeText(getActivity().getApplicationContext(), "No Events Found", Toast.LENGTH_LONG).show();
                     events_list.setVisibility(View.INVISIBLE);
@@ -249,7 +250,7 @@ public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefre
 
                     //swipe listener
                     swipeRefreshLayout.setOnRefreshListener(FragmentList.this);
-                    if (!isMain){
+                    if (!isMain) {
                         swipeRefreshLayout.setRefreshing(false);
                         swipeRefreshLayout.setEnabled(false);
                     }
@@ -267,26 +268,22 @@ public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefre
 
                         @Override
                         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                            // TODO Auto-generated method stub
+                            // If user is not logged -> in send to login activity
                             Intent intent = new Intent(getActivity().getApplicationContext(), EventInfo.class);
                             intent.putExtra("eventObject", homeEvents.get(position));
                             startActivity(intent);
                             getActivity().finish();
-
                         }
                     });
                 }
             }
-            try
-            {
-                if(dialog.isShowing())
-                {
+
+            try {
+                if (dialog.isShowing()) {
                     dialog.dismiss();
                 }
                 // do your Display and data setting operation here
-            }
-            catch(Exception e)
-            {
+            } catch (Exception e) {
 
             }
         }
@@ -331,17 +328,16 @@ public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefre
 
             if (convertView == null) {
                 view = inflater.inflate(R.layout.fragment_list_item, null);
-                if(position%2==0)
-                {
+                if (position % 2 == 0) {
                     view.setBackground(getResources().getDrawable(R.drawable.pg_cell_first));
-                }else {
+                } else {
                     view.setBackground(getResources().getDrawable(R.drawable.pg_cell_first_b));
                 }
             }
 
-           // update type icon according to event type
-            String uri = "@drawable/pg_" + data.get(position).GetType()+ "_icon";
-            int imageResource = getResources().getIdentifier(uri,null,getActivity().getPackageName());
+            // update type icon according to event type
+            String uri = "@drawable/pg_" + data.get(position).GetType() + "_icon";
+            int imageResource = getResources().getIdentifier(uri, null, getActivity().getPackageName());
             ImageView typeImg = (ImageView) view.findViewById(R.id.type_img);
             Drawable typeDrawable = getResources().getDrawable(imageResource);
             typeImg.setImageDrawable(typeDrawable);
@@ -366,69 +362,92 @@ public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefre
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
-                    Intent intent = new Intent(getActivity().getApplicationContext(), EventInfo.class);
-                    intent.putExtra("eventObject", data.get(position));
-                    startActivity(intent);
+                    if (prefs.getString("userid", null) == null) {
+                        Toast toast = Toast.makeText(getContext(), "Please log in to see more", Toast.LENGTH_LONG);
+                        toast.show();
+                    } else {
+                        Intent intent = new Intent(getActivity().getApplicationContext(), EventInfo.class);
+                        intent.putExtra("eventObject", data.get(position));
+                        startActivity(intent);
 //                    getActivity().finish();
+                    }
                 }
             });
 
-            ToggleButton playButton = (ToggleButton)view.findViewById(R.id.join);
+            ToggleButton playButton = (ToggleButton) view.findViewById(R.id.join);
             playButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     ToggleButton curplayButton = (ToggleButton) v;
                     String eventTask = null;
                     if (!curplayButton.isChecked()) {
-                        assert (currentUser!=null);
-                        if(currentUser.GetUserId().equals(data.get(position).GetCreatorId())){//cancel event
+                        assert (currentUser != null);
+                        if (currentUser.GetUserId().equals(data.get(position).GetCreatorId())) {//cancel event
                             eventTask = "cancel_event";
                             playTxt.setText("cancel");
-                        }
-                        else { //leave event
+                            assert (2 < 1); //not supposed to get here
+                        } else { //leave event
                             eventTask = "leave_event";
-                            EventInfo.toastGeneral(getContext(),"You left the event", Toast.LENGTH_SHORT);
+                            EventInfo.toastGeneral(getContext(), "You left the event", Toast.LENGTH_SHORT);
                             playTxt.setText("Play");//Todo  update eventInfo
                             curplayButton.setTextColor(Color.parseColor("#D0D0D0"));//how to set triangle gray?
                             playTxt.setTextColor(Color.parseColor("#D0D0D0"));
+                            //update
+                            currentUser.removeSpecificEventById(data.get(position).GetId());
+                            globalVariables.SetCurrentUser(currentUser);
+
                         }
-                    }
-                    else { //join event
-                        //Todo if private
-                        //Todo if public
-                        //curplayButton.setClickable(true);
-                        eventTask = "join_event";
-                        playTxt.setText("Playing");
-                        curplayButton.setTextColor(Color.parseColor("#104E8B"));//how to set triangle blue?
-                        playTxt.setTextColor(Color.parseColor("#104E8B"));
-                        EventInfo.toastGeneral(getContext(), "You joined the event!", Toast.LENGTH_SHORT);
+                    } else { //join event
+                        //private event
+                        if (data.get(position).getIsPublic().equals("0")) {
+                            eventTask = "request_join_event";
+                            playTxt.setText("Waiting");
+                            EventInfo.toastGeneral(getContext(), "Wait for approval", Toast.LENGTH_SHORT);
+                            playTxt.setTextColor(Color.parseColor("#104E8B"));
+                            //update
+                            ArrayList<EventsObject> temp = currentUser.getEvents_wait4approval();
+                            temp.add(data.get(position));
+                            currentUser.setEvents_wait4approval(temp);
+                            globalVariables.SetCurrentUser(currentUser);
+                            //todo : insert icon ?
+                        } else {//public event
+                            //curplayButton.setClickable(true);
+                            eventTask = "join_event";
+                            playTxt.setText("Playing");
+                            curplayButton.setTextColor(Color.parseColor("#104E8B"));//how to set triangle blue?
+                            playTxt.setTextColor(Color.parseColor("#104E8B"));
+                            EventInfo.toastGeneral(getContext(), "You joined the event!", Toast.LENGTH_SHORT);
+                            //update
+                            ArrayList<EventsObject> temp = currentUser.getEvents();
+                            temp.add(data.get(position));
+                            currentUser.setEvents(temp);
+                            globalVariables.SetCurrentUser(currentUser);
+                        }
                     }
                     /*Server side update */
                     myEventsTask = new HandleEventTask(data.get(position), eventTask);
                     myEventsTask.execute((Void) null);
                     //curplayButton.setChecked(!curplayButton.isChecked());
-                }});
+                }
+            });
 
             //TODO check if userLoginId is on members event
-            if(currentUser != null && userEvents !=null ) {
-                if (!userEvents.isEmpty()) {
-                    if (userEvents.contains(data.get(position).GetId())) {
+            if (currentUser != null && myEvents != null) {
+                if (!myEvents.isEmpty()) {
+                    if (myEvents.contains(data.get(position).GetId())) {
                         //playButton.setClickable(false);
-                        if(currentUser.GetUserId().equals(data.get(position).GetCreatorId())) {//cancel event
+                        if (currentUser.GetUserId().equals(data.get(position).GetCreatorId())) {//cancel event
                             //it's the creator
                             playButton.setVisibility(View.INVISIBLE);
                             playTxt.setText("Boss");
                             playTxt.setTextColor(Color.parseColor("#000000"));
                             //not allowed to cancel from here
-                        }
-                        else {
+                        } else {
                             playButton.setChecked(true);
                             playTxt.setText("Playing");
                             playTxt.setTextColor(Color.parseColor("#104E8B"));
                         }
-                    }
-                    else{// if user dont play
+                    } else {// if user dont play
                         playButton.setChecked(false);
                         playTxt.setText("Play");
                         playTxt.setTextColor(Color.parseColor("#D0D0D0"));
@@ -443,10 +462,12 @@ public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefre
         //        private Context context; //Todo : can we delete it ?
         private EventsObject currentEvent;
         String eventTask;
+
         public HandleEventTask(EventsObject currentEvent, String eventTask) {
             this.currentEvent = currentEvent;
             this.eventTask = eventTask;
         }
+
         private String responseString;
 
         protected void onPreExecute() {
@@ -472,9 +493,9 @@ public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefre
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
                 }
-                if(responseString == null) {
+                if (responseString == null) {
 
-                    Log.i("TESTID",currentEvent.GetId());
+                    Log.i("TESTID", currentEvent.GetId());
                 }
 
                 //Check response
@@ -489,19 +510,17 @@ public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefre
                 if (myObject != null && responseStatus != null) {
                     if (responseStatus.equals(Constants.RESPONSE_OK.toString())) {
                         isOK = true;
-                        if(eventTask.equals("join_event")) {
-                            userEvents.add(currentEvent.GetId());
+                        if (eventTask.equals("join_event")) {
+                            myEvents.add(currentEvent.GetId());
+                            //update also array<eventsObject>
+                        } else if (eventTask.equals("leave_event")) {
+                            myEvents.remove(currentEvent.GetId());
+                            //update also array<eventsObject>
+                        } else if (eventTask.equals("request_join_event")) {
+                            myEvents.add(currentEvent.GetId());
                             //update also array<eventsObject>
                         }
-                        else if (eventTask.equals("leave_event")) {
-                            userEvents.remove(currentEvent.GetId());
-                        //update also array<eventsObject>
-                        }
-                        else if(eventTask.equals("request_join_event")){
-                            userEvents.add(currentEvent.GetId());
-                            //update also array<eventsObject>
-                        }
-                        currentUser.SetUserEvents(userEvents);
+                        currentUser.SetUserEvents(myEvents);
                         //currentUser.Set() update also array<eventsObject>
                     } else {
                         isOK = false;
@@ -509,9 +528,7 @@ public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefre
                     }
                     myEventsTask = null;
                 }
-            }
-            else
-            {
+            } else {
                 // If user is not logged -> in send to login activity
                 Intent intent = new Intent(getActivity().getApplicationContext(), Login.class);
                 startActivity(intent);
@@ -520,6 +537,7 @@ public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefre
 
             return null;
         }
+
         @Override
         protected void onPostExecute(final String responseString) {
 //            progressBar.setVisibility(View.GONE);
@@ -535,30 +553,29 @@ public class FragmentList extends Fragment implements SwipeRefreshLayout.OnRefre
     public void onRefresh() {
         Log.i("Enter on refresh", "");
 
-        SwipeRefreshLayout swipeRefreshLayout =  (SwipeRefreshLayout)getActivity().
+        SwipeRefreshLayout swipeRefreshLayout = (SwipeRefreshLayout) getActivity().
                 findViewById(R.id.swipe_refresh_layout);
 
         swipeRefreshLayout.setRefreshing(true);
         Intent i = new Intent(this.getActivity(), MainActivity.class);
-        Splash.GetEventsAsyncTask getEventsAsyncTask = new Splash.GetEventsAsyncTask(this.getContext(),i);
+        Splash.GetEventsAsyncTask getEventsAsyncTask = new Splash.GetEventsAsyncTask(this.getContext(), i);
         getEventsAsyncTask.execute();
 
         swipeRefreshLayout.setRefreshing(false);
 
     }
 
-    private void initProgressDialog(ProgressDialog dialog)
-    {
+    private void initProgressDialog(ProgressDialog dialog) {
         String message = "Loading ...";
         SpannableString spanMessage = new SpannableString(message);
-        spanMessage.setSpan(new RelativeSizeSpan(1.2f),0,spanMessage.length(),0);
+        spanMessage.setSpan(new RelativeSizeSpan(1.2f), 0, spanMessage.length(), 0);
         spanMessage.setSpan(new ForegroundColorSpan(Color.parseColor("#104e8b")), 0, spanMessage.length(), 0);
         dialog.setTitle("Please wait");
         dialog.setMessage(spanMessage);
         dialog.setIcon(R.drawable.pg_loading);
         dialog.show();
         Window window = dialog.getWindow();
-        window.setLayout(800,420);
+        window.setLayout(800, 420);
     }
 
 }

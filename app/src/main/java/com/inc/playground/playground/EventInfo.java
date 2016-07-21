@@ -109,7 +109,10 @@ public class EventInfo extends FragmentActivity {
     User currentUser;
     ToggleButton playButton;
     Bitmap imageBitmap;
-    Set<String> userEvents;
+//    Set<String> userEvents;
+
+
+
     ScrollView mainLayout;
     public ArrayList<String> urlList = new ArrayList<>(); //saves the url of members by order
 
@@ -212,9 +215,11 @@ public class EventInfo extends FragmentActivity {
         viewStatus.setVisibility(View.INVISIBLE);
         statusImg.setVisibility(View.INVISIBLE);
         if (currentUser != null) { // the user is login
-            userEvents = currentUser.GetUserEvents();
-            if (!userEvents.isEmpty()) {
-                if (userEvents.contains(currentEvent.GetId())) {//play in the event
+
+
+            //user belong to some kind of event
+            if (! (currentUser.getEvents().isEmpty()&& currentUser.getEvents_wait4approval().isEmpty() && currentUser.getEvents_decline().isEmpty() )) {
+                if (User.userEventsContainEventId(currentUser.getEvents(), currentUser.getEvents_wait4approval(), currentUser.getEvents_decline(), currentEvent.GetId())) {//user in the event
                     if(currentUser.GetUserId().equals(currentEvent.GetCreatorId())){//creator
 //                        playButton.setChecked(true);//Todo change the tringle to other picture for manager - lina?
                         playButton.setVisibility(View.INVISIBLE);
@@ -223,10 +228,27 @@ public class EventInfo extends FragmentActivity {
                         viewPlay.setTextColor(Color.parseColor("#000000"));
                     }
                     else { //regular member
-                        playButton.setChecked(true);
-                        //playButton.setClickable(false); -avoid it: make it impossbile to click on the button
-                        viewPlay.setText("Playing");
-                        viewPlay.setTextColor(Color.parseColor("#104E8B"));
+                        //regular event
+                        if(User.eventsObjectContainEvent(currentUser.getEvents(), currentEvent.GetId())){
+                            playButton.setChecked(true);
+                            //playButton.setClickable(false); -avoid it: make it impossbile to click on the button
+                            viewPlay.setText("Playing");
+                            viewPlay.setTextColor(Color.parseColor("#104E8B"));
+                        }
+                        //events_wait4approval
+                        if(User.eventsObjectContainEvent(currentUser.getEvents_wait4approval() , currentEvent.GetId())){
+                            playButton.setVisibility(View.INVISIBLE);
+                            viewPlay.setText("Waiting");
+                            viewPlay.setTextColor(Color.parseColor("#104E8B"));
+                        }
+                        //events_decline
+                        if(User.eventsObjectContainEvent(currentUser.getEvents_decline() , currentEvent.GetId()) ){
+                            playButton.setVisibility(View.INVISIBLE);
+                            viewPlay.setText("Declined");
+                            viewPlay.setTextColor(Color.parseColor("#0xffff0000"));
+                        }
+
+
                     }
                 }
             }
@@ -269,7 +291,7 @@ public class EventInfo extends FragmentActivity {
                                 int date[] = parseDate(currentEvent.GetDate());
                                 int startTime[] = parseHour(currentEvent.GetStartTime());
                                 int endTime[] = parseHour(currentEvent.GetEndTime());
-                                cal.set(date[0] ,date[1],date[2],startTime[0],startTime[1] );
+                                cal.set(date[0], date[1], date[2], startTime[0], startTime[1]);
                                 Intent intent = new Intent(Intent.ACTION_EDIT);
                                 intent.setType("vnd.android.cursor.item/event");
                                 intent.putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, cal.getTimeInMillis());
@@ -336,7 +358,11 @@ public class EventInfo extends FragmentActivity {
                                     alertDialog.show();
                                     break;
                                 case R.id.join_requests:
-
+                                    Intent approveIntent = new Intent(EventInfo.this, ApproveEventList.class);
+                                    approveIntent.putExtra("eventObject", currentEvent);
+                                    approveIntent.putExtra("parent","EventInfo");
+                                    startActivity(approveIntent);
+                                    finish();
                                     break;
                             }
                             return true;
@@ -367,81 +393,6 @@ public class EventInfo extends FragmentActivity {
             e.printStackTrace();
         }
     }
-//
-//	class CustomPagerAdapter extends PagerAdapter {
-//
-//		Context mContext;
-//		LayoutInflater mLayoutInflater;
-//
-//		public CustomPagerAdapter(Context context) {
-//			mContext = context;
-//			mLayoutInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-//		}
-//
-//		@Override
-//		public int getCount() {
-//			return separated.length;
-//		}
-//
-//		@Override
-//		public boolean isViewFromObject(View view, Object object) {
-//			return view == ((RelativeLayout) object);
-//		}
-//
-//		@Override
-//		public Object instantiateItem(ViewGroup container, int position) {
-//			View itemView = mLayoutInflater.inflate(R.layout.image_pager, container, false);
-//
-//			imageView = (ImageView) itemView.findViewById(R.id.image_page_fliper);
-//			imageView.setImageResource(R.drawable.detail_page_loadimg);
-//			Log.d("position", "" + separated[position].replace("[", "").replace("]", "").replace("\"", ""));
-//			String imageurl = getString(R.string.link) + "uploads/store/full/"
-//					+ separated[position].replace("[", "").replace("]", "").replace("\"", "");
-//			// String imageurl = getResources().getString(R.string.liveurl) +
-//			// "uploads/" + separated[position].replace("[", "").replace("]",
-//			// "");
-//			Log.d("imageurl", imageurl);
-//			ImageLoader imgLoader = new ImageLoader(Detailpage.this);
-//			imgLoader.DisplayImage(imageurl.replace(" ", "%20"), imageView);
-//			// new DownloadImageTask(imageView).execute(imageurl);
-//			container.addView(itemView);
-//
-//			return itemView;
-//		}
-//
-//		@Override
-//		public void destroyItem(ViewGroup container, int position, Object object) {
-//			container.removeView((RelativeLayout) object);
-//		}
-//	}
-//
-//	class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
-//		ImageView bmImage;
-//		Bitmap mIcon11;
-//
-//		public DownloadImageTask(ImageView bmImage) {
-//			this.bmImage = bmImage;
-//		}
-//
-//		@Override
-//		protected Bitmap doInBackground(String... urls) {
-//			String urldisplay = urls[0];
-//
-//			try {
-//				InputStream in = new java.net.URL(urldisplay).openStream();
-//				mIcon11 = BitmapFactory.decodeStream(in);
-//			} catch (Exception e) {
-//				Log.e("Error", "" + e.getMessage());
-//				e.printStackTrace();
-//			}
-//			return mIcon11;
-//		}
-//
-//		@Override
-//		protected void onPostExecute(Bitmap result) {
-//			bmImage.setImageBitmap(result);
-//		}
-//	}
 
     public void addMarkerToHashMap(CustomMarker customMarker, Marker marker) {
         setUpMarkersHashMap();
@@ -494,14 +445,18 @@ public class EventInfo extends FragmentActivity {
             }
             else{ //leave_event
                 eventTask = "leave_event";
-                toastGeneral(getApplicationContext(),"You left the event", Toast.LENGTH_SHORT);
+                toastGeneral(getApplicationContext(), "You left the event", Toast.LENGTH_SHORT);
                 x.setChecked(false);
                 viewPlay.setText("Play");
                 viewPlay.setTextColor(Color.parseColor("#D0D0D0"));
                 //remove member picture
                 membersList.removeView(findMemberPhoto());
-                userEvents.remove(currentEvent.GetId());//remove current event from userEvents
                 viewCurrentSize.setText(Integer.toString(membersList.getChildCount()));
+
+                //update list
+                currentUser.removeSpecificEventById(currentEvent.GetId() );//remove current event from the specific record
+                globalVariables.SetCurrentUser(currentUser);
+
             }
         } else {//join event
 
@@ -510,14 +465,17 @@ public class EventInfo extends FragmentActivity {
                 eventTask = "request_join_event";
                 x.setChecked(true); //change icon to waiting
                 viewPlay.setText("Waiting");//for approval
-                toastGeneral(getApplicationContext(), "Waiting for event manager approvel", Toast.LENGTH_SHORT);
+                toastGeneral(getApplicationContext(), "Waiting for event manager approval", Toast.LENGTH_SHORT);
                 //Todo: change icon to question mark
 
-                //update global user events list - for join
-                //Todo : update to events_wait4approval idan
+                //update event to events_wait4approval
+                ArrayList<EventsObject> temp = currentUser.getEvents_wait4approval();
+                temp.add(currentEvent);
+                currentUser.setEvents_wait4approval(temp);
+                globalVariables.SetCurrentUser(currentUser);
+
 //                currentUser.getUserEventsObjects().add(currentEvent);
 //                currentUser.SetUserEvents(userEvents);
-//                globalVariables.SetCurrentUser(currentUser);
 
             }
             //public event
@@ -557,13 +515,16 @@ public class EventInfo extends FragmentActivity {
                     //TODO : set not clickable for join to event -> only for leave
 
                 }
-                if (userEvents == null) userEvents = new HashSet<>();
-                userEvents.add(currentEvent.GetId());
+                ArrayList<EventsObject> temp2 = currentUser.getEvents();
+                temp2.add(currentEvent);
+                currentUser.setEvents(temp2);
+                globalVariables.SetCurrentUser(currentUser);
             }
             //update global user events list - for join
             //Todo : update
 //            currentUser.getUserEventsObjects().add(currentEvent);
-            currentUser.SetUserEvents(userEvents);
+
+//            currentUser.SetUserEvents(userEvents);
             globalVariables.SetCurrentUser(currentUser);
 
         }

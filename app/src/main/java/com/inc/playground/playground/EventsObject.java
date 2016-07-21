@@ -20,7 +20,8 @@ public class EventsObject implements Serializable ,EventsObjectInterface {
 
     String isPublic;//1 indicate public, 0 indicate that members need approval
     ArrayList<String> members;
-    ArrayList<User> approveList =  new ArrayList<>();;
+
+    ArrayList<String> approveList =  new ArrayList<>();;
 
     // TODO ADD EVENT MEMBERS (A LIST CONTAINING USERS)
     String creatorId;
@@ -102,11 +103,11 @@ public class EventsObject implements Serializable ,EventsObjectInterface {
     }
 
 
-    public ArrayList<User> getApproveList() {
+    public ArrayList<String> getApproveList() {
         return approveList;
     }
 
-    public void setApproveList(ArrayList<User> approveList) {
+    public void setApproveList(ArrayList<String> approveList) {
         this.approveList = new ArrayList<>();
         this.approveList = approveList;
     }

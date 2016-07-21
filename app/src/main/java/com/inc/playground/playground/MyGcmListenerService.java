@@ -34,6 +34,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -111,14 +112,6 @@ public class MyGcmListenerService extends GcmListenerService {
     private void sendNotification(String message,String title,JSONObject inputJson) {
 
         globalVariables = ((GlobalVariables) this.getApplication());
-        ArrayList<NotificationObject> notificationList = globalVariables.GetNotifications();
-        EventsObject curEvent;
-        NotificationObject curNotification = new NotificationObject();
-        curNotification.setDescription(message);
-        curNotification.setTitle(title);
-        curNotification.setInputJson(inputJson);
-        notificationList.add(curNotification);
-        globalVariables.SetNotifications(notificationList);
 
         Intent intent = new Intent(this, MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -127,9 +120,20 @@ public class MyGcmListenerService extends GcmListenerService {
         if(title.contains("requested"))
         {
             iv = new Intent(MyGcmListenerService.this,ApproveEventList.class);
+            iv.putExtra("parent","MyGcm");
+            iv.putExtra("inputJson", inputJson.toString() );
         }
         else
         {
+            ArrayList<NotificationObject> notificationList = globalVariables.GetNotifications();
+            EventsObject curEvent = new EventsObject();
+            NotificationObject curNotification = new NotificationObject();
+            curNotification.setDescription(message);
+            curNotification.setTitle(title);
+            curNotification.setInputJson(inputJson);
+            notificationList.add(curNotification);
+            globalVariables.SetNotifications(notificationList);
+
             iv = new Intent(MyGcmListenerService.this,NotificationsList.class);
         }
 

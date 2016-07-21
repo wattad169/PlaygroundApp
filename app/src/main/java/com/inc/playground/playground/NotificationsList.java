@@ -8,7 +8,6 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.SpannableString;
@@ -19,19 +18,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ToggleButton;
 
 import com.inc.playground.playground.utils.InitGlobalVariables;
-import com.melnykov.fab.FloatingActionButton;
-import com.melnykov.fab.ScrollDirectionListener;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -192,9 +186,7 @@ public class NotificationsList extends FragmentActivity implements SwipeRefreshL
                 view = inflater.inflate(R.layout.notification_item, null);
             }
 
-            TextView eventName =(TextView) view.findViewById(R.id.event_nameTxt);
-            TextView notificationDescription = (TextView) view.findViewById(R.id.notification_descriptionTxt);
-
+            TextView eventName =(TextView) view.findViewById(R.id.approveId_txt);
 
             if(data.get(position).getTitle().contains("canceled"))
             {
@@ -226,7 +218,12 @@ public class NotificationsList extends FragmentActivity implements SwipeRefreshL
                     e.printStackTrace();
                 }
 
-                eventName.setText(curEvent.GetName());
+                eventName.setText(data.get(position).getTitle());
+                String uri = "@drawable/pg_" + curEvent.GetType()+ "_icon";
+                int imageResource = getResources().getIdentifier(uri, null, getPackageName());
+                ImageView typeImg = (ImageView) view.findViewById(R.id.img_type);
+                Drawable typeDrawable = getResources().getDrawable(imageResource);
+                typeImg.setImageDrawable(typeDrawable);
 
                 view.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -240,7 +237,7 @@ public class NotificationsList extends FragmentActivity implements SwipeRefreshL
                 });
             }
 
-            notificationDescription.setText(data.get(position).getDescription());
+
 
 
 

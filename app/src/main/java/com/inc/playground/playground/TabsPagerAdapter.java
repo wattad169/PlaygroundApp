@@ -1,6 +1,7 @@
 package com.inc.playground.playground;
 
 
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -25,7 +26,12 @@ public class TabsPagerAdapter extends FragmentPagerAdapter {
                 return new FragmentMap();
             case 2:
                 // List fragment activity
-                return new FragmentList(null, Constants.maxEvents);
+                FragmentList fragment1 = new FragmentList();
+                Bundle args = new Bundle();
+                args.putInt("len",Constants.maxEvents);
+                args.putSerializable("events",null);
+                fragment1.setArguments(args);
+                return fragment1;
         }
 
         return null;

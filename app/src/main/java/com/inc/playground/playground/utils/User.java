@@ -22,9 +22,9 @@ public class User {
     Set<String> userEvents;//do we really need it?
 
     //represents event status for the user
-    ArrayList<EventsObject> events;
-    ArrayList<EventsObject> events_wait4approval;
-    ArrayList<EventsObject> events_decline;
+    ArrayList<EventsObject> events = new ArrayList<>() ;
+    ArrayList<EventsObject> events_wait4approval = new ArrayList<>();
+    ArrayList<EventsObject> events_decline = new ArrayList<>();
 
     Set<String> favouritesId;//new feature!
 
@@ -152,6 +152,95 @@ public class User {
         this.events_wait4approval = events_wait4approval;
         this.events_decline = events_decline;
     }
+
+    /**
+     *
+     * @param events
+     * @param events_wait4approval
+     * @param events_decline
+     * @param eventId
+     * @return String of the type of eventId Or null if the user don't have reference for the eventid
+     */
+    public static String eventUserType(ArrayList<EventsObject> events,ArrayList<EventsObject> events_wait4approval ,
+                               ArrayList<EventsObject> events_decline, String eventId  ){
+        for(EventsObject e : events){
+            if(e.GetId().equals(eventId)){
+                return Constants.EVENTS;
+            }
+        }
+        for(EventsObject e : events_wait4approval){
+            if(e.GetId().equals(eventId)){
+                return Constants.EVENTS_WAIT4APPROVAL;            }
+        }
+
+        for(EventsObject e : events_decline){
+            if(e.GetId().equals(eventId)){
+                return Constants.EVENTS_DECLINE;
+            }
+        }
+        return null;
+    }
+
+    /**
+     *
+     * @param events
+     * @param eventId
+     * @return true if the array<EventObject> contain the eventid
+     */
+    public static boolean eventsObjectContainEvent(ArrayList<EventsObject> events, String eventId  ){
+        for(EventsObject e : events){
+            if(e.GetId().equals(eventId)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+    public static boolean userEventsContainEventId(ArrayList<EventsObject> events,ArrayList<EventsObject> events_wait4approval ,
+                                                   ArrayList<EventsObject> events_decline, String eventId ){
+        return eventsObjectContainEvent(events, eventId)||
+                eventsObjectContainEvent(events_wait4approval, eventId)||
+                eventsObjectContainEvent(events_decline,eventId);
+    }
+
+    /**
+     *`
+     * @param eventId
+     * @return True if it removed
+     */
+    public boolean removeSpecificEventById(String eventId ){
+        if( eventsObjectContainEvent(events,eventId) ){
+            for(int i =0 ; i<events.size() ; i++ ){
+                EventsObject e = events.get(i);
+                if(e.equals(eventId)){
+                    events.remove(i);
+                    return true;
+                }
+            }
+        }
+        if( eventsObjectContainEvent(events_wait4approval,eventId) ){
+            for(int i =0 ; i<events.size() ; i++ ){
+                EventsObject e = events_wait4approval.get(i);
+                if(e.equals(eventId)){
+                    events.remove(i);
+                    return true;
+                }
+            }
+        }
+        if( eventsObjectContainEvent(events_decline,eventId) ){
+            for(int i =0 ; i<events.size() ; i++ ){
+                EventsObject e = events_decline.get(i);
+                if(e.equals(eventId)){
+                    events.remove(i);
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+
 
     /**
      *

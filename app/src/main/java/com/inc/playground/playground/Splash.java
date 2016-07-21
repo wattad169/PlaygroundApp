@@ -110,7 +110,6 @@ public class Splash extends Activity {
                 //"get all events"
                 allEventsResponseString = NetworkUtilities.doPost(cred, NetworkUtilities.BASE_URL + "/get_all_events/");
 
-
             } catch (Exception ex) {
                 Log.e(TAG, "getUserEvents.doInBackground: failed to doPost");
                 Log.i(TAG, ex.toString());
@@ -296,9 +295,9 @@ public class Splash extends Activity {
 
                         Bitmap currentImage = new DownloadImageBitmapTask().execute(currentObject.getString(Constants.PHOTO_URL)).get();
                         String userId = currentObject.getString(Constants.ID);
-                        UserImageEntry currentUser = new UserImageEntry(fullname, currentImage, userId);
+                        UserImageEntry currentUser = new UserImageEntry(fullname, currentImage, userId,currentObject.getString(Constants.PHOTO_URL) );
                         usersList.add(currentUser);
-                        userToImage.put(fullname, currentImage);
+                        userToImage.put(userId, currentImage);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     } catch (ExecutionException e) {

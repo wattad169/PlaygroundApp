@@ -105,6 +105,24 @@ public class GlobalVariables extends Application {
     }
 
 
+    public void updateEventInEvents(String eventID,String approveId)
+    {
+        GlobalVariables globalVariables = ((GlobalVariables) this);
+        EventsObject eventForUpdate = new EventsObject();
+        ArrayList<EventsObject> homeEvents = globalVariables.GetHomeEvents();
+        if(homeEvents!= null) {
+            for (int i = 0; i < homeEvents.size(); i++)
+            {
+                if(homeEvents.get(i).GetId().equals(eventID))
+                {
+                    ArrayList<String> approveList = homeEvents.get(i).getApproveList();
+                    approveList.remove(approveId);
+                    homeEvents.get(i).setApproveList(approveList);
+                    break;
+                }
+            }
+        }
+    }
     public enum EventStatus {//eventObject optional status
         EXPIRED, OPEN ,LIVE
     }
