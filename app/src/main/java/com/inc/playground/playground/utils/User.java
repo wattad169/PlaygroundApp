@@ -188,7 +188,7 @@ public class User {
                                ArrayList<EventsObject> events_decline, String eventId  ){
         for(EventsObject e : events){
             if(e.GetId().equals(eventId)){
-                return Constants.EVENTS_EDITED;
+                return Constants.EVENTS;
             }
         }
         for(EventsObject e : events_wait4approval){

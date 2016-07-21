@@ -181,7 +181,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 
         // Set the drawer toggle as the DrawerListener
         mDrawerLayout.setDrawerListener(mDrawerToggle);
-
+        mDrawerLayout.closeDrawers();
         getActionBar().setDisplayHomeAsUpEnabled(true);
         getActionBar().setHomeButtonEnabled(true);
 
@@ -552,8 +552,16 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 
     @Override
     public void onBackPressed()
+
     {
-        finish();
+        if(mDrawerLayout.isDrawerOpen(GravityCompat.START)){
+            mDrawerLayout.closeDrawers();
+        }
+        else{
+
+            finish();
+        }
+
     }
 
 

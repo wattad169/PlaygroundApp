@@ -190,48 +190,41 @@ public class FilterActivity extends PreferenceActivity {
         }
 
         if (distancePicker.getSummary() != null) {
+            if (isFiltred) {
                 if(distancePicker.getSummary().equals("Walking distance (up to 2 km)"))
                 {
                     if (!(Double.valueOf(curEvent.GetDistance()) < 2))
-                    {
-                        if (isFiltred)
-                        {
-                            afterFilterEvents.remove(curEvent);
-                        }
-                        else
-                        {
-                            afterFilterEvents.add(curEvent);
-                        }
-                    }
+                        afterFilterEvents.remove(curEvent);
                 }
                 else if(distancePicker.getSummary().equals("Local area (up to 10 km)"))
                 {
                     if (!(Double.valueOf(curEvent.GetDistance()) < 10))
-                    {
-                        if (isFiltred)
-                        {
-                            afterFilterEvents.remove(curEvent);
-                        }
-                        else
-                        {
-                            afterFilterEvents.add(curEvent);
-                        }
-                    }
+                        afterFilterEvents.remove(curEvent);
                 }
                 else if(distancePicker.getSummary().equals("Over 10 km"))
                 {
-                    if (!(Double.valueOf(curEvent.GetDistance()) > 10)) {
-                        if (isFiltred) {
-                            afterFilterEvents.remove(curEvent);
-                        } else {
-                            afterFilterEvents.add(curEvent);
-                        }
-                    }
+                    if (!(Double.valueOf(curEvent.GetDistance()) > 10))
+                        afterFilterEvents.remove(curEvent);
                 }
-                if (! isFiltred)
+
+            } else {
+                isFiltred = true;
+                if(distancePicker.getSummary().equals("Walking distance (up to 2 km)"))
                 {
-                    isFiltred = true;
+                    if (Double.valueOf(curEvent.GetDistance()) < 2)
+                        afterFilterEvents.add(curEvent);
                 }
+                else if(distancePicker.getSummary().equals("Local area (up to 10 km)"))
+                {
+                    if (Double.valueOf(curEvent.GetDistance()) < 10)
+                        afterFilterEvents.add(curEvent);
+                }
+                else if(distancePicker.getSummary().equals("Over 10 km"))
+                {
+                    if (Double.valueOf(curEvent.GetDistance()) > 10)
+                        afterFilterEvents.add(curEvent);
+                }
+            }
         }
 
         if (membersTxt.getSummary() != null && ( ! membersTxt.getSummary().equals("Looking for somebody's events?"))) {

@@ -275,15 +275,21 @@ public class EventInfo extends FragmentActivity {
 
                         switch (item.getItemId()) {
                             case R.id.share_invite:
-                                FragmentTransaction ft = getFragmentManager().beginTransaction();
-                                android.app.Fragment prev = getFragmentManager().findFragmentByTag("dialog");
-                                if (prev != null) {
-                                    ft.remove(prev);
+                                if(currentEvent.getIsPublic().equals("0")){
+                                    toastGeneral(getApplicationContext(), "You cannot invite users to private event", Toast.LENGTH_SHORT);
                                 }
-                                ft.addToBackStack(null);
-                                String inputText = "asd";
-                                DialogFragment newFragment = new MyDialogFragment(currentEvent.GetId(), currentUser.GetUserId());
-                                newFragment.show(ft, "dialog");
+                                else{
+                                    FragmentTransaction ft = getFragmentManager().beginTransaction();
+                                    android.app.Fragment prev = getFragmentManager().findFragmentByTag("dialog");
+                                    if (prev != null) {
+                                        ft.remove(prev);
+                                    }
+                                    ft.addToBackStack(null);
+                                    String inputText = "asd";
+                                    DialogFragment newFragment = new MyDialogFragment(currentEvent.GetId(), currentUser.GetUserId());
+                                    newFragment.show(ft, "dialog");
+                                }
+
                                 break;
                             case R.id.share_calendar:
                                 Calendar cal = Calendar.getInstance();
