@@ -171,8 +171,8 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
 				if (method.equals("login")) {
 					try {
 						//whats is it mostafa? can you comment here?
-                        cred.put(Constants.MODE, Constants.LOGIN_MODE);
-                        cred.put(Constants.EMAIL, "mostafa");
+						cred.put(Constants.MODE, Constants.LOGIN_MODE);
+						cred.put(Constants.EMAIL, "mostafa");
 						cred.put(Constants.EMAIL, "mostafa");
 						cred.put(Constants.PASSWORD, "12345");
 					} catch (JSONException e) {
@@ -182,7 +182,7 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
 
 				} else if (method.equals("google")) {
 					try {
-                        cred.put(Constants.MODE, Constants.GOOGLE_MODE);
+						cred.put(Constants.MODE, Constants.GOOGLE_MODE);
 						cred.put(Constants.EMAIL, personemail);
 						cred.put(Constants.NAME, personname);
 						cred.put(Constants.PHOTO_URL, personPhotoUrl);
@@ -193,7 +193,7 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
 
 
 				} else if (method.equals("facebook")) {
-                    cred.put(Constants.MODE, Constants.FACEBOOK_MODE);
+					cred.put(Constants.MODE, Constants.FACEBOOK_MODE);
 					cred.put(Constants.FACEBOOK_ID, facebook_id);
 					cred.put(Constants.NAME, name);
 					cred.put(Constants.PHOTO_URL, imagefb);
@@ -211,9 +211,9 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
 				}
 
 				if (!responseStatus.equals(Constants.RESPONSE_OK)) {
-						Logingetset temp = new Logingetset();
-						temp.setId("Login Failed");
-						login.add(temp);
+					Logingetset temp = new Logingetset();
+					temp.setId("Login Failed");
+					login.add(temp);
 				}
 				else{ //
 					key = "user";
@@ -224,31 +224,31 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
 
 					Logingetset temp = new Logingetset();
 					if(method.equals("login")){
-                        user_token = resonseMessage.getString(Constants.ID);
-                        fullname = resonseMessage.getString(Constants.FULLNAME);
-                        email_id = resonseMessage.getString(Constants.EMAIL);
-                        user_name = email_id;
-                        user2 = email_id;
-                        fullimage = "https://storage.googleapis.com/sports-bucket/Source/1965583_10204825358656748_4079077085336938408_o.jpg";
-                        //TODO:Upload user image instead
+						user_token = resonseMessage.getString(Constants.ID);
+						fullname = resonseMessage.getString(Constants.FULLNAME);
+						email_id = resonseMessage.getString(Constants.EMAIL);
+						user_name = email_id;
+						user2 = email_id;
+						fullimage = "https://storage.googleapis.com/sports-bucket/Source/1965583_10204825358656748_4079077085336938408_o.jpg";
+						//TODO:Upload user image instead
 						created_count = resonseMessage.getString(Constants.CREATED_COUNT);
 
-                    }
-                    else if(method.equals("facebook")){
-                        user_token = resonseMessage.getString(Constants.ID);
-                        fullname= name;
-                        fullimage = imagefb;
-                        email_id = email;
-                        user2 =user_token;
-                    }
-                    else if(method.equals("google")){
-                        user_token = resonseMessage.getString(Constants.ID);;
-                        fullname= personname;
-                        fullimage = personPhotoUrl;
-                        email_id = personemail;
-                        user2 =user_token;
+					}
+					else if(method.equals("facebook")){
+						user_token = resonseMessage.getString(Constants.ID);
+						fullname= name;
+						fullimage = imagefb;
+						email_id = email;
+						user2 =user_token;
+					}
+					else if(method.equals("google")){
+						user_token = resonseMessage.getString(Constants.ID);;
+						fullname= personname;
+						fullimage = personPhotoUrl;
+						email_id = personemail;
+						user2 =user_token;
 
-                    }
+					}
 
 					temp.setUser_id(user_token);
 					temp.setName(fullname);
@@ -261,13 +261,13 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
 				}
 
 				// sorting data from miles wise in home page list
-				/*
-				 * Collections.sort(rest, new Comparator<Restgetset>() {
-				 *
-				 * @Override public int compare(Restgetset lhs, Restgetset rhs)
-				 * { // TODO Auto-generated method stub return
-				 * Double.compare(lhs.getMiles(), rhs.getMiles()); } });
-				 */
+            /*
+             * Collections.sort(rest, new Comparator<Restgetset>() {
+             *
+             * @Override public int compare(Restgetset lhs, Restgetset rhs)
+             * { // TODO Auto-generated method stub return
+             * Double.compare(lhs.getMiles(), rhs.getMiles()); } });
+             */
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -276,10 +276,10 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
 				// TODO: handle exception
 				Error = e.getMessage();
 			} catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            }
+				e.printStackTrace();
+			}
 
-            return null;
+			return null;
 		}
 
 		@Override
@@ -296,11 +296,11 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
 					editor.putString("fullname", "" + fullname);
 					editor.putString("picture", "" + fullimage);
 					editor.commit();
-//					if (value.equals("home")) {
+//             if (value.equals("home")) {
 
 
-                    Intent iv = new Intent(Login.this,Splash.class);
-                    startActivity(iv);
+					Intent iv = new Intent(Login.this,Splash.class);
+					startActivity(iv);
 					Toast.makeText(Login.this, "Login Successful", Toast.LENGTH_LONG).show();
 
 				} else if (key.equals("status")) {
@@ -317,14 +317,14 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
 					editor.putString("fullname", "" + fullname);
 					editor.putString("picture", "" + fullimage);
 					editor.commit();
-                    Log.i("UserLogin", user_token);
+					Log.i("UserLogin", user_token);
 
 					// create userObject
 					createUserObject();
 					Intent iv = new Intent(Login.this,MainActivity.class);
-                    startActivity(iv);
+					startActivity(iv);
 					finish();
-                    Toast.makeText(Login.this, "Login Successful with Facebook", Toast.LENGTH_LONG).show();
+					Toast.makeText(Login.this, "Login Successful with Facebook", Toast.LENGTH_LONG).show();
 
 
 				} else if (key.equals("status")) {
@@ -334,19 +334,19 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
 			} else if (method.equals("google")) {
 				if (key.equals("user")) {
 					SharedPreferences.Editor editor = getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE).edit();
-                    editor.putString("userid", "" + user_token);
+					editor.putString("userid", "" + user_token);
 					editor.putString("username", "" + user_name);
-                    editor.putString("emilid", "" + email_id);
-                    editor.putString("fullname", "" + fullname);
+					editor.putString("emilid", "" + email_id);
+					editor.putString("fullname", "" + fullname);
 					editor.putString("picture", "" + fullimage);
 					editor.commit();
-                    Log.i("UserLogin", user_token);
+					Log.i("UserLogin", user_token);
 					// create userObject
 					createUserObject();
-                    Intent iv = new Intent(Login.this,MainActivity.class);
+					Intent iv = new Intent(Login.this,MainActivity.class);
 					startActivity(iv);
 					finish();
-                    Toast.makeText(Login.this, "Login Successful with Google+", Toast.LENGTH_LONG).show();
+					Toast.makeText(Login.this, "Login Successful with Google+", Toast.LENGTH_LONG).show();
 
 				} else if (key.equals("status")) {
 					Toast.makeText(Login.this, "Username or Password is Incorrect", Toast.LENGTH_LONG)
@@ -498,7 +498,7 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
 					editor.putLong("access_expires", facebook.getAccessExpires());
 					editor.putString("access_id", facebook.getAppId());
 					editor.commit();
-                    getProfileInformation();
+					getProfileInformation();
 //                    Log.d("Finish", "" + facebook.getAppId());
 
 				}
@@ -605,7 +605,7 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
 	@Override
 	public void onConnected(Bundle arg0) {
 		mSignInClicked = false;
-        getProfileInformation1();
+		getProfileInformation1();
 		updateUI(true);
 
 	}
@@ -719,7 +719,7 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
 
 		@Override
 		protected String doInBackground(String... strings) {
-//			String responseString;
+//       String responseString;
 			String responseStringUserInfo;
 			try {
 				JSONObject cred = new JSONObject();
@@ -729,12 +729,12 @@ public class Login extends Activity implements ConnectionCallbacks, OnConnection
 				} catch (JSONException e) {
 					Log.i(TAG, e.toString());
 				}
-//				responseString = NetworkUtilities.doPost(cred, NetworkUtilities.BASE_URL + "/get_events_by_user/");
+//          responseString = NetworkUtilities.doPost(cred, NetworkUtilities.BASE_URL + "/get_events_by_user/");
 				responseStringUserInfo = NetworkUtilities.doPost(cred, NetworkUtilities.BASE_URL + "/get_user_info/");
 			} catch (Exception ex) {
 				Log.e(TAG, "getUserEvents.doInBackground or responseStringCreatedCount.doInBackground: failed to doPost");
 				Log.i(TAG, ex.toString());
-//				responseString ="";
+//          responseString ="";
 				responseStringUserInfo = "";
 			}
 			// Convert string received from server to JSON array

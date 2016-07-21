@@ -1,4 +1,3 @@
-
 /*
  * Copyright (C) 2010 The Android Open Source Project
  *
@@ -282,6 +281,15 @@ final public class NetworkUtilities {
             members.add(membersJson.getString(i));
         }
         currentEvent.SetMembers(members);
+
+        ArrayList<String> approves = new ArrayList<>();
+        JSONArray approvesJson = jsonObject.getJSONArray(Constants.APPROVE_LIST);
+        for(int i=0 ; i<approvesJson.length();i++){
+            approves.add(approvesJson.getString(i));
+        }
+        currentEvent.setApproveList(approves);
+
+
         return currentEvent;
     }
 

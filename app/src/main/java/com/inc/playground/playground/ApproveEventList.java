@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -17,35 +19,74 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.inc.playground.playground.utils.Constants;
 import com.inc.playground.playground.utils.InitGlobalVariables;
+import com.inc.playground.playground.utils.NetworkUtilities;
+import com.inc.playground.playground.utils.UserImageEntry;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+
+import static com.inc.playground.playground.utils.NetworkUtilities.eventListToArrayList;
 
 /**
  * Created by lina on 7/13/2016.
  */
 public class ApproveEventList extends FragmentActivity implements SwipeRefreshLayout.OnRefreshListener {
-    private ListView notifications_list; //ListView listView;
-    private ArrayList<NotificationObject> notifications;
-    private GlobalVariables globalVariables;
-
-
+    private ListView approve_list; //ListView listView;
+    public ArrayList<String> approves;
+    public EventsObject eventForApprove;
+    public GlobalVariables globalVariables;
+    public SharedPreferences prefs;
+    public TextView requestMessage;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.approve_event_list);
         Intent i = null;
         new InitGlobalVariables(this,i).init();
-        this.globalVariables = ((GlobalVariables) getApplication());
-        notifications = globalVariables.GetNotifications();
 
+        this.globalVariables = ((GlobalVariables) getApplication());
+        final String MY_PREFS_NAME = "Login";
+        prefs = getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
+
+        Intent prevIntent = getIntent();
+        if(prevIntent.getStringExtra("parent").equals("EventInfo")) {
+            eventForApprove = (EventsObject) prevIntent.getSerializableExtra("eventObject");
+        }
+        else
+        {
+            JSONObject inputJson;
+            JSONArray eventsFromServerJSON = new JSONArray();
+            try{
+                inputJson = new JSONObject(prevIntent.getStringExtra("inputJson"));
+                eventsFromServerJSON = inputJson.getJSONArray("more");
+            }
+            catch (JSONException e) {
+                e.printStackTrace();
+            }
+            catch(NullPointerException nPoitExc){
+                nPoitExc.printStackTrace();
+            }
+
+            try {
+                eventForApprove = eventListToArrayList(eventsFromServerJSON, globalVariables.GetCurrentLocation()).get(0);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        approves = eventForApprove.getApproveList();
         new getList().execute();
     }
 
@@ -65,20 +106,21 @@ public class ApproveEventList extends FragmentActivity implements SwipeRefreshLa
 
         @Override
         protected void onPostExecute(String result) {
-            notifications_list = (ListView) findViewById(R.id.list_detail);
+            approve_list = (ListView) findViewById(R.id.list_detail);
             SwipeRefreshLayout swipeRefreshLayout =  (SwipeRefreshLayout)ApproveEventList.this.
                     findViewById(R.id.swipe_refresh_layout);
 
 
-            if (notifications ==  null) {
+            if (approves ==  null) {
                 Toast.makeText(ApproveEventList.this, "No Requests Found", Toast.LENGTH_LONG).show();
-                notifications_list.setVisibility(View.INVISIBLE);
+                approve_list.setVisibility(View.INVISIBLE);
             }
             else {
                 // Display events
-                notifications_list.setVisibility(View.VISIBLE);
-                NotificationsAdapter notificationsAdapter = new NotificationsAdapter(ApproveEventList.this, notifications);                notificationsAdapter.notifyDataSetChanged();
-                notifications_list.setAdapter(notificationsAdapter);
+                approve_list.setVisibility(View.VISIBLE);
+                ApproveAdapter notificationsAdapter = new ApproveAdapter(ApproveEventList.this, approves);
+                notificationsAdapter.notifyDataSetChanged();
+                approve_list.setAdapter(notificationsAdapter);
 
                 //swipe listener
                 swipeRefreshLayout.setOnRefreshListener(ApproveEventList.this);
@@ -92,18 +134,6 @@ public class ApproveEventList extends FragmentActivity implements SwipeRefreshLa
                                             }
                     );*/
 
-                notifications_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
-                    @Override
-                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        Intent intent = new Intent(ApproveEventList.this, EventInfo.class);
-                        intent.putExtra("eventObject", notifications.get(position).getEvent());
-                        startActivity(intent);
-                        finish();
-                        notifications.remove(notifications.get(position));
-
-                    }
-                });
 
             }
             try
@@ -127,15 +157,15 @@ public class ApproveEventList extends FragmentActivity implements SwipeRefreshLa
     }
 
 
-    public class NotificationsAdapter extends BaseAdapter {
+    public class ApproveAdapter extends BaseAdapter {
 
         private Activity activity;
-        private ArrayList<NotificationObject> data;
+        private ArrayList<String> data;
         private LayoutInflater inflater = null;
 
-        public NotificationsAdapter(Activity activity, ArrayList<NotificationObject> notifications) {
+        public ApproveAdapter(Activity activity, ArrayList<String> approveList) {
             this.activity = activity;
-            this.data = notifications;
+            this.data = approveList;
             inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         }
 
@@ -161,48 +191,89 @@ public class ApproveEventList extends FragmentActivity implements SwipeRefreshLa
                 view = inflater.inflate(R.layout.approve_event_item, null);
             }
 
+            ArrayList<UserImageEntry> userImageEntry = globalVariables.GetUsersList();
+            UserImageEntry approveUser = null;
+            if(userImageEntry != null && ! userImageEntry.isEmpty()) {
+                for (int i = 0; i < userImageEntry.size(); i++) {
+                    if (userImageEntry.get(i).id.equals(data.get(position))) {
+                        approveUser = userImageEntry.get(i);
+                        break;
+                    }
+                }
+            }
 
+            TextView approveName = (TextView) view.findViewById(R.id.approveId_txt);
+            approveName.setText(approveUser.fullname);
+
+            // set event name
             TextView eventName =(TextView) view.findViewById(R.id.event_nameTxt);
-            TextView notificationDescription = (TextView) view.findViewById(R.id.notification_descriptionTxt);
-            Button approveBtn = (Button) view.findViewById(R.id.ok_btn);
-            Button rejectBtn = (Button) view.findViewById(R.id.cancel_btn);
+            eventName.setText(eventForApprove.GetName());
 
-            eventName.setText(data.get(position).getEvent().GetName());
-            notificationDescription.setText(data.get(position).getDescription());
-
-            approveBtn.setOnClickListener(new View.OnClickListener() {
+            // set picture member for approve
+            final String urlUser = approveUser.url;
+            ImageView img_profile = (ImageView) view.findViewById(R.id.img_profile);
+            Bitmap imageBitmap = globalVariables.GetUsersImagesMap().get(data.get(position));
+            img_profile.setImageBitmap(imageBitmap);
+            img_profile.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    new EventPhotoUserListener(urlUser).execute();
 
                 }
             });
+
+                    // set request message
+                    requestMessage = (TextView) view.findViewById(R.id.request_messageTxt);
+            requestMessage.setVisibility(View.INVISIBLE);
+
+                    final Button approveBtn = (Button) view.findViewById(R.id.positive_btn);
+                    final Button rejectBtn = (Button) view.findViewById(R.id.negative_btn);
+
+
+                    approveBtn.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            HandleEventTask handleEventTask = new HandleEventTask(eventForApprove, "1", data.get(position));
+                            handleEventTask.execute((Void) null);
+                            approveBtn.setVisibility(View.INVISIBLE);
+                            rejectBtn.setVisibility(View.INVISIBLE);
+                            requestMessage.setVisibility(View.VISIBLE);
+                            requestMessage.setText("Request accepted");
+                            globalVariables.updateEventInEvents(eventForApprove.GetId(), data.get(position));
+
+                        }
+                    });
 
             rejectBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    HandleEventTask handleEventTask = new HandleEventTask(eventForApprove, "0", data.get(position));
+                    handleEventTask.execute((Void) null);
+                    approveBtn.setVisibility(View.INVISIBLE);
+                    rejectBtn.setVisibility(View.INVISIBLE);
+                    requestMessage.setVisibility(View.VISIBLE);
+                    requestMessage.setText("Request removed");
+                    globalVariables.updateEventInEvents(eventForApprove.GetId(),data.get(position));
+
 
                 }
             });
 
-            return view;
-        }
-    }
+                    return view;
+                }
+            }
 
-    @Override
+            @Override
     public void onRefresh() {
         Log.i("Enter on refresh", "");
 
-        SwipeRefreshLayout swipeRefreshLayout =  (SwipeRefreshLayout)ApproveEventList.this.
-                findViewById(R.id.swipe_refresh_layout);
-
+        SwipeRefreshLayout swipeRefreshLayout =  (SwipeRefreshLayout)ApproveEventList.this.findViewById(R.id.swipe_refresh_layout);
         swipeRefreshLayout.setRefreshing(true);
-
-//        Splash.GetEventsAsyncTask getEventsAsyncTask = new Splash.GetEventsAsyncTask(ApproveEventList.this);
-//        getEventsAsyncTask.execute();
-        NotificationsAdapter notificationsAdapter = new NotificationsAdapter(ApproveEventList.this,notifications);
+        ApproveAdapter notificationsAdapter = new ApproveAdapter(ApproveEventList.this,approves);
+                new InitGlobalVariables(this,null).init();
 
         notificationsAdapter.notifyDataSetChanged();
-        notifications_list.setAdapter(notificationsAdapter);
+        approve_list.setAdapter(notificationsAdapter);
 
         swipeRefreshLayout.setRefreshing(false);
 
@@ -229,4 +300,140 @@ public class ApproveEventList extends FragmentActivity implements SwipeRefreshLa
         startActivity(iv);
         finish();
     }
+
+
+
+    public class HandleEventTask extends AsyncTask<Void, Void, String> {
+        /*handle 3 requests: 1.approve 2. ignore  */
+
+        private String responseString;
+        String join_status,approveId;
+        private EventsObject currentEvent;
+
+        public HandleEventTask(EventsObject currentEvent, String join_status, String approveId) {
+            this.currentEvent = currentEvent;
+            this.join_status = join_status;
+            this.approveId = approveId;
+            assert (join_status.equals("0") || join_status.equals("1"));
+        }
+
+        protected void onPreExecute() {
+        }
+
+        @Override
+        protected String doInBackground(Void... params) {
+            // TODO: attempt authentication against a network service.
+            JSONObject cred = new JSONObject();
+            if (prefs.getString("userid", null) != null) {
+                //If the user is logged in
+                String userId = prefs.getString("userid", null);
+
+                try {//Send request to server for eventTask
+                    cred.put(NetworkUtilities.TOKEN, userId);
+                    cred.put("user_id", this.approveId);
+                    cred.put("event_id", currentEvent.GetId());
+                    cred.put("join_status", join_status);
+
+                    responseString = NetworkUtilities.doPost(cred, NetworkUtilities.BASE_URL + "/resolve_join_request_response/");
+                } catch (JSONException | UnsupportedEncodingException | NullPointerException e) {
+                    e.printStackTrace();
+                }
+                if (responseString == null) {
+                    Log.i("TESTID", currentEvent.GetId());
+                }
+
+                //Check response
+                JSONObject myObject = null;
+                String responseStatus = null;
+                try {
+                    myObject = new JSONObject(responseString);
+                    responseStatus = myObject.getString(Constants.RESPONSE_STATUS);
+                } catch (JSONException | NullPointerException e) {
+                    e.printStackTrace();
+                }
+
+            } else {
+                // If user is not logged -> in send to login activity
+                Intent intent = new Intent(getApplicationContext(), Login.class);
+                startActivity(intent);
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(final String responseString) {
+        }
+
+    }
+
+    public class EventPhotoUserListener extends AsyncTask<String, String, String> {
+        int i;
+        String photoUrl;
+
+        EventPhotoUserListener(String photoUrl) {
+            this.photoUrl = photoUrl;
+
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected String doInBackground(String... strings) {
+           /*server call   */
+            String userProfileResponseStr = "";
+            try {
+                JSONObject cred = new JSONObject();
+                try {
+                    cred.put(NetworkUtilities.TOKEN, "StubToken");
+                    cred.put(NetworkUtilities.PHOTO_URL, photoUrl);
+                    userProfileResponseStr = NetworkUtilities.doPost(cred, NetworkUtilities.BASE_URL + "/get_user_by_photo/");
+
+                } catch (JSONException | UnsupportedEncodingException e) {
+                }
+            } catch (Exception ex) {
+                userProfileResponseStr = "";
+            }
+            // Convert string received from server to JSON
+            JSONObject userInfoFroServer = null;
+            JSONObject responseJSON = null;
+            try {
+
+                responseJSON = new JSONObject(userProfileResponseStr);
+                userInfoFroServer = responseJSON.getJSONObject(Constants.RESPONSE_MESSAGE);
+
+                Intent iv = new Intent(ApproveEventList.this,
+                        com.inc.playground.playground.upLeft3StripesButton.
+                                MyProfile.class);
+
+                JSONArray eventEntries = userInfoFroServer.getJSONArray(Constants.EVENT_ENTRIES);
+
+                ArrayList<EventsObject> memeberEvents = NetworkUtilities.eventUserListToArrayList(eventEntries, globalVariables.GetCurrentLocation(), Constants.EVENT_ENTRIES);
+
+                ArrayList<ArrayList<EventsObject>> allEvents = Splash.eventsTypesfromJson(userProfileResponseStr, InitGlobalVariables.globalVariables.GetCurrentLocation());
+                ArrayList<EventsObject> events = allEvents.get(0);
+                ArrayList<EventsObject> events_wait4approval = allEvents.get(1);
+                ArrayList<EventsObject> events_decline = allEvents.get(2);
+                iv.putExtra("events", events);
+                iv.putExtra("events_wait4approval", events_wait4approval);
+                iv.putExtra("events_decline", events_decline);
+
+                iv.putExtra("name", userInfoFroServer.getString("fullname"));
+                iv.putExtra("createdNumOfEvents", userInfoFroServer.getString("created_count"));
+                iv.putExtra("photoUrl", photoUrl);
+                startActivity(iv);
+//                finish();
+
+
+            } catch (JSONException | NullPointerException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+        //Log.d("EVent info", "getMembersUrls.sucessful" + membersImagesUrls);
+    }
+
 }

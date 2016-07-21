@@ -9,11 +9,13 @@ public class UserImageEntry {
     public String fullname;
     public Bitmap image;
     public String id;
+    public String url;
 
-    public UserImageEntry(String fullname, Bitmap image, String userid) {
+    public UserImageEntry(String fullname, Bitmap image, String userid, String url) {
         this.fullname = fullname;
         this.image = image;
         this.id = userid;
+        this.url = url;
     }
 
 

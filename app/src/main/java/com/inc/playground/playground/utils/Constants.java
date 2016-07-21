@@ -141,6 +141,11 @@ public class Constants {
 
     public static final String EVENTS_DECLINE = "events_decline";
 
+    public static final String EVENTS_HISTORY = "events_history";
+
+    public static final String APPROVE_LIST = "approve_list";
+
+
 
 
 }
