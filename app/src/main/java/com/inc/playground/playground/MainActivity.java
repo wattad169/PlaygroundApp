@@ -307,9 +307,22 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
                     startActivity(iv);
                     //
                 }
-
             }
         });
+
+        LinearLayout ll_aboutUs = (LinearLayout) findViewById(R.id.ll_about);
+        ll_aboutUs.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // TODO Auto-generated method stub
+                // new changes
+                Intent iv = new Intent(MainActivity.this,
+                        AboutUs.class);
+                startActivity(iv);
+                finish();
+            }
+        });
+
 
     }
 

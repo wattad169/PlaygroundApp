@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="@string/txtUrlApp"
+        android:id="@+id/urlTxt"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:textSize="30dp"
+      />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="PlayGround"
+        android:id="@+id/titleTxt"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="false"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="60dp"
+        android:textSize="40dp"
+        android:textColor="#2F307B"
+        android:textStyle="bold" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="The social sports networking app"
+        android:id="@+id/descriptio1Txt"
+        android:layout_below="@+id/titleTxt"
+        android:layout_alignStart="@+id/titleTxt"
+        android:layout_marginTop="5dp"
+        android:textColor="#104e8b"
+        android:textSize="20dp"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="40dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="Visit our website to see more"
+        android:id="@+id/url_titleTxt"
+        android:layout_above="@+id/urlTxt"
+        android:layout_alignLeft="@+id/descriptio1Txt"
+        android:layout_alignStart="@+id/descriptio1Txt"
+        android:textColor="#2F307B" />
+
+
+    <ImageView
+        android:id="@+id/img_logo"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_gravity="center"
+        android:src="@drawable/pg_logo2"
+        android:layout_alignParentBottom="false"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/urlTxt"
+        android:layout_marginTop="40dp" />
+
+
+</RelativeLayout>

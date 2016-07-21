@@ -99,7 +99,7 @@ public class EventInfo extends FragmentActivity {
     //DahanLina
 
     EventsObject currentEvent;
-    TextView viewName, viewDateEvent, viewStartTime, viewEndTime, viewCurMembers, viewLocation, viewMinSize, viewCurrentSize, viewMaxSize, viewEventDescription, viewPlay, viewStatus;
+    TextView viewName, viewDateEvent, viewStartTime, viewEndTime, viewCurMembers, viewLocation, viewEventDescription, viewPlay, viewStatus, fullView;
     ImageView typeImg, statusImg;
     JSONArray membersImagesUrls;
     private HandleEventTask handleEventTask = null;
@@ -109,7 +109,8 @@ public class EventInfo extends FragmentActivity {
     User currentUser;
     ToggleButton playButton;
     Bitmap imageBitmap;
-//    Set<String> userEvents;
+    int minSize,maxSize,currenctSize;
+    boolean falgForJoin = true;
 
 
 
@@ -139,14 +140,11 @@ public class EventInfo extends FragmentActivity {
         viewEndTime = (TextView) findViewById(R.id.event_end_time);
         viewCurMembers = (TextView) findViewById(R.id.cur_membersTxt);
         viewLocation = (TextView) findViewById(R.id.event_formatted_location);
-        viewMinSize = (TextView) findViewById(R.id.event_min_size);
-        viewCurrentSize = (TextView) findViewById(R.id.event_current_size);
-        viewMaxSize = (TextView) findViewById(R.id.event_max_size);
         viewEventDescription = (TextView) findViewById(R.id.event_description);
         typeImg = (ImageView) findViewById(R.id.type_img);
         playButton = (ToggleButton) findViewById(R.id.playing_btn);
         viewPlay = (TextView) findViewById(R.id.Play_txt);
-
+        fullView = (TextView) findViewById(R.id.fullTxt);
         moreButton = (ImageButton) findViewById(R.id.more_btn);
         shareButton = (ImageButton) findViewById(R.id.share_btn);
         viewStatus = (TextView) findViewById(R.id.statusTxt);
@@ -167,6 +165,7 @@ public class EventInfo extends FragmentActivity {
             // Ask user to enable GPS/network in settings
             gps.showSettingsAlert();
         }
+        fullView.setVisibility(View.INVISIBLE);
         setdata();
 
     }
@@ -200,6 +199,9 @@ public class EventInfo extends FragmentActivity {
         addMarkerToHashMap(customMarkerOne, newMark);
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(position, 15));
 
+        minSize = Integer.parseInt(currentEvent.GetSize());
+        maxSize = Integer.parseInt(currentEvent.getMaxSize());
+
         Typeface fontText = Typeface.createFromAsset(getAssets(), "kimberly.ttf");
         viewName.setTypeface(fontText);
 
@@ -209,8 +211,6 @@ public class EventInfo extends FragmentActivity {
         viewStartTime.setText(currentEvent.GetStartTime());
         viewEndTime.setText(currentEvent.GetEndTime());
         viewLocation.setText(currentEvent.GetFormattedLocation());
-        viewMinSize.setText(currentEvent.GetSize());
-        viewMaxSize.setText(currentEvent.getMaxSize());
         viewEventDescription.setText(currentEvent.GetDescription());
         viewStatus.setVisibility(View.INVISIBLE);
         statusImg.setVisibility(View.INVISIBLE);
@@ -247,7 +247,6 @@ public class EventInfo extends FragmentActivity {
                             viewPlay.setText("Declined");
                             viewPlay.setTextColor(Color.parseColor("#0xffff0000"));
                         }
-
 
                     }
                 }
@@ -451,10 +450,16 @@ public class EventInfo extends FragmentActivity {
                 viewPlay.setTextColor(Color.parseColor("#D0D0D0"));
                 //remove member picture
                 membersList.removeView(findMemberPhoto());
-                viewCurrentSize.setText(Integer.toString(membersList.getChildCount()));
+                currenctSize = membersList.getChildCount();
+                viewCurMembers.setText(String.valueOf(currenctSize));
 
-                //update list
-                currentUser.removeSpecificEventById(currentEvent.GetId() );//remove current event from the specific record
+                //update set
+                Set<String> setEvents = currentUser.GetUserEvents();
+                setEvents.remove(currentEvent.GetId());
+                currentUser.SetUserEvents(setEvents);
+                // update list
+                currentUser.removeSpecificEventById(currentEvent.GetId());//remove current event from the specific record
+                //update global variables
                 globalVariables.SetCurrentUser(currentUser);
 
             }
@@ -472,53 +477,14 @@ public class EventInfo extends FragmentActivity {
                 ArrayList<EventsObject> temp = currentUser.getEvents_wait4approval();
                 temp.add(currentEvent);
                 currentUser.setEvents_wait4approval(temp);
+                viewCurMembers.setText(String.valueOf(currenctSize));
                 globalVariables.SetCurrentUser(currentUser);
-
-//                currentUser.getUserEventsObjects().add(currentEvent);
-//                currentUser.SetUserEvents(userEvents);
 
             }
             //public event
             else {
                 eventTask = "join_event";
-                x.setChecked(true);
-                viewPlay.setText("Playing");
-                viewPlay.setTextColor(Color.parseColor("#104E8B"));
-                toastGeneral(getApplicationContext(), "You joined the event !" , Toast.LENGTH_SHORT);
-                //add member picture
-                ImageView member = new ImageView(this);
-                member.setImageResource(R.drawable.pg_time);
-                Bitmap currentImgae = getRoundedShape(globalVariables.GetUserPictureBitMap());
-                member.setImageBitmap(currentImgae);
-                member.setId(membersImagesUrls.length() + 1);
-                urlList.add(currentUser.getPhotoUrl());
-                membersList.addView(member);
-                //add for this new member listener
-                member.setOnClickListener(new View.OnClickListener() {
-                                              @Override
-                                              public void onClick(View v) {
-                                                  // new changes
-                                                  new EventPhotoUserListener(currentUser.getPhotoUrl()).execute();
-                                              }
-                                          }
 
-                );
-                viewCurrentSize.setText(Integer.toString(membersImagesUrls.length() + 1));
-
-                //set status ("game on!" or not)
-                if (Integer.valueOf((String) viewCurrentSize.getText()) == Integer.valueOf((String) viewMinSize.getText())) {
-                    viewStatus.setVisibility(View.VISIBLE);
-                    statusImg.setVisibility(View.VISIBLE);
-                    //            mainLayout.setBackgroundColor(Color.parseColor("#98fb98"));
-                }
-                if (Integer.valueOf((String) viewCurrentSize.getText()) == Integer.valueOf((String) viewMaxSize.getText())) {
-                    //TODO : set not clickable for join to event -> only for leave
-
-                }
-                ArrayList<EventsObject> temp2 = currentUser.getEvents();
-                temp2.add(currentEvent);
-                currentUser.setEvents(temp2);
-                globalVariables.SetCurrentUser(currentUser);
             }
             //update global user events list - for join
             //Todo : update
@@ -532,6 +498,59 @@ public class EventInfo extends FragmentActivity {
         /*Server side update */
         handleEventTask = new HandleEventTask(currentEvent, eventTask);
         handleEventTask.execute((Void) null);
+
+        if(eventTask.equals("join_event") && falgForJoin)
+        {
+            x.setChecked(true);
+            viewPlay.setText("Playing");
+            viewPlay.setTextColor(Color.parseColor("#104E8B"));
+            toastGeneral(getApplicationContext(), "You joined the event !" , Toast.LENGTH_SHORT);
+            //add member picture
+            ImageView member = new ImageView(this);
+            member.setImageResource(R.drawable.pg_time);
+            Bitmap currentImgae = getRoundedShape(globalVariables.GetUserPictureBitMap());
+            member.setImageBitmap(currentImgae);
+            member.setId(membersImagesUrls.length() + 1);
+            urlList.add(currentUser.getPhotoUrl());
+            membersList.addView(member);
+            //add for this new member listener
+            member.setOnClickListener(new View.OnClickListener() {
+                                          @Override
+                                          public void onClick(View v) {
+                                              // new changes
+                                              new EventPhotoUserListener(currentUser.getPhotoUrl()).execute();
+                                          }
+                                      }
+
+            );
+            currenctSize = membersList.getChildCount();
+            viewCurMembers.setText(String.valueOf(currenctSize));
+
+            //set status ("game on!" or not)
+            if (currenctSize == minSize) {
+                viewStatus.setVisibility(View.VISIBLE);
+                statusImg.setVisibility(View.VISIBLE);
+            }
+            if (currenctSize == maxSize) {
+
+                //TODO : set not clickable for join to event -> only for leave
+
+            }
+            //update set
+            Set<String> setEvents = currentUser.GetUserEvents();
+            setEvents.add(currentEvent.GetId());
+            currentUser.SetUserEvents(setEvents);
+            // update list
+            ArrayList<EventsObject> temp2 = currentUser.getEvents();
+            temp2.add(currentEvent);
+            currentUser.setEvents(temp2);
+            //update global variables
+            globalVariables.SetCurrentUser(currentUser);
+        }
+        else if (eventTask.equals("join_event") && !falgForJoin)
+        {
+            toastGeneral(getApplicationContext(), "Join canceled, full event", Toast.LENGTH_SHORT);
+        }
 }
 
     public class HandleEventTask extends AsyncTask<Void, Void, String> {
@@ -582,9 +601,16 @@ public class EventInfo extends FragmentActivity {
 
                 if (myObject != null && responseStatus != null) {
                     if (responseStatus.equals(Constants.RESPONSE_OK.toString())) {
-                        //all the todo happen in :  onPlayClick()
+                        if(eventTask.equals("join_event")) // when event is not full
+                        {
+                            falgForJoin = true;
+                        }
                         handleEventTask = null;
-                    } else {
+                    } else if (responseStatus.equals(Constants.RESPONSE_NOK.toString())){
+                        if(eventTask.equals("join_event")) // when event is full and we cant join
+                        {
+                            falgForJoin = false;
+                        }
                         handleEventTask= null;
                     }
                 }
@@ -695,15 +721,28 @@ public class EventInfo extends FragmentActivity {
         @Override
         protected void onPostExecute(String lenghtOfFile) {
             // do stuff after posting data
-            viewCurrentSize.setText(Integer.toString(membersImagesUrls.length()));
-            viewCurMembers.setText(Integer.toString(membersImagesUrls.length()));
-            if (Integer.valueOf((String) viewCurrentSize.getText()) == Integer.valueOf((String) viewMinSize.getText())) {
+            currenctSize = membersImagesUrls.length();
+            viewCurMembers.setText(String.valueOf(currenctSize));
+            if (currenctSize == minSize) {
                 viewStatus.setVisibility(View.VISIBLE);
                 statusImg.setVisibility(View.VISIBLE);
-//                mainLayout.setBackgroundColor(Color.parseColor("#98fb98"));
             }
-            if (Integer.valueOf((String) viewCurrentSize.getText()) == Integer.valueOf((String) viewMaxSize.getText())) {
-                //TODO : set not clickable for join to event -> only for leave
+            if (currenctSize == maxSize) {
+                if(! User.eventsObjectContainEvent(currentUser.getEvents(), currentEvent.GetId()))
+                {
+                    playButton.setVisibility(View.INVISIBLE);
+                    viewPlay.setVisibility(View.INVISIBLE);
+                    fullView.setVisibility(View.VISIBLE);
+                }
+                else if(playButton.isChecked())
+                {
+                    playButton.setClickable(true);
+                }
+                else
+                {
+                    playButton.setClickable(false);
+                    toastGeneral(getApplicationContext(), "The event is full", Toast.LENGTH_SHORT);
+                }
             }
             for (int i = 0; i < membersImagesUrls.length(); i++) {
                 try {
@@ -715,14 +754,10 @@ public class EventInfo extends FragmentActivity {
                 Bitmap newMember = getRoundedShape(imageBitmap);
                 ImageView member = new ImageView(thisContext);
                 member.setImageBitmap(newMember);
-                //member.setImageResource(R.drawable.pg_time);
                 member.getAdjustViewBounds();
                 urlList.add(photoURL);
                 member.setId(i);
-//                LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(150, 150);
-//                member.setLayoutParams(layoutParams);
                 member.setPadding(10, 1, 10, 1);
-
                 membersList.addView(member);
 
             }
@@ -758,7 +793,6 @@ public class EventInfo extends FragmentActivity {
         @Override
         protected void onProgressUpdate(Integer... values) {
             super.onProgressUpdate(values);
-//            progressBar.setProgress(values[0]);
         }
 
     }

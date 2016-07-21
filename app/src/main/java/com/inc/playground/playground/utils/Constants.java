@@ -27,6 +27,8 @@ public class Constants {
 
     public static final String RESPONSE_OK = "OK";
 
+    public static final String RESPONSE_NOK = "NOK";
+
     public static final String RESPONSE_MESSAGE = "message";
 
     /**
@@ -135,7 +137,7 @@ public class Constants {
 
     public static final String INVITEE = "invitee";
 
-    public static final String EVENTS_EDITED = "events";//Todo : make sure we use those
+    public static final String EVENTS = "events";//Todo : make sure we use those
 
     public static final String EVENTS_WAIT4APPROVAL = "events_wait4approval";
 

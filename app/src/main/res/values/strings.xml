@@ -224,5 +224,5 @@
     <string name="menu_settings">Settings</string>
     <string name="str_hnt_autocomplete">Enter Country Name</string>
 
-
+    <string name="txtUrlApp"><a href="http://milysportbuddies.wix.com/playground">PlayGround Web</a></string>
 </resources>
