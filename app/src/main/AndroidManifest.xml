@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     android:screenOrientation="landscape"
-    package="com.inc.playground.playground"
+    package="com.inc.playground.playgroundApp"
     android:versionCode="2"
     android:versionName="2.0">
 
@@ -12,7 +12,7 @@
     <permission
         android:name="com.androidbunch.drawroutev2.permission.MAPS_RECEIVE"
         android:protectionLevel="signature" />
-    <permission android:name="com.inc.playground.playground.permission.C2D_MESSAGE"
+    <permission android:name="com.inc.playground.playgroundApp.permission.C2D_MESSAGE"
         android:protectionLevel="signature" />
 
     <uses-feature
@@ -43,7 +43,7 @@
 
     <!-- </application> -->
     <application
-        android:name=".GlobalVariables"
+        android:name="com.inc.playground.playgroundApp.GlobalVariables"
         android:largeHeap="true"
         android:icon="@drawable/pg_logo2"
         android:label="Playground"
@@ -64,25 +64,25 @@
             </intent-filter>
         </receiver>
         <service
-            android:name="com.inc.playground.playground.MyGcmListenerService"
+            android:name="com.inc.playground.playgroundApp.MyGcmListenerService"
             android:exported="false" >
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
             </intent-filter>
         </service>
         <service
-            android:name="com.inc.playground.playground.MyInstanceIDListenerService"
+            android:name="com.inc.playground.playgroundApp.MyInstanceIDListenerService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.android.gms.iid.InstanceID" />
             </intent-filter>
         </service>
         <service
-            android:name="com.inc.playground.playground.RegistrationIntentService"
+            android:name="com.inc.playground.playgroundApp.RegistrationIntentService"
             android:exported="false">
         </service>
         <activity
-            android:name=".Splash"
+            android:name="com.inc.playground.playgroundApp.Splash"
             android:label="@string/app_name"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -92,55 +92,55 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".MainActivity"
+            android:name="com.inc.playground.playgroundApp.MainActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"/>
         <activity
-            android:name=".Login"
-            android:label="@string/app_name"
-            android:windowSoftInputMode="stateHidden"
-            android:screenOrientation="portrait"/>
-        <activity
-            android:name=".Register"
+            android:name="com.inc.playground.playgroundApp.Login"
             android:label="@string/app_name"
             android:windowSoftInputMode="stateHidden"
             android:screenOrientation="portrait"/>
         <activity
-            android:name=".upLeft3StripesButton.SettingsActivity"
+            android:name="com.inc.playground.playgroundApp.Register"
+            android:label="@string/app_name"
+            android:windowSoftInputMode="stateHidden"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name="com.inc.playground.playgroundApp.upLeft3StripesButton.SettingsActivity"
             android:label="@string/title_activity_settings"
             android:screenOrientation="portrait"/>
         <!-- android:theme= "@android:style/Animation.Toast" -->
         <activity
-            android:name=".EventInfo"
+            android:name="com.inc.playground.playgroundApp.EventInfo"
             android:label="@string/app_name"
             android:windowSoftInputMode="stateHidden"
             android:screenOrientation="portrait"/>
         <activity
-            android:name=".AddEvent"
-            android:label="@string/app_name"
-            android:windowSoftInputMode="stateHidden"
-            android:screenOrientation="portrait"/>
-
-        <activity
-            android:name=".upLeft3StripesButton.MyProfile"
+            android:name="com.inc.playground.playgroundApp.AddEvent"
             android:label="@string/app_name"
             android:windowSoftInputMode="stateHidden"
             android:screenOrientation="portrait"/>
 
         <activity
-            android:name=".NotificationsList"
+            android:name="com.inc.playground.playgroundApp.upLeft3StripesButton.MyProfile"
             android:label="@string/app_name"
             android:windowSoftInputMode="stateHidden"
             android:screenOrientation="portrait"/>
 
         <activity
-            android:name=".ApproveEventList"
+            android:name="com.inc.playground.playgroundApp.NotificationsList"
             android:label="@string/app_name"
             android:windowSoftInputMode="stateHidden"
             android:screenOrientation="portrait"/>
 
         <activity
-            android:name=".AboutUs"
+            android:name="com.inc.playground.playgroundApp.ApproveEventList"
+            android:label="@string/app_name"
+            android:windowSoftInputMode="stateHidden"
+            android:screenOrientation="portrait"/>
+
+        <activity
+            android:name="com.inc.playground.playgroundApp.AboutUs"
             android:label="@string/app_name"
             android:windowSoftInputMode="stateHidden"
             android:screenOrientation="portrait"/>
@@ -150,12 +150,12 @@
             android:value="AIzaSyAU9ShujnIg3IDQxtPr7Q1qOvFVdwNmWc4" />
 
         <activity
-            android:name=".FilterActivity"
+            android:name="com.inc.playground.playgroundApp.FilterActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"></activity>
 
         <activity
-            android:name=".EditEvent"
+            android:name="com.inc.playground.playgroundApp.EditEvent"
             android:label="@string/app_name"></activity>
 
 
