@@ -4,7 +4,7 @@
 
 
     <header
-        android:fragment="com.inc.playground.playground.upLeft3StripesButton.SettingsActivity$NotificationPreferenceFragment"
+        android:fragment="com.inc.playground.playgroundApp.upLeft3StripesButton.SettingsActivity$NotificationPreferenceFragment"
         android:icon="@drawable/ic_notifications_black_24dp"
         android:title="@string/pref_header_notifications" />
 

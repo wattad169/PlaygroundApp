@@ -43,7 +43,7 @@
                     android:gravity="center"
                     android:id="@+id/linearLayout">
 
-                    <com.inc.playground.playground.utils.RoundedImageView
+                    <com.inc.playground.playgroundApp.utils.RoundedImageView
                         android:id="@+id/img_my"
                         android:layout_width="60dp"
                         android:layout_height="60dp"
