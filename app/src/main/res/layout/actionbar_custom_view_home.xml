@@ -32,7 +32,7 @@
         android:visibility="invisible"/>
 
 
-    <com.inc.playground.playground.utils.RoundedImageView
+    <com.inc.playground.playgroundApp.utils.RoundedImageView
         android:id="@+id/img_profile_action_bar"
         android:layout_width="35dp"
         android:layout_height="35dp"

@@ -31,7 +31,7 @@
         android:layout_marginTop="7dp"
         android:background="@drawable/peofile_bg" >
 
-        <com.inc.playground.playground.utils.RoundedImageView
+        <com.inc.playground.playgroundApp.utils.RoundedImageView
             android:id="@+id/img_profile"
             android:layout_width="100dp"
             android:layout_height="100dp"
