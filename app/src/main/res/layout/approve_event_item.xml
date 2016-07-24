@@ -26,7 +26,7 @@
             android:layout_toRightOf="@+id/img_profile" />
 
 
-        <com.inc.playground.playground.utils.RoundedImageView
+        <com.inc.playground.playgroundApp.utils.RoundedImageView
             android:id="@+id/img_profile"
             android:layout_width="60dp"
             android:layout_height="60dp"
