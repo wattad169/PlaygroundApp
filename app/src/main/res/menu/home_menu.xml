@@ -1,7 +1,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.inc.playground.playground.Home">
+    tools:context="com.inc.playground.playgroundApp.Home">
 
     <item
         android:id="@+id/settings_menu"

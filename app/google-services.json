@@ -8,7 +8,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:905465991528:android:fa363e3a6b8ffd4a",
         "android_client_info": {
-          "package_name": "com.inc.playground.playground"
+          "package_name": "com.inc.playground.playgroundApp"
         }
       },
       "oauth_client": [
@@ -16,7 +16,7 @@
           "client_id": "905465991528-oegvluj0ba18h12eoi6g0r1ld5femg29.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.inc.playground.playground",
+            "package_name": "com.inc.playground.playgroundApp",
             "certificate_hash": "0EB8FCEEBEB9D11E6D24127AC1A4B731614FEBEC"
           }
         },
