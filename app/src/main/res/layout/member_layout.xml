@@ -3,7 +3,7 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.inc.playground.playground.utils.RoundedImageView
+    <com.inc.playground.playgroundApp.utils.RoundedImageView
         android:id="@+id/img_profile_action_bar"
         android:layout_width="35dp"
         android:layout_height="35dp"
