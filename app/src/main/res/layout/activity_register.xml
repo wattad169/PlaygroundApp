@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.inc.playground.playground.Register" >
+    tools:context="com.inc.playground.playgroundApp.Register" >
 
     <RelativeLayout
         android:id="@+id/rel_header"
@@ -29,7 +29,7 @@
         android:layout_marginTop="7dp"
         android:background="@drawable/peofile_bg" >
 
-        <com.inc.playground.playground.utils.RoundedImageView
+        <com.inc.playground.playgroundApp.utils.RoundedImageView
             android:id="@+id/img_profile"
             android:layout_width="100dp"
             android:layout_height="100dp"

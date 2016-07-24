@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.inc.playground.playground.Login" >
+    tools:context="com.inc.playground.playgroundApp.Login" >
 
     <RelativeLayout
         android:id="@+id/rel_header"
@@ -36,7 +36,7 @@
             android:id="@+id/scroll"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:layout_alignParentStart="false">
+           >
 
             <RelativeLayout
                 android:id="@+id/rel_scroll"
@@ -45,7 +45,7 @@
 
                 <Button
                     android:id="@+id/btn_fb"
-                    android:layout_width="300dp"
+                    android:layout_width="fill_parent"
                     android:layout_height="50dp"
                     android:background="@drawable/fb_btn"
                     android:text="Login With Facebook"
@@ -53,9 +53,8 @@
                     android:foregroundGravity="center_vertical|center|center_horizontal"
                     android:gravity="center_vertical|center|center_horizontal"
                     android:layout_alignParentTop="true"
-                    android:layout_alignParentLeft="true"
-                    android:layout_marginTop="100dp"
-                    android:layout_marginLeft="30dp" />
+                    android:layout_alignParentLeft="false"
+                    android:layout_marginTop="100dp" />
             </RelativeLayout>
         </ScrollView>
     </RelativeLayout>
