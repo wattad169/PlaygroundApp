@@ -10,7 +10,7 @@
         android:background="#f0f8ff"
         android:gravity="center">
 
-        <com.inc.playground.playground.utils.RoundedImageView
+        <com.inc.playground.playgroundApp.utils.RoundedImageView
             android:id="@+id/img_type"
             android:layout_width="35dp"
             android:layout_height="35dp"
